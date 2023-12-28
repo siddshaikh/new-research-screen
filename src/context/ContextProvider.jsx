@@ -1,12 +1,44 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 export const ResearchContext = createContext(null);
 const ContextProvider = ({ children }) => {
+  const navigate = useNavigate();
+  // auto logout
+  const [logoutTimer, setLogoutTimer] = useState(null);
+  const [userToken, setUserToken] = useState("");
+  const handleLogout = () => {
+    if (logoutTimer) {
+      clearTimeout(logoutTimer);
+    }
+    setUserToken("");
+    localStorage.removeItem("user");
+    setQc1by([]);
+    setQc2by([]);
+    setClientId("");
+    setUnsavedChanges(false);
+    navigate("/login");
+  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setUserToken(""); // Clear user token
+      localStorage.removeItem("user"); // Remove token from storage
+
+      navigate("/login");
+    }, 30 * 60 * 1000); // 30 minutes in milliseconds
+
+    setLogoutTimer(timer);
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [userToken]);
   //state for the login component
   const [researchOpen, setResearchOpen] = useState(false);
   const [name, setName] = useState("");
-  const [userToken, setUserToken] = useState("");
   // for logout timer
   const [timerId, setTimerId] = useState(null);
   // clientId for the fetching company
@@ -70,6 +102,7 @@ const ContextProvider = ({ children }) => {
   return (
     <ResearchContext.Provider
       value={{
+        handleLogout,
         researchOpen,
         setResearchOpen,
         name,

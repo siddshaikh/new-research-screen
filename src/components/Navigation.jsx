@@ -1,34 +1,10 @@
 import { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ResearchContext } from "../context/ContextProvider";
 
 const Navigation = () => {
-  const navigate = useNavigate();
-  const {
-    researchOpen,
-    setResearchOpen,
-    qc2Open,
-    setQc2Open,
-    setQc1by,
-    setQc2by,
-    setClientId,
-    setUnsavedChanges,
-    timerId,
-    setTimerId,
-  } = useContext(ResearchContext);
-
-  const handleLogout = () => {
-    if (timerId) {
-      clearTimeout(timerId);
-      setTimerId(null);
-    }
-    localStorage.removeItem("user");
-    navigate("/login");
-    setQc1by([]);
-    setQc2by([]);
-    setClientId("");
-    setUnsavedChanges(false);
-  };
+  const { researchOpen, setResearchOpen, qc2Open, setQc2Open, handleLogout } =
+    useContext(ResearchContext);
 
   const handleResearchScreenClick = () => {
     if (!researchOpen) {
@@ -58,12 +34,14 @@ const Navigation = () => {
           </Link>
         </li>
         <li className="-mb-px mr-1">
-          <button
-            className="bg-transparent inline-block py-2 px-4 text-slate-100 hover:text-slate-200 border-b-2 border-transparent hover:border-gray-500 focus:outline-none tracking-wider uppercase"
-            onClick={handleResearchScreenClick}
-          >
-            Online
-          </button>
+          <Link to={"/"}>
+            <button
+              className="bg-transparent inline-block py-2 px-4 text-slate-100 hover:text-slate-200 border-b-2 border-transparent hover:border-gray-500 focus:outline-none tracking-wider uppercase"
+              onClick={handleResearchScreenClick}
+            >
+              Online
+            </button>
+          </Link>
         </li>
         <li className="-mb-px mr-1">
           <button

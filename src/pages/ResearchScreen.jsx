@@ -41,6 +41,11 @@ const useStyle = makeStyles(() => ({
   clientForm: {
     width: 300,
   },
+  menuPaper: {
+    maxHeight: 200,
+    width: 200,
+    marginTop: 5,
+  },
 }));
 const Home = () => {
   const classes = useStyle();
@@ -302,6 +307,7 @@ const Home = () => {
             // language: langsTostring, //optional using condition
           };
 
+          // eslint-disable-next-line no-inner-declarations
           function addPropertyIfConditionIsTrue(condition, property, value) {
             if (condition) {
               requestData[property] = value;
@@ -335,7 +341,7 @@ const Home = () => {
           );
 
           const requestDataJSON = JSON.stringify(requestData);
-          const url = "http://51.68.220.77:8000/listArticlebyQC/";
+          const url = `${import.meta.env.VITE_BASE_URL}listArticlebyQC/`;
           const response = await axios.post(url, requestDataJSON, {
             headers: {
               "Content-Type": "application/json",
@@ -403,6 +409,9 @@ const Home = () => {
                 onChange={handleChange}
                 input={<OutlinedInput label="Name" />}
                 className={classes.dropDowns}
+                MenuProps={{
+                  classes: { paper: classes.menuPaper },
+                }}
               >
                 {clients &&
                   clients.map((client) => (
@@ -602,6 +611,7 @@ const Home = () => {
                 <FormControlLabel
                   control={
                     <Checkbox
+                      color="default"
                       checked={isImage === 1}
                       onChange={() => {
                         setIsImage(isImage === 1 ? 0 : 1);
@@ -618,6 +628,7 @@ const Home = () => {
                 <FormControlLabel
                   control={
                     <Checkbox
+                      color="default"
                       checked={isVideo === 1} // Check if isVideo equals 1
                       onChange={() => {
                         setIsVideo(isVideo === 1 ? 0 : 1); // Toggle isVideo between 0 and 1
