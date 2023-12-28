@@ -14,7 +14,7 @@ function App() {
     checkUserAuthenticate(setUserToken);
   }, []);
   return (
-    <div className="App" style={{ backgroundColor: "#C8D7F4" }}>
+    <div className="App bg-secondory">
       <ToastContainer />
       <Routes>
         <Route path="/login" element={<Login />} />

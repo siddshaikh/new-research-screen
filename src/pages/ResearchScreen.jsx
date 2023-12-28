@@ -45,6 +45,7 @@ const useStyle = makeStyles(() => ({
     maxHeight: 200,
     width: 200,
     marginTop: 5,
+    background: "#d4c8c7",
   },
 }));
 const Home = () => {
@@ -737,9 +738,8 @@ const Home = () => {
               </Select>
             </FormControl>
             <button
-              style={{ backgroundColor: "#150734" }}
               onClick={handleSearch}
-              className={`border border-gray-400 rounded px-10 py-1 uppercase text-white ${
+              className={`bg-primary border border-gray-400 rounded px-10 py-1 uppercase text-white ${
                 tableDataLoading ? "text-yellow-300" : "text-white"
               }`}
             >
@@ -749,9 +749,7 @@ const Home = () => {
           {/* divider */}
           <Divider variant="middle" sx={{ m: 2 }} />
           {/* table */}
-          <div>
-            <ResearchTable />
-          </div>
+          <ResearchTable />
         </>
       )}
     </div>

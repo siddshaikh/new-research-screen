@@ -16,6 +16,7 @@ import axios from "axios";
 import { ResearchContext } from "../../context/ContextProvider";
 import useFetchData from "../../hooks/useFetchData";
 import { toast } from "react-toastify";
+import { DDSearchValues } from "../../utils/dataArray";
 
 const useStyles = makeStyles(() => ({
   dropDowns: {
@@ -36,6 +37,9 @@ const useStyles = makeStyles(() => ({
   resize: {
     fontSize: "0.8em",
     height: 20,
+  },
+  headerCheckBox: {
+    color: "white",
   },
 }));
 const ResearchTable = () => {
@@ -123,22 +127,19 @@ const ResearchTable = () => {
 
   // Function to find company id based on selection
   const getCompanyId = (companyData, companyNames) => {
-    let companyId = [];
-    if (companyNames) {
-      for (let i = 0; i < companyNames.length; i++) {
-        const companyName = companyNames[i];
-        const company = companyData.find(
-          (item) => item.companyname === companyName
-        );
-        if (company) {
-          companyId.push(company.companyid);
-        } else {
-          companyId.push(null);
-        }
-      }
-    } else {
+    if (!companyNames) {
       return null;
     }
+
+    let companyId = [];
+
+    for (const companyName of companyNames) {
+      const company = companyData.find(
+        (item) => item.companyname === companyName
+      );
+      companyId.push(company ? company.companyid : null);
+    }
+
     return companyId;
   };
 
@@ -232,21 +233,17 @@ const ResearchTable = () => {
 
   // handle Search Table Values
   const handleSearch = () => {
-    if (searchValue.trim() === "" || !headerForSearch) {
-      setSearchedData([]);
-      return;
-    }
-
-    const output = tableData.filter((rowData) => {
-      const value = rowData[headerForSearch];
-      if (
-        value !== null &&
-        value.toString().toLowerCase().includes(searchValue.toLowerCase())
-      ) {
-        return true;
-      }
-      return false;
-    });
+    const output =
+      searchValue.trim() !== "" && headerForSearch
+        ? tableData.filter(
+            (rowData) =>
+              rowData[headerForSearch] &&
+              rowData[headerForSearch]
+                .toString()
+                .toLowerCase()
+                .includes(searchValue.toLowerCase())
+          )
+        : [];
 
     setSearchedData(output);
   };
@@ -366,10 +363,7 @@ const ResearchTable = () => {
 
       return parts.map((part, index) =>
         regex.test(part) ? (
-          <span
-            key={index}
-            style={{ backgroundColor: "#121212", color: "white" }}
-          >
+          <span key={index} className="text-white bg-black">
             {part}
           </span>
         ) : (
@@ -408,12 +402,11 @@ const ResearchTable = () => {
                 >
                   <TableCell>
                     <div
-                      className={`h-8 overflow-hidden w-28 text-xs ${
+                      className={`h-8 overflow-hidden w-28 text-xs text-black ${
                         (header === "REPORTING SUBJECT" && "w-16") ||
                         (header === "HEADLINE" && "w-72") ||
                         (header === "DETAIL SUMMARY" && "w-72")
                       }`}
-                      style={{ color: "black" }}
                     >
                       {highlightSearch(
                         rowData[header.toLowerCase().replace(/ /g, "_")]
@@ -427,10 +420,7 @@ const ResearchTable = () => {
                 header !== "DETAIL SUMMARY" &&
                 header !== "KEYWORD" && (
                   <TableCell className="table-cell" size="small">
-                    <div
-                      className="h-14 overflow-hidden text-xs w-14"
-                      style={{ color: "black" }}
-                    >
+                    <div className="h-14 overflow-hidden text-xs w-14 text-black">
                       {highlightSearch(
                         rowData[header.toLowerCase().replace(/ /g, "_")]
                       )}
@@ -442,7 +432,7 @@ const ResearchTable = () => {
         </TableRow>
       ))
     ) : (
-      <table className="w-screen border h-screen " style={{ color: "#cbcae3" }}>
+      <table className="bg-primary w-screen border h-screen">
         <thead>
           <tr>
             <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500">
@@ -472,48 +462,41 @@ const ResearchTable = () => {
   };
 
   return (
-    <div
-      style={{
-        position: "relative",
-      }}
-    >
+    <div>
       {/* filters for editing the cells */}
-      <div className="flex gap-2 items-center mt-2">
-        <div className="flex items-center gap-2 ml-2">
-          {/* search values using dropdown */}
-          <FormControl className="w-28">
-            <InputLabel className={classes.inputLabel}>Select</InputLabel>
-            <Select
-              className={classes.dropDowns}
-              variant="outlined"
-              label="select"
-              value={headerForSearch}
-              onChange={(e) => setHeaderForSearch(e.target.value)}
-            >
-              <MenuItem value="headline">Headline</MenuItem>
-              <MenuItem value="author_name">Author</MenuItem>
-              <MenuItem value="publication">Publication</MenuItem>
-              <MenuItem value="reporting_subject">Subject</MenuItem>
-              <MenuItem value="detail_summary">Summary</MenuItem>
-            </Select>
-          </FormControl>
-          {/* searchfield for the searching tableData */}
-          <TextField
-            placeholder="Find Text"
+      <div className="flex items-center gap-2 ml-2">
+        {/* search values using dropdown */}
+        <FormControl className="w-28">
+          <InputLabel className={classes.inputLabel}>Select</InputLabel>
+          <Select
+            className={classes.dropDowns}
             variant="outlined"
-            size="small"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            InputProps={{ style: { fontSize: "0.8rem", height: 25, top: 6 } }}
-          />
-          <button
-            style={{ backgroundColor: "#150734" }}
-            onClick={handleSearch}
-            className="border border-gray-400 rounded px-10 py-1 uppercase text-white mt-2 tracking-wider"
+            label="select"
+            value={headerForSearch}
+            onChange={(e) => setHeaderForSearch(e.target.value)}
           >
-            Find
-          </button>
-        </div>
+            {DDSearchValues.map((item) => (
+              <MenuItem value={item.value} key={item.title}>
+                {item.title}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        {/* searchfield for the searching tableData */}
+        <TextField
+          placeholder="Find Text"
+          variant="outlined"
+          size="small"
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          InputProps={{ style: { fontSize: "0.8rem", height: 25, top: 6 } }}
+        />
+        <button
+          onClick={handleSearch}
+          className=" bg-primary border border-gray-400 rounded px-10 py-1 uppercase text-white mt-2 tracking-wider"
+        >
+          Find
+        </button>
       </div>
       <hr className="mt-1" />
       <div className="mt-2 ml-2 flex items-center gap-4">
@@ -534,11 +517,7 @@ const ResearchTable = () => {
               onChange={(e) => setReportingTone(e.target.value)}
             />
             {reportingTones.map((item) => (
-              <MenuItem
-                value={item.value}
-                key={item.value}
-                sx={{ fontSize: "0.8em" }}
-              >
+              <MenuItem value={item.value} key={item.value}>
                 {item.tonality}
               </MenuItem>
             ))}
@@ -555,7 +534,7 @@ const ResearchTable = () => {
             onChange={(e) => setProminence(e.target.value)}
           >
             {prominences.map((item) => (
-              <MenuItem value={item} key={item} sx={{ fontSize: "0.8em" }}>
+              <MenuItem value={item} key={item}>
                 {item}
               </MenuItem>
             ))}
@@ -572,7 +551,7 @@ const ResearchTable = () => {
             onChange={(e) => setSubject(e.target.value)}
           >
             {subjects.map((item) => (
-              <MenuItem key={item} value={item} sx={{ fontSize: "0.8em" }}>
+              <MenuItem key={item} value={item}>
                 {item}
               </MenuItem>
             ))}
@@ -589,7 +568,7 @@ const ResearchTable = () => {
             onChange={(e) => setCategory(e.target.value)}
           >
             {categories.map((item) => (
-              <MenuItem value={item} key={item} sx={{ fontSize: "0.8em" }}>
+              <MenuItem value={item} key={item}>
                 {item}
               </MenuItem>
             ))}
@@ -616,15 +595,13 @@ const ResearchTable = () => {
           InputProps={{ style: { fontSize: "0.8rem", height: 25, top: 6 } }}
         />
         <button
-          style={{ backgroundColor: "#150734" }}
-          className="border border-gray-400 rounded px-10 py-1 uppercase text-white tracking-wider"
+          className="bg-primary border border-gray-400 rounded px-10 py-1 uppercase text-white tracking-wider"
           onClick={handleApplyChanges}
         >
           Apply
         </button>
         <button
-          style={{ backgroundColor: "#150734" }}
-          className={`border border-gray-400 rounded px-10 py-1 uppercase text-white tracking-wider ${
+          className={` bg-primary border border-gray-400 rounded px-10 py-1 uppercase text-white tracking-wider ${
             postingLoading ? "text-yellow-300" : "text-white"
           }`}
           onClick={handlePostData}
@@ -649,7 +626,7 @@ const ResearchTable = () => {
                   <Checkbox
                     checked={selectedRowData.length === tableData.length}
                     onChange={handleMasterCheckboxChange}
-                    style={{ color: "white" }}
+                    className={classes.headerCheckBox}
                   />
                 </TableCell>
               )}

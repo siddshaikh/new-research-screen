@@ -247,3 +247,25 @@ export const countriesByContinent = [
     ],
   },
 ];
+export const DDSearchValues = [
+  {
+    title: "Headline",
+    value: "headline",
+  },
+  {
+    title: "Author",
+    value: "author_name",
+  },
+  {
+    title: "Publication",
+    value: "publication",
+  },
+  {
+    title: "Subject",
+    value: "reporting_subject",
+  },
+  {
+    title: "Summary",
+    value: "detail_summary",
+  },
+];

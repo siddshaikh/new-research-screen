@@ -9,6 +9,9 @@ const Home = () => {
   return (
     <div>
       <Navigation />
+      <p className="text-xl mt-4 text-center">
+        {!researchOpen && !qc2Open && "Choose Any Tab"}
+      </p>
       {researchOpen && <ResearchScreen />}
       {qc2Open && <Qc2Print />}
     </div>

@@ -34,6 +34,7 @@ const useStyles = makeStyles(() => ({
   button: {
     backgroundColor: "#150734",
     color: "white",
+    marginTop: "1rem",
   },
 }));
 
@@ -96,7 +97,6 @@ const Login = () => {
             variant="contained"
             color="primary"
             fullWidth
-            style={{ marginTop: "1rem" }}
             className={classes.button}
           >
             Login
