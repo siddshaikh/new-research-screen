@@ -399,14 +399,14 @@ const ResearchTable = () => {
                 header === "REPORTING SUBJECT" ||
                 header === "DETAIL SUMMARY" ||
                 header === "KEYWORD") && (
-                <Tooltip
-                  title={rowData[header.toLowerCase().replace(/ /g, "_")]}
-                  placement="top"
-                  enterDelay={1000}
-                  leaveDelay={1000}
-                  TransitionProps={{ timeout: 700 }}
-                >
-                  <TableCell>
+                <TableCell>
+                  <Tooltip
+                    title={rowData[header.toLowerCase().replace(/ /g, "_")]}
+                    placement="top"
+                    enterDelay={1000}
+                    leaveDelay={200}
+                    TransitionProps={{ timeout: 1500 }}
+                  >
                     <div
                       className={`h-8 overflow-hidden w-28 text-xs text-black text-ellipsis ${
                         (header === "REPORTING SUBJECT" && "w-16") ||
@@ -418,8 +418,8 @@ const ResearchTable = () => {
                         rowData[header.toLowerCase().replace(/ /g, "_")]
                       )}
                     </div>
-                  </TableCell>
-                </Tooltip>
+                  </Tooltip>
+                </TableCell>
               )}
               {header !== "HEADLINE" &&
                 header !== "REPORTING SUBJECT" &&
