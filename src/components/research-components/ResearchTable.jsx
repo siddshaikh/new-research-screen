@@ -441,9 +441,9 @@ const ResearchTable = () => {
       <table className="bg-primary w-screen border h-screen">
         <thead>
           <tr>
-            <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500"></th>
-            <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500"></th>
-            <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500"></th>
+            <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500">
+              Table
+            </th>
           </tr>
         </thead>
         <tbody>
