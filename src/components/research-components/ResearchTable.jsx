@@ -247,7 +247,12 @@ const ResearchTable = () => {
 
     setSearchedData(output);
   };
-
+  // search function using table header
+  const hanleTableSearchUsingHeader = (event) => {
+    setHeaderForSearch(event.target.value);
+    setSearchedData([]);
+    setSearchValue("");
+  };
   //updating tabledata
   const handleApplyChanges = () => {
     if (selectedRowData.length > 0) {
@@ -397,12 +402,13 @@ const ResearchTable = () => {
                 <Tooltip
                   title={rowData[header.toLowerCase().replace(/ /g, "_")]}
                   placement="top"
-                  enterDelay={500}
-                  leaveDelay={200}
+                  enterDelay={1000}
+                  leaveDelay={1000}
+                  TransitionProps={{ timeout: 700 }}
                 >
                   <TableCell>
                     <div
-                      className={`h-8 overflow-hidden w-28 text-xs text-black ${
+                      className={`h-8 overflow-hidden w-28 text-xs text-black text-ellipsis ${
                         (header === "REPORTING SUBJECT" && "w-16") ||
                         (header === "HEADLINE" && "w-72") ||
                         (header === "DETAIL SUMMARY" && "w-72")
@@ -420,7 +426,7 @@ const ResearchTable = () => {
                 header !== "DETAIL SUMMARY" &&
                 header !== "KEYWORD" && (
                   <TableCell className="table-cell" size="small">
-                    <div className="h-14 overflow-hidden text-xs w-14 text-black">
+                    <div className="h-14 overflow-hidden text-xs w-14 text-black text">
                       {highlightSearch(
                         rowData[header.toLowerCase().replace(/ /g, "_")]
                       )}
@@ -435,15 +441,9 @@ const ResearchTable = () => {
       <table className="bg-primary w-screen border h-screen">
         <thead>
           <tr>
-            <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500">
-              1
-            </th>
-            <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500">
-              2
-            </th>
-            <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500">
-              3
-            </th>
+            <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500"></th>
+            <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500"></th>
+            <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500"></th>
           </tr>
         </thead>
         <tbody>
@@ -473,7 +473,7 @@ const ResearchTable = () => {
             variant="outlined"
             label="select"
             value={headerForSearch}
-            onChange={(e) => setHeaderForSearch(e.target.value)}
+            onChange={hanleTableSearchUsingHeader}
           >
             {DDSearchValues.map((item) => (
               <MenuItem value={item.value} key={item.title}>
@@ -676,7 +676,7 @@ const ResearchTable = () => {
             </tr>
           </thead>
 
-          <tbody>{renderTableData()}</tbody>
+          <tbody className="bg-[#e6e1e1]">{renderTableData()}</tbody>
         </table>
       </div>
     </div>

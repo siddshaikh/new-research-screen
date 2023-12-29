@@ -349,6 +349,7 @@ const Home = () => {
               Authorization: "Bearer " + userToken,
             },
           });
+          console.log("feed_data", response.data.feed_data);
           if (response) {
             const updatedData = response.data.feed_data.map((item) => {
               return {

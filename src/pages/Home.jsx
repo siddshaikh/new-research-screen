@@ -7,7 +7,7 @@ import Qc2Print from "./Qc2Print";
 const Home = () => {
   const { researchOpen, qc2Open } = useContext(ResearchContext);
   return (
-    <div>
+    <div className="h-screen">
       <Navigation />
       <p className="text-xl mt-4 text-center">
         {!researchOpen && !qc2Open && "Choose Any Tab"}

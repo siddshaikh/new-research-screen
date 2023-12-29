@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export const ResearchContext = createContext(null);
 const ContextProvider = ({ children }) => {
@@ -24,7 +25,7 @@ const ContextProvider = ({ children }) => {
     const timer = setTimeout(() => {
       setUserToken(""); // Clear user token
       localStorage.removeItem("user"); // Remove token from storage
-
+      toast.warning("Session Expired.");
       navigate("/login");
     }, 30 * 60 * 1000); // 30 minutes in milliseconds
 
