@@ -25,7 +25,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Loader from "../components/loader/Loader";
 import SearchableDropdown from "../components/dropdowns/SearchableDropDown";
-import AutocompleteWithCheckbox from "../components/dropdowns/SearchableSelect";
+// import AutocompleteWithCheckbox from "../components/dropdowns/SearchableSelect";
 const useStyle = makeStyles(() => ({
   dropDowns: {
     height: 25,
