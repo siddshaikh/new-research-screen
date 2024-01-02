@@ -268,4 +268,8 @@ export const DDSearchValues = [
     title: "Summary",
     value: "detail_summary",
   },
+  {
+    title: "Keyword",
+    value: "keyword",
+  },
 ];

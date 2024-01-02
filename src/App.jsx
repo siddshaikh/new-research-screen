@@ -10,11 +10,16 @@ import { checkUserAuthenticate } from "./auth/auth";
 
 function App() {
   const { userToken, setUserToken } = useContext(ResearchContext);
+  let sessionValid = sessionStorage.getItem("user");
+  if (!sessionValid) {
+    localStorage.removeItem("user");
+  }
   useEffect(() => {
     checkUserAuthenticate(setUserToken);
   }, []);
+
   return (
-    <div className="App bg-secondory">
+    <div className="App bg-white">
       <ToastContainer />
       <Routes>
         <Route path="/login" element={<Login />} />

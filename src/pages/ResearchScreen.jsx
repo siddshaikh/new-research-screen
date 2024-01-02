@@ -4,15 +4,14 @@ import {
   Divider,
   FormControl,
   FormControlLabel,
-  InputLabel,
   MenuItem,
   OutlinedInput,
   Select,
   TextField,
   Typography,
   FormGroup,
-  makeStyles,
-} from "@material-ui/core";
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import {
   dateTypes,
   qc1Array,
@@ -25,17 +24,13 @@ import useFetchData from "../hooks/useFetchData";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Loader from "../components/loader/Loader";
-
+import SearchableDropdown from "../components/dropdowns/SearchableDropDown";
+import AutocompleteWithCheckbox from "../components/dropdowns/SearchableSelect";
 const useStyle = makeStyles(() => ({
   dropDowns: {
-    height: 20,
+    height: 25,
     fontSize: "0.8em",
     marginTop: "1em",
-  },
-  inputLabel: {
-    fontSize: "0.8em",
-    top: -5,
-    left: 10,
   },
 
   clientForm: {
@@ -52,7 +47,7 @@ const Home = () => {
   const classes = useStyle();
   const [clients, setClients] = useState([]);
 
-  const [clientName, setClientName] = useState([]);
+  // const [clientName, setClientName] = useState([]);
   //languages from getting an api
   const [languages, setLanguages] = useState([]);
   // qcusers data
@@ -90,8 +85,8 @@ const Home = () => {
     setIsImage,
     isVideo,
     setIsVideo,
-    searchValue,
-    setSearchValue,
+    // searchValue,
+    // setSearchValue,
     setShowTableData,
     dateType,
     setDateType,
@@ -176,24 +171,7 @@ const Home = () => {
 
   // loading states
   const isLoading = clientLoading || companyLoading || langsLoading;
-  const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
 
-    // Find the selected client based on the clientname
-    const selectedClient = clients.find(
-      (client) => client.clientname === value
-    );
-
-    // Set the clientId in the state
-    if (selectedClient) {
-      setClientId(selectedClient.clientid);
-    }
-
-    // Set the selected client name
-    setClientName(value);
-  };
   const handleSelectedCompanies = (event) => {
     const {
       target: { value },
@@ -296,7 +274,7 @@ const Home = () => {
             date_type: dateType,
             from_date: fromDate,
             to_date: dateNow,
-            search_text: searchValue,
+            // search_text: searchValue,
             // qc1_by: "qc1_user", //optional using condition
             // qc2_by: "qc2_user", //optional using condition
             is_qc1: qc1done,
@@ -385,6 +363,12 @@ const Home = () => {
       toast.warn("Please select a client.");
     }
   };
+  const selectedUsernamesqc1 = qcUsersData
+    .filter((item) => qc1by.includes(item.usersid))
+    .map((selectedItem) => selectedItem.username);
+  const selectedUsernamesqc2 = qcUsersData
+    .filter((item) => qc2by.includes(item.usersid))
+    .map((selectedItem) => selectedItem.username);
 
   return (
     <div>
@@ -394,53 +378,47 @@ const Home = () => {
         <Loader />
       ) : (
         <>
-          <div className="flex items-center gap-2 flex-wrap mt-4">
-            {/* clients */}
-            <FormControl className={classes.clientForm}>
-              <InputLabel
-                id="demo-multiple-name-label"
-                className={classes.inputLabel}
-              >
-                Client
-              </InputLabel>
-              <Select
-                labelId="demo-multiple-name-label"
-                id="demo-multiple-name"
-                placeholder="select"
-                value={clientName}
-                onChange={handleChange}
-                input={<OutlinedInput label="Name" />}
-                className={classes.dropDowns}
-                MenuProps={{
-                  classes: { paper: classes.menuPaper },
-                }}
-              >
-                {clients &&
-                  clients.map((client) => (
-                    <MenuItem key={client.clientid} value={client.clientname}>
-                      {client.clientname}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
+          <div className="flex items-center gap-1 flex-wrap">
+            <div className="mt-1">
+              <SearchableDropdown
+                options={clients}
+                setTestClient={setClientId}
+                testclient={clientId}
+                label={"Clients"}
+                width={300}
+              />
+            </div>
+
             {/* comapany */}
+            {/* <AutocompleteWithCheckbox /> */}
+            {/* 
+            <SelectAll
+              options={company}
+              placeholder="Company"
+              value={companies}
+              onChange={handleSelectedCompanies}
+            /> */}
             <FormControl className="w-52">
-              <InputLabel
-                id="demo-multiple-checkbox-label"
-                className={classes.inputLabel}
-              >
-                Company
-              </InputLabel>
               <Select
                 labelId="demo-multiple-checkbox-label"
                 id="demo-multiple-checkbox"
                 multiple
-                value={companies && companies}
+                value={companies}
                 onChange={handleSelectedCompanies}
                 input={<OutlinedInput label="Name" />}
-                renderValue={(selected) => selected.join(", ")}
                 className={classes.dropDowns}
+                MenuProps={{ PaperProps: { style: { height: 200 } } }}
+                displayEmpty
+                renderValue={(selected) => {
+                  if (selected.length === 0) {
+                    return <em>Companies</em>;
+                  }
+                  return selected.join(", ");
+                }}
               >
+                <MenuItem value="" disabled>
+                  <em>Select Companies</em>
+                </MenuItem>
                 {company &&
                   company?.map((companyItem) => (
                     <MenuItem
@@ -455,19 +433,16 @@ const Home = () => {
             </FormControl>
             {/* Dataetype */}
             <FormControl className="w-24">
-              <InputLabel
-                id="demo-mutiple-chip-label"
-                className={classes.inputLabel}
-              >
-                Datetype
-              </InputLabel>
               <Select
-                labelId="demo-multiple-checkbox-label"
                 value={dateType}
                 onChange={handleDateTypeChange}
-                input={<OutlinedInput label="Tag" />}
                 className={classes.dropDowns}
+                displayEmpty
+                inputProps={{ "aria-label": "Without label" }}
               >
+                <MenuItem value="" disabled>
+                  <em>Datetype</em>
+                </MenuItem>
                 {dateTypes.map((dateType) => (
                   <MenuItem
                     key={dateType.id}
@@ -505,71 +480,53 @@ const Home = () => {
                 }}
               />
             </FormControl>
-            {/* qc1 */}
+            {/* qc1 by */}
             <FormControl className="w-32">
-              <InputLabel id="qc1-select-label" className={classes.inputLabel}>
-                QC1 by
-              </InputLabel>
               <Select
-                id="qc1-checks"
                 input={<OutlinedInput label="tag" />}
                 className={classes.dropDowns}
                 value={qc1by}
                 onChange={(e) => setQc1by(e.target.value)}
                 multiple
+                MenuProps={{ PaperProps: { style: { height: 200 } } }}
+                displayEmpty
+                inputProps={{ "aria-label": "Without label" }}
+                renderValue={() => {
+                  if (selectedUsernamesqc1.length === 0) {
+                    return <em>Qc1 by</em>;
+                  }
+                  return selectedUsernamesqc1.join(", ");
+                }}
               >
+                <MenuItem value="" disabled>
+                  <em>Qc1 by</em>
+                </MenuItem>
                 {qcUsersData &&
-                  qcUsersData?.map((items) => (
+                  qcUsersData.map((item) => (
                     <MenuItem
-                      key={items.usersid}
-                      value={items.usersid}
+                      key={item.usersid}
+                      value={item.usersid}
                       sx={{ fontSize: "0.8em" }}
                     >
-                      {items.username}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
-            {/* qc2 */}
-            <FormControl className="w-32">
-              <InputLabel id="qc1-select-label" className={classes.inputLabel}>
-                QC2 by
-              </InputLabel>
-              <Select
-                id="qc1-checks"
-                input={<OutlinedInput label="tag" />}
-                className={classes.dropDowns}
-                value={qc2by}
-                onChange={(e) => setQc2by(e.target.value)}
-                multiple
-              >
-                {qcUsersData &&
-                  qcUsersData?.map((items) => (
-                    <MenuItem
-                      key={items.usersid}
-                      value={items.usersid}
-                      sx={{ fontSize: "0.8em" }}
-                    >
-                      {items.username}
+                      {item.username}
                     </MenuItem>
                   ))}
               </Select>
             </FormControl>
             {/* qc1 done */}
             <FormControl className="w-28">
-              <InputLabel
-                id="users-select-label"
-                className={classes.inputLabel}
-              >
-                Isqc1 Done
-              </InputLabel>
               <Select
                 id="qc1-checks"
                 value={qc1done}
                 onChange={handleQc1done}
                 input={<OutlinedInput label="tag" />}
                 className={classes.dropDowns}
+                displayEmpty
+                inputProps={{ "aria-label": "Without label" }}
               >
+                <MenuItem value="" disabled>
+                  <em>qc1 done</em>
+                </MenuItem>
                 {qc1Array.map((item) => (
                   <MenuItem
                     key={item.id}
@@ -581,21 +538,50 @@ const Home = () => {
                 ))}
               </Select>
             </FormControl>
+            {/* qc2 by */}
+            <FormControl className="w-32">
+              <Select
+                className={classes.dropDowns}
+                value={qc2by}
+                onChange={(e) => setQc2by(e.target.value)}
+                multiple
+                MenuProps={{ PaperProps: { style: { height: 200 } } }}
+                displayEmpty
+                inputProps={{ "aria-label": "Without label" }}
+                renderValue={() => {
+                  if (selectedUsernamesqc2.length === 0) {
+                    return <em>Qc2 by</em>;
+                  }
+                  return selectedUsernamesqc2.join(", ");
+                }}
+              >
+                <MenuItem value="" disabled>
+                  <em>Qc2 by</em>
+                </MenuItem>
+                {qcUsersData &&
+                  qcUsersData?.map((items) => (
+                    <MenuItem
+                      key={items.usersid}
+                      value={items.usersid}
+                      sx={{ fontSize: "0.8em" }}
+                    >
+                      {items.username}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
             {/* qc2 done */}
             <FormControl className="w-28">
-              <InputLabel
-                id="users-select-label"
-                className={classes.inputLabel}
-              >
-                Isqc2 Done
-              </InputLabel>
               <Select
-                id="qc1-checks"
+                displayEmpty
                 value={qc2done}
                 onChange={handleQc2done}
-                input={<OutlinedInput label="tag" />}
                 className={classes.dropDowns}
+                inputProps={{ "aria-label": "Without label" }}
               >
+                <MenuItem value="" disabled>
+                  <em>qc2 done</em>
+                </MenuItem>
                 {qc1Array.map((item) => (
                   <MenuItem
                     key={item.id}
@@ -608,41 +594,45 @@ const Home = () => {
               </Select>
             </FormControl>
             {/* image checkbox */}
-            <FormControl>
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      color="default"
-                      checked={isImage === 1}
-                      onChange={() => {
-                        setIsImage(isImage === 1 ? 0 : 1);
-                      }}
-                    />
-                  }
-                  label={<Typography variant="body2">Image</Typography>}
-                />
-              </FormGroup>
-            </FormControl>
+            <div className="mt-2">
+              <FormControl>
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color="default"
+                        checked={isImage === 1}
+                        onChange={() => {
+                          setIsImage(isImage === 1 ? 0 : 1);
+                        }}
+                      />
+                    }
+                    label={<Typography variant="body2">Image</Typography>}
+                  />
+                </FormGroup>
+              </FormControl>
+            </div>
             {/* video checkbox */}
-            <FormControl>
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      color="default"
-                      checked={isVideo === 1} // Check if isVideo equals 1
-                      onChange={() => {
-                        setIsVideo(isVideo === 1 ? 0 : 1); // Toggle isVideo between 0 and 1
-                      }}
-                    />
-                  }
-                  label={<Typography variant="body2">Video</Typography>}
-                />
-              </FormGroup>
-            </FormControl>
+            <div className="mt-2">
+              <FormControl>
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color="default"
+                        checked={isVideo === 1} // Check if isVideo equals 1
+                        onChange={() => {
+                          setIsVideo(isVideo === 1 ? 0 : 1); // Toggle isVideo between 0 and 1
+                        }}
+                      />
+                    }
+                    label={<Typography variant="body2">Video</Typography>}
+                  />
+                </FormGroup>
+              </FormControl>
+            </div>
             {/* searchBox for searching an article */}
-            <FormControl>
+            {/* <FormControl>
               <TextField
                 placeholder="Search"
                 variant="outlined"
@@ -653,23 +643,28 @@ const Home = () => {
                   style: { fontSize: "0.8rem", height: 25, top: 6 },
                 }}
               />
-            </FormControl>
+            </FormControl> */}
             {/* languages */}
             <FormControl className="w-28">
-              <InputLabel
-                id="languages-select-label"
-                className={classes.inputLabel}
-              >
-                Languages
-              </InputLabel>
               <Select
-                id="languages"
+                multiple
+                displayEmpty
                 value={language}
                 onChange={handleLanguageChange}
-                input={<OutlinedInput label="Name" />}
-                multiple
                 className={classes.dropDowns}
+                input={<OutlinedInput />}
+                MenuProps={{ PaperProps: { style: { height: 200 } } }}
+                inputProps={{ "aria-label": "Without label" }}
+                renderValue={(selected) => {
+                  if (selected.length === 0) {
+                    return <em>Languages</em>;
+                  }
+                  return selected.join(", ");
+                }}
               >
+                <MenuItem value="" disabled>
+                  <em>Languages</em>
+                </MenuItem>
                 {Object.entries(languages).map(
                   ([languagename, languagecode]) => (
                     <MenuItem
@@ -685,21 +680,24 @@ const Home = () => {
             </FormControl>
             {/* continents */}
             <FormControl className="w-28">
-              <InputLabel
-                id="continent-type-select-label"
-                className={classes.inputLabel}
-              >
-                Continent
-              </InputLabel>
               <Select
-                id="continents"
+                multiple
+                displayEmpty
                 value={continent}
                 onChange={handleContinentChange}
                 input={<OutlinedInput label="Name" />}
-                renderValue={(selected) => selected.join(", ")}
+                inputProps={{ "aria-label": "Without label" }}
+                renderValue={(selected) => {
+                  if (selected.length === 0) {
+                    return <em>Continents</em>;
+                  }
+                  return selected.join(", ");
+                }}
                 className={classes.dropDowns}
-                multiple
               >
+                <MenuItem value="" disabled>
+                  <em>Continents</em>
+                </MenuItem>
                 {continents.map((continent) => (
                   <MenuItem
                     key={continent}
@@ -713,20 +711,25 @@ const Home = () => {
             </FormControl>
             {/* countries */}
             <FormControl className="w-28">
-              <InputLabel
-                id="countries-select-label"
-                className={classes.inputLabel}
-              >
-                Countries
-              </InputLabel>
               <Select
-                id="countries"
+                multiple
+                displayEmpty
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
                 input={<OutlinedInput label="Name" />}
-                multiple
                 className={classes.dropDowns}
+                MenuProps={{ PaperProps: { style: { height: 200 } } }}
+                inputProps={{ "aria-label": "Without label" }}
+                renderValue={(selected) => {
+                  if (selected.length === 0) {
+                    return <em>Countries</em>;
+                  }
+                  return selected.join(", ");
+                }}
               >
+                <MenuItem value="" disabled>
+                  <em>Countries</em>
+                </MenuItem>
                 {filteredCountries.map((country) => (
                   <MenuItem
                     key={country}
@@ -740,7 +743,7 @@ const Home = () => {
             </FormControl>
             <button
               onClick={handleSearch}
-              className={`bg-primary border border-gray-400 rounded px-10 py-1 uppercase text-white ${
+              className={`bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white ${
                 tableDataLoading ? "text-yellow-300" : "text-white"
               }`}
             >

@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   Checkbox,
   FormControl,
-  InputLabel,
   MenuItem,
   Select,
   TableCell,
@@ -10,24 +9,23 @@ import {
   TextField,
   Typography,
   Tooltip,
-  makeStyles,
-} from "@material-ui/core";
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import axios from "axios";
 import { ResearchContext } from "../../context/ContextProvider";
 import useFetchData from "../../hooks/useFetchData";
 import { toast } from "react-toastify";
 import { DDSearchValues } from "../../utils/dataArray";
+import Button from "../custom/Button";
+import TableDropdown from "../dropdowns/TableDropdown";
+import { IoIosArrowRoundDown, IoIosArrowRoundUp } from "react-icons/io";
+import getHeaderAbbreviation from "../../utils/concatHeader";
 
 const useStyles = makeStyles(() => ({
   dropDowns: {
-    height: 20,
+    height: 25,
     fontSize: "0.8em",
     marginTop: "1em",
-  },
-  inputLabel: {
-    fontSize: "0.7em",
-    top: -5,
-    left: 10,
   },
   textField: {
     "& .MuiInputBase-input": {
@@ -36,7 +34,7 @@ const useStyles = makeStyles(() => ({
   },
   resize: {
     fontSize: "0.8em",
-    height: 20,
+    height: 25,
   },
   headerCheckBox: {
     color: "white",
@@ -63,8 +61,6 @@ const ResearchTable = () => {
   const [currentDateWithTime, setCurrentDateWithTime] = useState("");
   const [postingLoading, setPostingLoading] = useState(false);
   //  varibale for the fetching the data convert array to string
-
-  // variable for the tableData
 
   // dropdown items (for editing/updating row values)
   const [editRow, setEditRow] = useState("");
@@ -312,7 +308,7 @@ const ResearchTable = () => {
     }));
 
     try {
-      const url = "http://51.68.220.77:8000/update2database/";
+      const url = `http://51.68.220.77:8000/update2database/`;
       if (dataToSending.length > 0) {
         await axios.post(url, dataToSending, {
           headers: {
@@ -383,9 +379,16 @@ const ResearchTable = () => {
   const renderTableData = () => {
     const dataToRender = searchedData.length > 0 ? searchedData : tableData;
 
+    const highlightCellContent = (text, header) => {
+      if (headerForSearch === header) {
+        return highlightSearch(text); // Highlight the search result
+      }
+      return text;
+    };
+
     return tableData.length > 0 && showTableData ? (
       dataToRender.map((rowData, rowIndex) => (
-        <TableRow key={rowIndex} sx={{ overflow: "hidden" }}>
+        <TableRow key={rowIndex}>
           <TableCell size="small">
             <Checkbox
               checked={selectedRowData.includes(rowData)}
@@ -408,14 +411,20 @@ const ResearchTable = () => {
                     TransitionProps={{ timeout: 1500 }}
                   >
                     <div
-                      className={`h-8 overflow-hidden w-28 text-xs text-black text-ellipsis ${
+                      style={{
+                        display: "-webkit-box",
+                        WebkitBoxOrient: "vertical",
+                        WebkitLineClamp: 3,
+                      }}
+                      className={`text-xs w-28 text-black overflow-hidden whitespace-normal " ${
                         (header === "REPORTING SUBJECT" && "w-16") ||
                         (header === "HEADLINE" && "w-72") ||
                         (header === "DETAIL SUMMARY" && "w-72")
                       }`}
                     >
-                      {highlightSearch(
-                        rowData[header.toLowerCase().replace(/ /g, "_")]
+                      {highlightCellContent(
+                        rowData[header.toLowerCase().replace(/ /g, "_")],
+                        header.toLowerCase().replace(/ /g, "_")
                       )}
                     </div>
                   </Tooltip>
@@ -426,9 +435,17 @@ const ResearchTable = () => {
                 header !== "DETAIL SUMMARY" &&
                 header !== "KEYWORD" && (
                   <TableCell className="table-cell" size="small">
-                    <div className="h-14 overflow-hidden text-xs w-14 text-black text">
-                      {highlightSearch(
-                        rowData[header.toLowerCase().replace(/ /g, "_")]
+                    <div
+                      className="text-xs w-16 text-black overflow-hidden whitespace-normal"
+                      style={{
+                        display: "-webkit-box",
+                        WebkitBoxOrient: "vertical",
+                        WebkitLineClamp: 3,
+                      }}
+                    >
+                      {highlightCellContent(
+                        rowData[header.toLowerCase().replace(/ /g, "_")],
+                        header.toLowerCase().replace(/ /g, "_")
                       )}
                     </div>
                   </TableCell>
@@ -438,25 +455,8 @@ const ResearchTable = () => {
         </TableRow>
       ))
     ) : (
-      <table className="bg-primary w-screen border h-screen">
-        <thead>
-          <tr>
-            <th className="py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-500">
-              Table
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {/* No data row */}
-          <tr>
-            <td
-              className="py-4 text-xs text-white text-center border-b border-gray-500"
-              colSpan="2"
-            >
-              No data found
-            </td>
-          </tr>
-        </tbody>
+      <table className="bg-primary w-screen border h-screen text-gray-400 text-sm text-center py-4">
+        No table Data
       </table>
     );
   };
@@ -467,16 +467,24 @@ const ResearchTable = () => {
       <div className="flex items-center gap-2 ml-2">
         {/* search values using dropdown */}
         <FormControl className="w-28">
-          <InputLabel className={classes.inputLabel}>Select</InputLabel>
           <Select
             className={classes.dropDowns}
-            variant="outlined"
-            label="select"
             value={headerForSearch}
             onChange={hanleTableSearchUsingHeader}
+            displayEmpty
+            inputProps={{ "aria-label": "Without label" }}
+            MenuProps={{ PaperProps: { style: { height: 200 } } }}
           >
+            <MenuItem value="" disabled>
+              <em>select</em>
+            </MenuItem>
+
             {DDSearchValues.map((item) => (
-              <MenuItem value={item.value} key={item.title}>
+              <MenuItem
+                value={item.value}
+                key={item.title}
+                sx={{ fontSize: "0.8em" }}
+              >
                 {item.title}
               </MenuItem>
             ))}
@@ -491,89 +499,40 @@ const ResearchTable = () => {
           onChange={(e) => setSearchValue(e.target.value)}
           InputProps={{ style: { fontSize: "0.8rem", height: 25, top: 6 } }}
         />
-        <button
-          onClick={handleSearch}
-          className=" bg-primary border border-gray-400 rounded px-10 py-1 uppercase text-white mt-2 tracking-wider"
-        >
-          Find
-        </button>
+        <Button btnText={"Find"} onClick={handleSearch} />
       </div>
       <hr className="mt-1" />
-      <div className="mt-2 ml-2 flex items-center gap-4">
+      <div className="mt-2 ml-2 flex items-center flex-wrap gap-4">
         {" "}
         {/* dropdowns for separating the files */}
         {/* reporting tone */}
-        <FormControl className="w-28">
-          <InputLabel className={classes.inputLabel}>Tone</InputLabel>
-          <Select
-            variant="outlined"
-            label="Reporting Tone"
-            className={classes.dropDowns}
-            value={reportingTone}
-            onChange={(e) => setReportingTone(e.target.value)}
-          >
-            <TextField
-              value={reportingTone}
-              onChange={(e) => setReportingTone(e.target.value)}
-            />
-            {reportingTones.map((item) => (
-              <MenuItem value={item.value} key={item.value}>
-                {item.tonality}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <TableDropdown
+          value={reportingTone}
+          setValues={setReportingTone}
+          placeholder={"Tone"}
+          mappingValue={reportingTones}
+        />
         {/* Prominence */}
-        <FormControl className="w-28">
-          <InputLabel className={classes.inputLabel}>Prominence</InputLabel>
-          <Select
-            label="Prominence"
-            variant="outlined"
-            className={classes.dropDowns}
-            value={prominence}
-            onChange={(e) => setProminence(e.target.value)}
-          >
-            {prominences.map((item) => (
-              <MenuItem value={item} key={item}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <TableDropdown
+          value={prominence}
+          setValues={setProminence}
+          placeholder={"Prominence"}
+          mappingValue={prominences}
+        />
         {/* Reporting subject */}
-        <FormControl className="w-28">
-          <InputLabel className={classes.inputLabel}>Subject</InputLabel>
-          <Select
-            label="Reporting Subject"
-            variant="outlined"
-            className={classes.dropDowns}
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-          >
-            {subjects.map((item) => (
-              <MenuItem key={item} value={item}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <TableDropdown
+          value={subject}
+          setValues={setSubject}
+          placeholder={"Subject"}
+          mappingValue={subjects}
+        />
         {/*category */}
-        <FormControl className="w-28">
-          <InputLabel className={classes.inputLabel}>Category</InputLabel>
-          <Select
-            label="Category"
-            variant="outlined"
-            className={classes.dropDowns}
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            {categories.map((item) => (
-              <MenuItem value={item} key={item}>
-                {item}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <TableDropdown
+          value={category}
+          setValues={setCategory}
+          placeholder={"Category"}
+          mappingValue={categories}
+        />
         {/* Details summary */}
         <FormControl className="w-28">
           <Select
@@ -581,7 +540,13 @@ const ResearchTable = () => {
             onChange={(e) => setEditRow(e.target.value)}
             variant="outlined"
             className={classes.dropDowns}
+            displayEmpty
+            inputProps={{ "aria-label": "Without label" }}
+            MenuProps={{ PaperProps: { style: { height: 200 } } }}
           >
+            <MenuItem value="" disabled>
+              <em>Select</em>
+            </MenuItem>
             <MenuItem value="detail_summary" sx={{ fontSize: "0.8em" }}>
               Summary
             </MenuItem>
@@ -594,14 +559,9 @@ const ResearchTable = () => {
           variant="outlined"
           InputProps={{ style: { fontSize: "0.8rem", height: 25, top: 6 } }}
         />
+        <Button btnText={"Apply"} onClick={handleApplyChanges} />
         <button
-          className="bg-primary border border-gray-400 rounded px-10 py-1 uppercase text-white tracking-wider"
-          onClick={handleApplyChanges}
-        >
-          Apply
-        </button>
-        <button
-          className={` bg-primary border border-gray-400 rounded px-10 py-1 uppercase text-white tracking-wider ${
+          className={` bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white tracking-wider ${
             postingLoading ? "text-yellow-300" : "text-white"
           }`}
           onClick={handlePostData}
@@ -611,7 +571,7 @@ const ResearchTable = () => {
         {/* saved or not */}
         <div>
           {savedSuccess && (
-            <Typography sx={{ color: "white" }}>{successMessage}</Typography>
+            <Typography className="text-primary">{successMessage}</Typography>
           )}
         </div>
       </div>
@@ -620,7 +580,7 @@ const ResearchTable = () => {
       <div className="mt-4 overflow-scroll h-screen">
         <table>
           <thead>
-            <tr className="sticky top-0" style={{ background: "#150734" }}>
+            <tr className="sticky top-0 bg-[#150734]">
               {showTableData && (
                 <TableCell size="small">
                   <Checkbox
@@ -642,35 +602,29 @@ const ResearchTable = () => {
                       "text-white cursor-pointer font-thin text-sm tracking-wider border-1 p-2"
                     }
                   >
-                    {header && header === "CLIENT NAME"
-                      ? "CLIENT"
-                      : header === "REPORTING TONE"
-                      ? "TONE"
-                      : header && header === "REPORTING SUBJECT"
-                      ? "SUBJECT"
-                      : header && header === "SUBCATEGORY"
-                      ? "SUBCATE"
-                      : header && header === "DETAIL SUMMARY"
-                      ? "SUMMARY"
-                      : header && header === "COMPANY NAME"
-                      ? "COMPANY"
-                      : header === "AUTHOR NAME"
-                      ? "AUTHOR"
-                      : header === "QC1 DONE"
-                      ? "QC1"
-                      : header === "QC2 DONE"
-                      ? "QC2"
-                      : header === "SOCIAL FEED ID"
-                      ? "FEED-ID"
-                      : header === "FEED DATE TIME"
-                      ? "FEED-DATE"
-                      : header === "UPLOAD DATE"
-                      ? "UPLOAD"
-                      : header === "HAS IMAGE"
-                      ? "IMAGE"
-                      : header === "HAS VIDEO"
-                      ? "VIDEO"
-                      : header}
+                    <span className="flex items-center">
+                      <IoIosArrowRoundUp
+                        style={{
+                          color:
+                            sortColumn ===
+                              header.toLowerCase().replace(/ /g, "_") &&
+                            sortDirection === "asc"
+                              ? "red"
+                              : "white",
+                        }}
+                      />
+                      <IoIosArrowRoundDown
+                        style={{
+                          color:
+                            sortColumn ===
+                              header.toLowerCase().replace(/ /g, "_") &&
+                            sortDirection === "desc"
+                              ? "red"
+                              : "white",
+                        }}
+                      />
+                    </span>
+                    {getHeaderAbbreviation(header)}
                   </td>
                 ))}
             </tr>

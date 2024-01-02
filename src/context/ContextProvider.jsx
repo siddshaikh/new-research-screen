@@ -67,11 +67,11 @@ const ContextProvider = ({ children }) => {
   // qc2by
   const [qc2by, setQc2by] = useState([]);
   // image
-  const [isImage, setIsImage] = useState(1);
+  const [isImage, setIsImage] = useState(0);
   // video
   const [isVideo, setIsVideo] = useState(0);
   // search text
-  const [searchValue, setSearchValue] = useState("");
+  // const [searchValue, setSearchValue] = useState("");
   // dates
   const currentDate = new Date();
 
@@ -134,8 +134,8 @@ const ContextProvider = ({ children }) => {
         setIsImage,
         isVideo,
         setIsVideo,
-        searchValue,
-        setSearchValue,
+        // searchValue,
+        // setSearchValue,
         tableFetchLoading,
         setTableFetchLoading,
         showTableData,
