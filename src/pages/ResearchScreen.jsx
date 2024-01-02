@@ -24,7 +24,7 @@ import useFetchData from "../hooks/useFetchData";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Loader from "../components/loader/Loader";
-import SearchableDropdown from "../components/dropdowns/SearchableDropDown";
+import SearchableDropDown from "../components/dropdowns/SearchableDropDown";
 // import AutocompleteWithCheckbox from "../components/dropdowns/SearchableSelect";
 const useStyle = makeStyles(() => ({
   dropDowns: {
@@ -380,7 +380,7 @@ const Home = () => {
         <>
           <div className="flex items-center gap-1 flex-wrap">
             <div className="mt-1">
-              <SearchableDropdown
+              <SearchableDropDown
                 options={clients}
                 setTestClient={setClientId}
                 testclient={clientId}
