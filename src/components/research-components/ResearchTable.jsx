@@ -389,8 +389,21 @@ const ResearchTable = () => {
     return tableData.length > 0 && showTableData ? (
       dataToRender.map((rowData, rowIndex) => (
         <TableRow key={rowIndex}>
-          <TableCell size="small">
+          <TableCell
+            size="small"
+            padding="checkbox"
+            style={{
+              position: "sticky",
+              top: 55,
+              backgroundColor: "#e6e1e1",
+              fontSize: "0.8em",
+            }}
+            sx={{
+              padding: "10px",
+            }}
+          >
             <Checkbox
+              size="small"
               checked={selectedRowData.includes(rowData)}
               onChange={() => handleRowSelect(rowData)}
               style={{ color: "black" }}
@@ -402,7 +415,11 @@ const ResearchTable = () => {
                 header === "REPORTING SUBJECT" ||
                 header === "DETAIL SUMMARY" ||
                 header === "KEYWORD") && (
-                <TableCell>
+                <TableCell
+                  sx={{
+                    padding: "10px",
+                  }}
+                >
                   <Tooltip
                     title={rowData[header.toLowerCase().replace(/ /g, "_")]}
                     placement="top"
@@ -414,9 +431,9 @@ const ResearchTable = () => {
                       style={{
                         display: "-webkit-box",
                         WebkitBoxOrient: "vertical",
-                        WebkitLineClamp: 3,
+                        WebkitLineClamp: 2,
                       }}
-                      className={`text-xs w-28 text-black overflow-hidden whitespace-normal " ${
+                      className={`text-xs w-28 text-black overflow-hidden whitespace-normal" ${
                         (header === "REPORTING SUBJECT" && "w-16") ||
                         (header === "HEADLINE" && "w-72") ||
                         (header === "DETAIL SUMMARY" && "w-72")
@@ -434,13 +451,18 @@ const ResearchTable = () => {
                 header !== "REPORTING SUBJECT" &&
                 header !== "DETAIL SUMMARY" &&
                 header !== "KEYWORD" && (
-                  <TableCell className="table-cell" size="small">
+                  <TableCell
+                    size="small"
+                    sx={{
+                      padding: "10px",
+                    }}
+                  >
                     <div
-                      className="text-xs w-16 text-black overflow-hidden whitespace-normal"
+                      className="text-xs w-16 text-black overflow-hidden whitespace-normal mx-1"
                       style={{
                         display: "-webkit-box",
                         WebkitBoxOrient: "vertical",
-                        WebkitLineClamp: 3,
+                        WebkitLineClamp: 2,
                       }}
                     >
                       {highlightCellContent(
@@ -577,20 +599,22 @@ const ResearchTable = () => {
       </div>
 
       {/* main table */}
-      <div className="mt-4 overflow-scroll h-screen">
+      <div className="mt-2 overflow-scroll h-screen">
         <table>
           <thead>
-            <tr className="sticky top-0 bg-[#150734]">
+            <tr className="sticky left-0 top-0 bg-[#150734]">
+              {" "}
+              {/* Adjust h-10 for the desired height */}
               {showTableData && (
                 <TableCell size="small">
                   <Checkbox
+                    sx={{ transform: "scale(0.8)" }}
                     checked={selectedRowData.length === tableData.length}
                     onChange={handleMasterCheckboxChange}
                     className={classes.headerCheckBox}
                   />
                 </TableCell>
               )}
-
               {showTableData &&
                 tableHeaders?.map((header) => (
                   <td
@@ -599,28 +623,30 @@ const ResearchTable = () => {
                       handleSort(header.toLowerCase().replace(/ /g, "_"))
                     }
                     className={
-                      "text-white cursor-pointer font-thin text-sm tracking-wider border-1 p-2"
+                      "text-white cursor-pointer font-thin text-xs tracking-widest"
                     }
                   >
-                    <span className="flex items-center">
+                    <span className="flex items-center text-sm">
                       <IoIosArrowRoundUp
                         style={{
+                          fontSize: "x-small",
                           color:
                             sortColumn ===
                               header.toLowerCase().replace(/ /g, "_") &&
                             sortDirection === "asc"
                               ? "red"
-                              : "white",
+                              : "#fff",
                         }}
                       />
                       <IoIosArrowRoundDown
                         style={{
+                          fontSize: "x-small",
                           color:
                             sortColumn ===
                               header.toLowerCase().replace(/ /g, "_") &&
                             sortDirection === "desc"
                               ? "red"
-                              : "white",
+                              : "#fff",
                         }}
                       />
                     </span>

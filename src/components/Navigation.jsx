@@ -25,7 +25,7 @@ const Navigation = () => {
       <ul className="flex justify-evenly border-b border-gray-200">
         <li className="-mb-px mr-1">
           <NavLink to={"/"}>
-            <button className="bg-transparent inline-block py-2 px-4 text-slate-100 hover:text-slate-200 border-b-2 border-transparent hover:border-gray-500 focus:outline-none uppercase font-bold text-xl">
+            <button className="bg-transparent inline-block  px-4 text-slate-100 hover:text-slate-200 border-b-2 border-transparent hover:border-gray-500 focus:outline-none uppercase font-bold text-xl">
               Research
             </button>
           </NavLink>
@@ -33,7 +33,7 @@ const Navigation = () => {
         <li className="-mb-px mr-1">
           <NavLink to={"/"}>
             <button
-              className="bg-transparent inline-block py-2 px-4 text-slate-100 hover:text-slate-200 border-b-2 border-transparent hover:border-gray-500 focus:outline-none tracking-wider uppercase"
+              className="bg-transparent inline-block px-4 text-slate-100 hover:text-slate-200 border-b-2 border-transparent hover:border-gray-500 focus:outline-none tracking-wider uppercase"
               onClick={handleResearchScreenClick}
             >
               Online
@@ -42,7 +42,7 @@ const Navigation = () => {
         </li>
         <li className="-mb-px mr-1">
           <button
-            className="bg-transparent inline-block py-2 px-4 text-slate-100 hover:text-slate-200 border-b-2 border-transparent hover:border-gray-500 focus:outline-none uppercase tracking-wider"
+            className="bg-transparent inline-block px-4 text-slate-100 hover:text-slate-200 border-b-2 border-transparent hover:border-gray-500 focus:outline-none uppercase tracking-wider"
             onClick={handleQc2PrintClick}
           >
             Print
@@ -50,7 +50,7 @@ const Navigation = () => {
         </li>
         <li className="-mb-px">
           <button
-            className="bg-transparent inline-block py-2 px-4 text-slate-100 hover:text-slate-200 border-b-2 border-transparent hover:border-gray-500 focus:outline-none uppercase tracking-wider"
+            className="bg-transparent inline-block px-4 text-slate-100 hover:text-slate-200 border-b-2 border-transparent hover:border-gray-500 focus:outline-none uppercase tracking-wider"
             onClick={handleLogout}
           >
             Logout

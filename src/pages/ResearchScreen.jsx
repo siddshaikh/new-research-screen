@@ -1,15 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
-  Checkbox,
   Divider,
   FormControl,
-  FormControlLabel,
   MenuItem,
   OutlinedInput,
   Select,
   TextField,
-  Typography,
-  FormGroup,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import {
@@ -24,8 +20,9 @@ import useFetchData from "../hooks/useFetchData";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Loader from "../components/loader/Loader";
-import SearchableDropDown from "../components/dropdowns/SearchableDropDown";
-// import AutocompleteWithCheckbox from "../components/dropdowns/SearchableSelect";
+import SearchableDropDown from "../components/dropdowns/SearchableDropdown";
+import CheckboxComp from "../components/checkbox/Checkbox";
+
 const useStyle = makeStyles(() => ({
   dropDowns: {
     height: 25,
@@ -39,11 +36,11 @@ const useStyle = makeStyles(() => ({
   menuPaper: {
     maxHeight: 200,
     width: 200,
-    marginTop: 5,
+    // marginTop: 5,
     background: "#d4c8c7",
   },
 }));
-const Home = () => {
+const ReasearchScreen = () => {
   const classes = useStyle();
   const [clients, setClients] = useState([]);
 
@@ -103,7 +100,14 @@ const Home = () => {
     // data saved or not
     unsavedChanges,
     setUnsavedChanges,
+    tableData,
   } = useContext(ResearchContext);
+  const researchTableRef = useRef(null);
+  useEffect(() => {
+    if (tableData.length > 1 && researchTableRef.current) {
+      researchTableRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [tableData]);
   // base url
   const base_url = import.meta.env.VITE_BASE_URL;
   // clients
@@ -371,15 +375,15 @@ const Home = () => {
     .map((selectedItem) => selectedItem.username);
 
   return (
-    <div>
+    <div className="h-full">
       {/* Category dropdowns filter out */}
       {/* client */}
       {isLoading ? (
         <Loader />
       ) : (
         <>
-          <div className="flex items-center gap-1 flex-wrap">
-            <div className="mt-1">
+          <div className="flex items-center gap-1 flex-wrap mt-2">
+            <div className="flex items-center mt-1" style={{ height: 25 }}>
               <SearchableDropDown
                 options={clients}
                 setTestClient={setClientId}
@@ -388,248 +392,237 @@ const Home = () => {
                 width={300}
               />
             </div>
-
             {/* comapany */}
-            {/* <AutocompleteWithCheckbox /> */}
-            {/* 
-            <SelectAll
-              options={company}
-              placeholder="Company"
-              value={companies}
-              onChange={handleSelectedCompanies}
-            /> */}
-            <FormControl className="w-52">
-              <Select
-                labelId="demo-multiple-checkbox-label"
-                id="demo-multiple-checkbox"
-                multiple
-                value={companies}
-                onChange={handleSelectedCompanies}
-                input={<OutlinedInput label="Name" />}
-                className={classes.dropDowns}
-                MenuProps={{ PaperProps: { style: { height: 200 } } }}
-                displayEmpty
-                renderValue={(selected) => {
-                  if (selected.length === 0) {
-                    return <em>Companies</em>;
-                  }
-                  return selected.join(", ");
-                }}
-              >
-                <MenuItem value="" disabled>
-                  <em>Select Companies</em>
-                </MenuItem>
-                {company &&
-                  company?.map((companyItem) => (
-                    <MenuItem
-                      key={companyItem.companyid}
-                      value={companyItem.companyname}
-                      sx={{ fontSize: "0.8em" }}
-                    >
-                      {companyItem.companyname}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
-            {/* Dataetype */}
-            <FormControl className="w-24">
-              <Select
-                value={dateType}
-                onChange={handleDateTypeChange}
-                className={classes.dropDowns}
-                displayEmpty
-                inputProps={{ "aria-label": "Without label" }}
-              >
-                <MenuItem value="" disabled>
-                  <em>Datetype</em>
-                </MenuItem>
-                {dateTypes.map((dateType) => (
-                  <MenuItem
-                    key={dateType.id}
-                    value={dateType.value}
-                    sx={{ fontSize: "0.8em" }}
-                  >
-                    {dateType.title}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            {/* date filter from date */}
-            <FormControl>
-              <TextField
-                size="small"
-                type="datetime-local"
-                value={fromDate}
-                onChange={handleFromDate}
-                variant="outlined"
-                InputProps={{
-                  style: { fontSize: "0.8rem", height: 25, top: 6 },
-                }}
-              />
-            </FormControl>
-            {/* date filter to now date */}
-            <FormControl>
-              <TextField
-                type="datetime-local"
-                value={dateNow}
-                onChange={handleToDate}
-                size="small"
-                variant="outlined"
-                InputProps={{
-                  style: { fontSize: "0.8rem", height: 25, top: 6 },
-                }}
-              />
-            </FormControl>
-            {/* qc1 by */}
-            <FormControl className="w-32">
-              <Select
-                input={<OutlinedInput label="tag" />}
-                className={classes.dropDowns}
-                value={qc1by}
-                onChange={(e) => setQc1by(e.target.value)}
-                multiple
-                MenuProps={{ PaperProps: { style: { height: 200 } } }}
-                displayEmpty
-                inputProps={{ "aria-label": "Without label" }}
-                renderValue={() => {
-                  if (selectedUsernamesqc1.length === 0) {
-                    return <em>Qc1 by</em>;
-                  }
-                  return selectedUsernamesqc1.join(", ");
-                }}
-              >
-                <MenuItem value="" disabled>
-                  <em>Qc1 by</em>
-                </MenuItem>
-                {qcUsersData &&
-                  qcUsersData.map((item) => (
-                    <MenuItem
-                      key={item.usersid}
-                      value={item.usersid}
-                      sx={{ fontSize: "0.8em" }}
-                    >
-                      {item.username}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
-            {/* qc1 done */}
-            <FormControl className="w-28">
-              <Select
-                id="qc1-checks"
-                value={qc1done}
-                onChange={handleQc1done}
-                input={<OutlinedInput label="tag" />}
-                className={classes.dropDowns}
-                displayEmpty
-                inputProps={{ "aria-label": "Without label" }}
-              >
-                <MenuItem value="" disabled>
-                  <em>qc1 done</em>
-                </MenuItem>
-                {qc1Array.map((item) => (
-                  <MenuItem
-                    key={item.id}
-                    value={item.value}
-                    sx={{ fontSize: "0.8em" }}
-                  >
-                    {item.option}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            {/* qc2 by */}
-            <FormControl className="w-32">
-              <Select
-                className={classes.dropDowns}
-                value={qc2by}
-                onChange={(e) => setQc2by(e.target.value)}
-                multiple
-                MenuProps={{ PaperProps: { style: { height: 200 } } }}
-                displayEmpty
-                inputProps={{ "aria-label": "Without label" }}
-                renderValue={() => {
-                  if (selectedUsernamesqc2.length === 0) {
-                    return <em>Qc2 by</em>;
-                  }
-                  return selectedUsernamesqc2.join(", ");
-                }}
-              >
-                <MenuItem value="" disabled>
-                  <em>Qc2 by</em>
-                </MenuItem>
-                {qcUsersData &&
-                  qcUsersData?.map((items) => (
-                    <MenuItem
-                      key={items.usersid}
-                      value={items.usersid}
-                      sx={{ fontSize: "0.8em" }}
-                    >
-                      {items.username}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </FormControl>
-            {/* qc2 done */}
-            <FormControl className="w-28">
-              <Select
-                displayEmpty
-                value={qc2done}
-                onChange={handleQc2done}
-                className={classes.dropDowns}
-                inputProps={{ "aria-label": "Without label" }}
-              >
-                <MenuItem value="" disabled>
-                  <em>qc2 done</em>
-                </MenuItem>
-                {qc1Array.map((item) => (
-                  <MenuItem
-                    key={item.id}
-                    value={item.value}
-                    sx={{ fontSize: "0.8em" }}
-                  >
-                    {item.option}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            {/* image checkbox */}
-            <div className="mt-2">
-              <FormControl>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        color="default"
-                        checked={isImage === 1}
-                        onChange={() => {
-                          setIsImage(isImage === 1 ? 0 : 1);
-                        }}
-                      />
+            <div style={{ height: 25 }} className="flex items-center">
+              <FormControl className="w-52">
+                <Select
+                  labelId="demo-multiple-checkbox-label"
+                  id="demo-multiple-checkbox"
+                  multiple
+                  value={companies}
+                  onChange={handleSelectedCompanies}
+                  input={<OutlinedInput label="Name" />}
+                  className={classes.dropDowns}
+                  MenuProps={{ PaperProps: { style: { height: 200 } } }}
+                  displayEmpty
+                  renderValue={(selected) => {
+                    if (selected.length === 0) {
+                      return <em>Companies</em>;
                     }
-                    label={<Typography variant="body2">Image</Typography>}
-                  />
-                </FormGroup>
+                    return selected.join(", ");
+                  }}
+                >
+                  <MenuItem value="" disabled>
+                    <em>Select Companies</em>
+                  </MenuItem>
+                  {company &&
+                    company?.map((companyItem) => (
+                      <MenuItem
+                        key={companyItem.companyid}
+                        value={companyItem.companyname}
+                        sx={{ fontSize: "0.8em" }}
+                      >
+                        {companyItem.companyname}
+                      </MenuItem>
+                    ))}
+                </Select>
               </FormControl>
             </div>
-            {/* video checkbox */}
-            <div className="mt-2">
-              <FormControl>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        color="default"
-                        checked={isVideo === 1} // Check if isVideo equals 1
-                        onChange={() => {
-                          setIsVideo(isVideo === 1 ? 0 : 1); // Toggle isVideo between 0 and 1
-                        }}
-                      />
-                    }
-                    label={<Typography variant="body2">Video</Typography>}
-                  />
-                </FormGroup>
+            {/* Dataetype */}
+            <div style={{ height: 25 }} className="flex items-center">
+              <FormControl className="w-24">
+                <Select
+                  value={dateType}
+                  onChange={handleDateTypeChange}
+                  className={classes.dropDowns}
+                  displayEmpty
+                  inputProps={{ "aria-label": "Without label" }}
+                >
+                  <MenuItem value="" disabled>
+                    <em>Datetype</em>
+                  </MenuItem>
+                  {dateTypes.map((dateType) => (
+                    <MenuItem
+                      key={dateType.id}
+                      value={dateType.value}
+                      sx={{ fontSize: "0.8em" }}
+                    >
+                      {dateType.title}
+                    </MenuItem>
+                  ))}
+                </Select>
               </FormControl>
+            </div>
+            {/* date filter from date */}
+            <div style={{ height: 25 }} className="flex items-center">
+              <FormControl>
+                <TextField
+                  size="small"
+                  type="datetime-local"
+                  value={fromDate}
+                  onChange={handleFromDate}
+                  variant="outlined"
+                  InputProps={{
+                    style: { fontSize: "0.8rem", height: 25, top: 6 },
+                  }}
+                />
+              </FormControl>
+            </div>
+            {/* date filter to now date */}
+            <div style={{ height: 25 }} className="mt-1 flex items-center">
+              <FormControl>
+                <TextField
+                  type="datetime-local"
+                  value={dateNow}
+                  onChange={handleToDate}
+                  size="small"
+                  variant="outlined"
+                  InputProps={{
+                    style: { fontSize: "0.8rem", height: 25, top: 6 },
+                  }}
+                />
+              </FormControl>
+            </div>
+            {/* qc1 by */}
+            <div style={{ height: 25 }} className="flex items-center">
+              <FormControl className="w-32">
+                <Select
+                  input={<OutlinedInput label="tag" />}
+                  className={classes.dropDowns}
+                  value={qc1by}
+                  onChange={(e) => setQc1by(e.target.value)}
+                  multiple
+                  MenuProps={{ PaperProps: { style: { height: 200 } } }}
+                  displayEmpty
+                  inputProps={{ "aria-label": "Without label" }}
+                  renderValue={() => {
+                    if (selectedUsernamesqc1.length === 0) {
+                      return <em>Qc1 by</em>;
+                    }
+                    return selectedUsernamesqc1.join(", ");
+                  }}
+                >
+                  <MenuItem value="" disabled>
+                    <em>Qc1 by</em>
+                  </MenuItem>
+                  {qcUsersData &&
+                    qcUsersData.map((item) => (
+                      <MenuItem
+                        key={item.usersid}
+                        value={item.usersid}
+                        sx={{ fontSize: "0.8em" }}
+                      >
+                        {item.username}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </div>
+            {/* qc1 done */}
+            <div style={{ height: 25 }} className="flex items-center">
+              <FormControl className="w-28">
+                <Select
+                  id="qc1-checks"
+                  value={qc1done}
+                  onChange={handleQc1done}
+                  input={<OutlinedInput label="tag" />}
+                  className={classes.dropDowns}
+                  displayEmpty
+                  inputProps={{ "aria-label": "Without label" }}
+                >
+                  <MenuItem value="" disabled>
+                    <em>qc1 done</em>
+                  </MenuItem>
+                  {qc1Array.map((item) => (
+                    <MenuItem
+                      key={item.id}
+                      value={item.value}
+                      sx={{ fontSize: "0.8em" }}
+                    >
+                      {item.option}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+            {/* qc2 by */}
+            <div style={{ height: 25 }} className="flex items-center">
+              <FormControl className="w-32">
+                <Select
+                  className={classes.dropDowns}
+                  value={qc2by}
+                  onChange={(e) => setQc2by(e.target.value)}
+                  multiple
+                  MenuProps={{ PaperProps: { style: { height: 200 } } }}
+                  displayEmpty
+                  inputProps={{ "aria-label": "Without label" }}
+                  renderValue={() => {
+                    if (selectedUsernamesqc2.length === 0) {
+                      return <em>Qc2 by</em>;
+                    }
+                    return selectedUsernamesqc2.join(", ");
+                  }}
+                >
+                  <MenuItem value="" disabled>
+                    <em>Qc2 by</em>
+                  </MenuItem>
+                  {qcUsersData &&
+                    qcUsersData?.map((items) => (
+                      <MenuItem
+                        key={items.usersid}
+                        value={items.usersid}
+                        sx={{ fontSize: "0.8em" }}
+                      >
+                        {items.username}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </div>
+            {/* qc2 done */}
+            <div style={{ height: 25 }} className="flex items-center">
+              <FormControl className="w-28">
+                <Select
+                  displayEmpty
+                  value={qc2done}
+                  onChange={handleQc2done}
+                  className={classes.dropDowns}
+                  inputProps={{ "aria-label": "Without label" }}
+                >
+                  <MenuItem value="" disabled>
+                    <em>qc2 done</em>
+                  </MenuItem>
+                  {qc1Array.map((item) => (
+                    <MenuItem
+                      key={item.id}
+                      value={item.value}
+                      sx={{ fontSize: "0.8em" }}
+                    >
+                      {item.option}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+            {/* image checkbox */}
+            <div className="flex items-center" style={{ height: 25 }}>
+              <div className="mt-2">
+                <CheckboxComp
+                  value={isImage}
+                  setValue={setIsImage}
+                  label={"Image"}
+                />
+              </div>
+            </div>
+            {/* video checkbox */}
+            <div style={{ height: 25 }} className="flex items-center">
+              <div className="mt-2">
+                <CheckboxComp
+                  value={isVideo}
+                  setValue={setIsVideo}
+                  label={"Video"}
+                />
+              </div>
             </div>
             {/* searchBox for searching an article */}
             {/* <FormControl>
@@ -645,102 +638,108 @@ const Home = () => {
               />
             </FormControl> */}
             {/* languages */}
-            <FormControl className="w-28">
-              <Select
-                multiple
-                displayEmpty
-                value={language}
-                onChange={handleLanguageChange}
-                className={classes.dropDowns}
-                input={<OutlinedInput />}
-                MenuProps={{ PaperProps: { style: { height: 200 } } }}
-                inputProps={{ "aria-label": "Without label" }}
-                renderValue={(selected) => {
-                  if (selected.length === 0) {
-                    return <em>Languages</em>;
-                  }
-                  return selected.join(", ");
-                }}
-              >
-                <MenuItem value="" disabled>
-                  <em>Languages</em>
-                </MenuItem>
-                {Object.entries(languages).map(
-                  ([languagename, languagecode]) => (
+            <div style={{ height: 25 }} className="flex items-center">
+              <FormControl className="w-28">
+                <Select
+                  multiple
+                  displayEmpty
+                  value={language}
+                  onChange={handleLanguageChange}
+                  className={classes.dropDowns}
+                  input={<OutlinedInput />}
+                  MenuProps={{ PaperProps: { style: { height: 200 } } }}
+                  inputProps={{ "aria-label": "Without label" }}
+                  renderValue={(selected) => {
+                    if (selected.length === 0) {
+                      return <em>Languages</em>;
+                    }
+                    return selected.join(", ");
+                  }}
+                >
+                  <MenuItem value="" disabled>
+                    <em>Languages</em>
+                  </MenuItem>
+                  {Object.entries(languages).map(
+                    ([languagename, languagecode]) => (
+                      <MenuItem
+                        key={languagecode}
+                        value={languagecode}
+                        sx={{ fontSize: "0.8em" }}
+                      >
+                        {languagename}
+                      </MenuItem>
+                    )
+                  )}
+                </Select>
+              </FormControl>
+            </div>
+            {/* continents */}
+            <div style={{ height: 25 }} className="flex items-center">
+              <FormControl className="w-28">
+                <Select
+                  multiple
+                  displayEmpty
+                  value={continent}
+                  onChange={handleContinentChange}
+                  input={<OutlinedInput label="Name" />}
+                  inputProps={{ "aria-label": "Without label" }}
+                  renderValue={(selected) => {
+                    if (selected.length === 0) {
+                      return <em>Continents</em>;
+                    }
+                    return selected.join(", ");
+                  }}
+                  className={classes.dropDowns}
+                >
+                  <MenuItem value="" disabled>
+                    <em>Continents</em>
+                  </MenuItem>
+                  {continents.map((continent) => (
                     <MenuItem
-                      key={languagecode}
-                      value={languagecode}
+                      key={continent}
+                      value={continent}
                       sx={{ fontSize: "0.8em" }}
                     >
-                      {languagename}
+                      {continent}
                     </MenuItem>
-                  )
-                )}
-              </Select>
-            </FormControl>
-            {/* continents */}
-            <FormControl className="w-28">
-              <Select
-                multiple
-                displayEmpty
-                value={continent}
-                onChange={handleContinentChange}
-                input={<OutlinedInput label="Name" />}
-                inputProps={{ "aria-label": "Without label" }}
-                renderValue={(selected) => {
-                  if (selected.length === 0) {
-                    return <em>Continents</em>;
-                  }
-                  return selected.join(", ");
-                }}
-                className={classes.dropDowns}
-              >
-                <MenuItem value="" disabled>
-                  <em>Continents</em>
-                </MenuItem>
-                {continents.map((continent) => (
-                  <MenuItem
-                    key={continent}
-                    value={continent}
-                    sx={{ fontSize: "0.8em" }}
-                  >
-                    {continent}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
             {/* countries */}
-            <FormControl className="w-28">
-              <Select
-                multiple
-                displayEmpty
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                input={<OutlinedInput label="Name" />}
-                className={classes.dropDowns}
-                MenuProps={{ PaperProps: { style: { height: 200 } } }}
-                inputProps={{ "aria-label": "Without label" }}
-                renderValue={(selected) => {
-                  if (selected.length === 0) {
-                    return <em>Countries</em>;
-                  }
-                  return selected.join(", ");
-                }}
-              >
-                <MenuItem value="" disabled>
-                  <em>Countries</em>
-                </MenuItem>
-                {filteredCountries.map((country) => (
-                  <MenuItem
-                    key={country}
-                    value={country}
-                    sx={{ fontSize: "0.8em" }}
-                  >
-                    {country}
+            <div style={{ height: 25 }} className="flex items-center">
+              <FormControl className="w-28">
+                <Select
+                  multiple
+                  displayEmpty
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  input={<OutlinedInput label="Name" />}
+                  className={classes.dropDowns}
+                  MenuProps={{ PaperProps: { style: { height: 200 } } }}
+                  inputProps={{ "aria-label": "Without label" }}
+                  renderValue={(selected) => {
+                    if (selected.length === 0) {
+                      return <em>Countries</em>;
+                    }
+                    return selected.join(", ");
+                  }}
+                >
+                  <MenuItem value="" disabled>
+                    <em>Countries</em>
                   </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                  {filteredCountries.map((country) => (
+                    <MenuItem
+                      key={country}
+                      value={country}
+                      sx={{ fontSize: "0.8em" }}
+                    >
+                      {country}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
             <button
               onClick={handleSearch}
               className={`bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white ${
@@ -751,13 +750,15 @@ const Home = () => {
             </button>
           </div>
           {/* divider */}
-          <Divider variant="middle" sx={{ m: 2 }} />
+          <Divider variant="middle" sx={{ marginTop: 1 }} />
           {/* table */}
-          <ResearchTable />
+          <div ref={researchTableRef}>
+            <ResearchTable />
+          </div>
         </>
       )}
     </div>
   );
 };
 
-export default Home;
+export default ReasearchScreen;

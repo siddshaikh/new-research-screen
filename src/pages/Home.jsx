@@ -23,11 +23,13 @@ const Home = () => {
     }
   }, [researchOpen]);
   return (
-    <div className="h-screen">
-      <Navigation />
-      <p className="text-xl mt-4 text-center">
-        {!researchOpen && !qc2Open && "Choose the Tab"}
-      </p>
+    <div className="h-screen flex flex-col">
+      <div className="h-4">
+        <Navigation />
+      </div>
+      {!researchOpen && !qc2Open && (
+        <p className="text-xl mt-4 text-center">Choose the Tab</p>
+      )}
       {researchOpen && <ResearchScreen />}
       {qc2Open && <Qc2Print />}
     </div>

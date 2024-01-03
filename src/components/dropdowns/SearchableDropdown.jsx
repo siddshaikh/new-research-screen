@@ -39,7 +39,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const SearchableSelect = ({
+const SearchableDropdown = ({
   options,
   label,
   setTestClient,
@@ -95,9 +95,9 @@ const SearchableSelect = ({
   );
 };
 
-export default memo(SearchableSelect);
+export default memo(SearchableDropdown);
 
-SearchableSelect.propTypes = {
+SearchableDropdown.propTypes = {
   options: PropTypes.array.isRequired,
   label: PropTypes.string.isRequired,
   setTestClient: PropTypes.func.isRequired,
