@@ -331,7 +331,6 @@ const ReasearchScreen = () => {
               Authorization: "Bearer " + userToken,
             },
           });
-          console.log("feed_data", response.data.feed_data);
           if (response) {
             const updatedData = response.data.feed_data.map((item) => {
               return {
@@ -375,7 +374,7 @@ const ReasearchScreen = () => {
     .map((selectedItem) => selectedItem.username);
 
   return (
-    <div className="h-full">
+    <div className="h-full ml-4">
       {/* Category dropdowns filter out */}
       {/* client */}
       {isLoading ? (
@@ -469,7 +468,7 @@ const ReasearchScreen = () => {
               </FormControl>
             </div>
             {/* date filter to now date */}
-            <div style={{ height: 25 }} className="mt-1 flex items-center">
+            <div style={{ height: 25 }} className="flex items-center">
               <FormControl>
                 <TextField
                   type="datetime-local"

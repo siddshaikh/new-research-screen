@@ -9,6 +9,9 @@ import {
   TextField,
   Typography,
   Tooltip,
+  RadioGroup,
+  Radio,
+  FormControlLabel,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import axios from "axios";
@@ -67,8 +70,12 @@ const ResearchTable = () => {
   // selectedRowData
   const [selectedRowData, setSelectedRowData] = useState([]);
   // search values from the table
+  // radios
+  const [selectedRadioValue, setSelectedRadioValue] = useState(null);
   const [headerForSearch, setHeaderForSearch] = useState("");
   const [searchValue, setSearchValue] = useState("");
+  const [secondHeaderForSearch, setSecondheaderForSearch] = useState("");
+  const [secondSearchValue, setSecondSearchValue] = useState("");
   const [searchedData, setSearchedData] = useState([]);
   // data for the edit
   const [editValue, setEditValue] = useState("");
@@ -227,28 +234,85 @@ const ResearchTable = () => {
     applySort();
   }, [sortColumn, sortDirection]);
 
-  // handle Search Table Values
-  const handleSearch = () => {
-    const output =
-      searchValue.trim() !== "" && headerForSearch
-        ? tableData.filter(
-            (rowData) =>
-              rowData[headerForSearch] &&
-              rowData[headerForSearch]
-                .toString()
-                .toLowerCase()
-                .includes(searchValue.toLowerCase())
-          )
-        : [];
-
-    setSearchedData(output);
-  };
   // search function using table header
   const hanleTableSearchUsingHeader = (event) => {
     setHeaderForSearch(event.target.value);
     setSearchedData([]);
     setSearchValue("");
   };
+  const handleSecondSearchUsingHeader = (event) => {
+    setSecondheaderForSearch(event.target.value);
+    setSecondSearchValue("");
+  };
+  // radio change
+  const handleChange = (event) => {
+    setSelectedRadioValue(event.target.value);
+  };
+  // handle Search Table Values
+  const handleSearch = () => {
+    if (selectedRadioValue === "and") {
+      // Filter with AND logic
+      const output =
+        searchValue.trim() !== "" && headerForSearch
+          ? tableData.filter(
+              (rowData) =>
+                rowData[headerForSearch] &&
+                rowData[headerForSearch]
+                  .toString()
+                  .toLowerCase()
+                  .includes(searchValue.toLowerCase())
+            )
+          : [];
+
+      const secondOutput =
+        secondSearchValue.trim() !== "" && secondHeaderForSearch
+          ? tableData.filter(
+              (rowData) =>
+                rowData[secondHeaderForSearch] &&
+                rowData[secondHeaderForSearch]
+                  .toString()
+                  .toLowerCase()
+                  .includes(secondSearchValue.toLowerCase())
+            )
+          : [];
+
+      // Apply AND logic
+      const combinedOutput = output.filter((row) => secondOutput.includes(row));
+
+      setSearchedData(combinedOutput);
+    } else if (selectedRadioValue === "or") {
+      // Filter with OR logic
+      const output =
+        searchValue.trim() !== "" && headerForSearch
+          ? tableData.filter(
+              (rowData) =>
+                rowData[headerForSearch] &&
+                rowData[headerForSearch]
+                  .toString()
+                  .toLowerCase()
+                  .includes(searchValue.toLowerCase())
+            )
+          : [];
+
+      const secondOutput =
+        secondSearchValue.trim() !== "" && secondHeaderForSearch
+          ? tableData.filter(
+              (rowData) =>
+                rowData[secondHeaderForSearch] &&
+                rowData[secondHeaderForSearch]
+                  .toString()
+                  .toLowerCase()
+                  .includes(secondSearchValue.toLowerCase())
+            )
+          : [];
+
+      // Apply OR logic
+      const combinedOutput = [...output, ...secondOutput];
+
+      setSearchedData(combinedOutput);
+    }
+  };
+
   //updating tabledata
   const handleApplyChanges = () => {
     if (selectedRowData.length > 0) {
@@ -349,28 +413,34 @@ const ResearchTable = () => {
       return () => clearTimeout(timeoutId);
     }
   }, [savedSuccess]);
-  const highlightSearch = (text) => {
-    if (!text || !searchValue.trim()) {
-      return text;
-    }
-
-    if (typeof text === "string") {
-      if (text.startsWith("<a") && text.endsWith("</a>")) {
-        return text;
-      }
-
-      const regex = new RegExp(`(${searchValue})`, "gi");
-      const parts = text.split(regex);
-
-      return parts.map((part, index) =>
-        regex.test(part) ? (
-          <span key={index} className="text-white bg-black">
-            {part}
-          </span>
-        ) : (
-          part
-        )
+  const highlightSearch = (text, header) => {
+    if (
+      ((headerForSearch === header && searchValue.trim()) ||
+        (secondHeaderForSearch === header && secondSearchValue.trim())) &&
+      text
+    ) {
+      const searchRegex = new RegExp(
+        `(${headerForSearch === header ? searchValue : secondSearchValue})`,
+        "gi"
       );
+      const parts = text.split(searchRegex);
+
+      return parts.map((part, index) => {
+        if (searchRegex.test(part)) {
+          return (
+            <span
+              key={index}
+              className={`text-white ${
+                headerForSearch === header ? "bg-yellow-400" : "bg-gray-500"
+              }`}
+            >
+              {part}
+            </span>
+          );
+        } else {
+          return part;
+        }
+      });
     }
 
     return text;
@@ -378,13 +448,6 @@ const ResearchTable = () => {
 
   const renderTableData = () => {
     const dataToRender = searchedData.length > 0 ? searchedData : tableData;
-
-    const highlightCellContent = (text, header) => {
-      if (headerForSearch === header) {
-        return highlightSearch(text); // Highlight the search result
-      }
-      return text;
-    };
 
     return tableData.length > 0 && showTableData ? (
       dataToRender.map((rowData, rowIndex) => (
@@ -439,7 +502,7 @@ const ResearchTable = () => {
                         (header === "DETAIL SUMMARY" && "w-72")
                       }`}
                     >
-                      {highlightCellContent(
+                      {highlightSearch(
                         rowData[header.toLowerCase().replace(/ /g, "_")],
                         header.toLowerCase().replace(/ /g, "_")
                       )}
@@ -458,14 +521,15 @@ const ResearchTable = () => {
                     }}
                   >
                     <div
-                      className="text-xs w-16 text-black overflow-hidden whitespace-normal mx-1"
+                      className="text-xs w-14 text-black overflow-hidden whitespace-normal mx-2"
                       style={{
                         display: "-webkit-box",
                         WebkitBoxOrient: "vertical",
                         WebkitLineClamp: 2,
+                        textAlign: "left",
                       }}
                     >
-                      {highlightCellContent(
+                      {highlightSearch(
                         rowData[header.toLowerCase().replace(/ /g, "_")],
                         header.toLowerCase().replace(/ /g, "_")
                       )}
@@ -482,12 +546,11 @@ const ResearchTable = () => {
       </table>
     );
   };
-
   return (
     <div>
       {/* filters for editing the cells */}
-      <div className="flex items-center gap-2 ml-2">
-        {/* search values using dropdown */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {/* first find */}
         <FormControl className="w-28">
           <Select
             className={classes.dropDowns}
@@ -521,10 +584,72 @@ const ResearchTable = () => {
           onChange={(e) => setSearchValue(e.target.value)}
           InputProps={{ style: { fontSize: "0.8rem", height: 25, top: 6 } }}
         />
+        {/* radio button */}
+        <FormControl component="fieldset" sx={{ height: 25 }}>
+          <RadioGroup
+            aria-label="and-or-label"
+            name="and-or-label"
+            value={selectedRadioValue}
+            onChange={handleChange}
+            row
+          >
+            <FormControlLabel
+              value="and"
+              control={<Radio size="small" />}
+              label="AND"
+              sx={{
+                fontSize: "0.8em",
+                "& .MuiTypography-root": { fontSize: "0.8em" },
+              }}
+            />
+            <FormControlLabel
+              value="or"
+              control={<Radio size="small" />}
+              label="OR"
+              sx={{
+                fontSize: "0.8em",
+                "& .MuiTypography-root": { fontSize: "0.8em" },
+              }}
+            />
+          </RadioGroup>
+        </FormControl>
+        {/* second find */}
+        <FormControl className="w-28">
+          <Select
+            className={classes.dropDowns}
+            value={secondHeaderForSearch}
+            onChange={handleSecondSearchUsingHeader}
+            displayEmpty
+            inputProps={{ "aria-label": "Without label" }}
+            MenuProps={{ PaperProps: { style: { height: 200 } } }}
+          >
+            <MenuItem value="" disabled>
+              <em>select</em>
+            </MenuItem>
+
+            {DDSearchValues.map((item) => (
+              <MenuItem
+                value={item.value}
+                key={item.title}
+                sx={{ fontSize: "0.8em" }}
+              >
+                {item.title}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <TextField
+          placeholder="Find Text"
+          variant="outlined"
+          size="small"
+          value={secondSearchValue}
+          onChange={(e) => setSecondSearchValue(e.target.value)}
+          InputProps={{ style: { fontSize: "0.8rem", height: 25, top: 6 } }}
+        />
         <Button btnText={"Find"} onClick={handleSearch} />
       </div>
       <hr className="mt-1" />
-      <div className="mt-2 ml-2 flex items-center flex-wrap gap-4">
+      <div className="flex items-center flex-wrap gap-4">
         {" "}
         {/* dropdowns for separating the files */}
         {/* reporting tone */}
@@ -604,8 +729,7 @@ const ResearchTable = () => {
           <thead>
             <tr className="sticky left-0 top-0 bg-[#150734]">
               {" "}
-              {/* Adjust h-10 for the desired height */}
-              {showTableData && (
+              {tableHeaders.length > 0 && (
                 <TableCell size="small">
                   <Checkbox
                     sx={{ transform: "scale(0.8)" }}
