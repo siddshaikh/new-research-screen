@@ -23,6 +23,8 @@ import Button from "../custom/Button";
 import TableDropdown from "../dropdowns/TableDropdown";
 import { IoIosArrowRoundDown, IoIosArrowRoundUp } from "react-icons/io";
 import getHeaderAbbreviation from "../../utils/concatHeader";
+import Loader from "../loader/Loader";
+import TextFields from "../TextFields/TextField";
 
 const useStyles = makeStyles(() => ({
   dropDowns: {
@@ -70,23 +72,23 @@ const ResearchTable = () => {
   // selectedRowData
   const [selectedRowData, setSelectedRowData] = useState([]);
   // search values from the table
-  // radios
   const [selectedRadioValue, setSelectedRadioValue] = useState(null);
   const [headerForSearch, setHeaderForSearch] = useState("");
   const [searchValue, setSearchValue] = useState("");
-  const [secondHeaderForSearch, setSecondheaderForSearch] = useState("");
+  const [secondHeaderForSearch, setSecondHeaderForSearch] = useState("");
   const [secondSearchValue, setSecondSearchValue] = useState("");
   const [searchedData, setSearchedData] = useState([]);
   // data for the edit
   const [editValue, setEditValue] = useState("");
   // Function to fetch table data
   // updatedrows
-  const [updatedRows, setUpadatedRows] = useState([]);
+  const [updatedRows, setUpdatedRows] = useState([]);
   // saved success
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   // showing tooltip when hover the table cell
   // sotrting
+  const [sortLoading, setSortLoading] = useState(false);
   const [sortDirection, setSortDirection] = useState("asc");
   const [sortColumn, setSortColumn] = useState("");
   // dropdown fetch
@@ -151,7 +153,7 @@ const ResearchTable = () => {
     companyIds
       ? setCompanyId(companyIds?.map((item) => `'${item}'`).join(","))
       : setCompanyId([]);
-  }, [companies, company, companyId]);
+  }, [companies, company, companyId, setCompanyId]);
   // effect for the setting data for the editing row data basis on dropdown selection
   useEffect(() => {
     const editRowValues = selectedRowData
@@ -202,7 +204,8 @@ const ResearchTable = () => {
       setSortDirection("asc");
     }
   };
-  const applySort = () => {
+  const applySort = async () => {
+    setSortLoading(true); // Set sortLoading to true when sorting begins
     let sortedData = [];
 
     if (searchedData.length > 0) {
@@ -211,23 +214,32 @@ const ResearchTable = () => {
       sortedData = [...tableData]; // If not, use the original table data
     }
 
-    sortedData.sort((a, b) => {
-      const valueA = (a[sortColumn] || "").toString().toLowerCase();
-      const valueB = (b[sortColumn] || "").toString().toLowerCase();
+    // Simulate sorting delay with a timeout
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        sortedData.sort((a, b) => {
+          const valueA = (a[sortColumn] || "").toString().toLowerCase();
+          const valueB = (b[sortColumn] || "").toString().toLowerCase();
 
-      if (!isNaN(valueA) && !isNaN(valueB)) {
-        return sortDirection === "asc" ? valueA - valueB : valueB - valueA;
-      } else {
-        const comparison = valueA.localeCompare(valueB);
-        return sortDirection === "asc" ? comparison : -comparison;
-      }
+          if (!isNaN(valueA) && !isNaN(valueB)) {
+            return sortDirection === "asc" ? valueA - valueB : valueB - valueA;
+          } else {
+            const comparison = valueA.localeCompare(valueB);
+            return sortDirection === "asc" ? comparison : -comparison;
+          }
+        });
+
+        if (searchedData.length > 0) {
+          setSearchedData(sortedData); // Update the sorted searchedData
+        } else {
+          setTableData(sortedData); // Update the sorted tableData
+        }
+
+        resolve();
+      }, 1000);
     });
 
-    if (searchedData.length > 0) {
-      setSearchedData(sortedData); // Update the sorted searchedData
-    } else {
-      setTableData(sortedData); // Update the sorted tableData
-    }
+    setSortLoading(false);
   };
 
   useEffect(() => {
@@ -241,17 +253,24 @@ const ResearchTable = () => {
     setSearchValue("");
   };
   const handleSecondSearchUsingHeader = (event) => {
-    setSecondheaderForSearch(event.target.value);
+    setSecondHeaderForSearch(event.target.value);
     setSecondSearchValue("");
+  };
+  const handleFirstSearchValue = (e) => {
+    setSearchValue(e.target.value);
+  };
+  const handleSecondSearchValue = (e) => {
+    setSecondSearchValue(e.target.value);
   };
   // radio change
   const handleChange = (event) => {
     setSelectedRadioValue(event.target.value);
   };
   // handle Search Table Values
+
   const handleSearch = () => {
     if (selectedRadioValue === "and") {
-      // Filter with AND logic
+      // Logic for 'AND' operation
       const output =
         searchValue.trim() !== "" && headerForSearch
           ? tableData.filter(
@@ -281,7 +300,7 @@ const ResearchTable = () => {
 
       setSearchedData(combinedOutput);
     } else if (selectedRadioValue === "or") {
-      // Filter with OR logic
+      // Logic for 'OR' operation
       const output =
         searchValue.trim() !== "" && headerForSearch
           ? tableData.filter(
@@ -310,6 +329,21 @@ const ResearchTable = () => {
       const combinedOutput = [...output, ...secondOutput];
 
       setSearchedData(combinedOutput);
+    } else {
+      // Different operation when it's neither 'AND' nor 'OR'
+      const output =
+        searchValue.trim() !== "" && headerForSearch
+          ? tableData.filter(
+              (rowData) =>
+                rowData[headerForSearch] &&
+                rowData[headerForSearch]
+                  .toString()
+                  .toLowerCase()
+                  .includes(searchValue.toLowerCase())
+            )
+          : [];
+
+      setSearchedData(output);
     }
   };
 
@@ -333,7 +367,7 @@ const ResearchTable = () => {
         return updatedRow || row;
       });
 
-      setUpadatedRows(updatedSelectedRows);
+      setUpdatedRows(updatedSelectedRows);
       setTableData(updatedTableData);
     } else {
       toast.warning("Please select at least one item to update");
@@ -380,7 +414,7 @@ const ResearchTable = () => {
             Authorization: "Bearer " + userToken,
           },
         });
-        setUpadatedRows([]);
+        setUpdatedRows([]);
         setPostingLoading(false);
         setSuccessMessage("Data updated successfully!");
         setSelectedRowData([]);
@@ -457,7 +491,7 @@ const ResearchTable = () => {
             padding="checkbox"
             style={{
               position: "sticky",
-              top: 55,
+              top: 28,
               backgroundColor: "#e6e1e1",
               fontSize: "0.8em",
             }}
@@ -495,11 +529,13 @@ const ResearchTable = () => {
                         display: "-webkit-box",
                         WebkitBoxOrient: "vertical",
                         WebkitLineClamp: 2,
+                        fontSize: "0.8em",
+                        fontWeight: "bold",
                       }}
                       className={`text-xs w-28 text-black overflow-hidden whitespace-normal" ${
                         (header === "REPORTING SUBJECT" && "w-16") ||
                         (header === "HEADLINE" && "w-72") ||
-                        (header === "DETAIL SUMMARY" && "w-72")
+                        (header === "DETAIL SUMMARY" && "w-[25rem]")
                       }`}
                     >
                       {highlightSearch(
@@ -514,19 +550,16 @@ const ResearchTable = () => {
                 header !== "REPORTING SUBJECT" &&
                 header !== "DETAIL SUMMARY" &&
                 header !== "KEYWORD" && (
-                  <TableCell
-                    size="small"
-                    sx={{
-                      padding: "10px",
-                    }}
-                  >
+                  <TableCell size="small">
                     <div
-                      className="text-xs w-14 text-black overflow-hidden whitespace-normal mx-2"
+                      className="text-xs w-16 text-black overflow-hidden whitespace-normal mx-3"
                       style={{
                         display: "-webkit-box",
                         WebkitBoxOrient: "vertical",
                         WebkitLineClamp: 2,
-                        textAlign: "left",
+                        marginLeft: -3,
+                        fontSize: "0.8em",
+                        fontWeight: "bold",
                       }}
                     >
                       {highlightSearch(
@@ -541,13 +574,16 @@ const ResearchTable = () => {
         </TableRow>
       ))
     ) : (
-      <table className="bg-primary w-screen border h-screen text-gray-400 text-sm text-center py-4">
-        No table Data
-      </table>
+      <table className="bg-primary w-screen border h-screen text-gray-400 text-sm text-center py-4"></table>
     );
   };
   return (
-    <div>
+    <div className="relative">
+      {sortLoading && (
+        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 bg-opacity-50 z-50">
+          <Loader /> {/* Replace this with your Loader component */}
+        </div>
+      )}
       {/* filters for editing the cells */}
       <div className="flex items-center gap-2 flex-wrap">
         {/* first find */}
@@ -560,7 +596,7 @@ const ResearchTable = () => {
             inputProps={{ "aria-label": "Without label" }}
             MenuProps={{ PaperProps: { style: { height: 200 } } }}
           >
-            <MenuItem value="" disabled>
+            <MenuItem value="" sx={{ color: "lightgray" }}>
               <em>select</em>
             </MenuItem>
 
@@ -576,13 +612,10 @@ const ResearchTable = () => {
           </Select>
         </FormControl>
         {/* searchfield for the searching tableData */}
-        <TextField
-          placeholder="Find Text"
-          variant="outlined"
-          size="small"
+        <TextFields
+          placeholder={"Find Text"}
           value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          InputProps={{ style: { fontSize: "0.8rem", height: 25, top: 6 } }}
+          onChange={handleFirstSearchValue}
         />
         {/* radio button */}
         <FormControl component="fieldset" sx={{ height: 25 }}>
@@ -623,7 +656,7 @@ const ResearchTable = () => {
             inputProps={{ "aria-label": "Without label" }}
             MenuProps={{ PaperProps: { style: { height: 200 } } }}
           >
-            <MenuItem value="" disabled>
+            <MenuItem value="" sx={{ color: "lightgray" }}>
               <em>select</em>
             </MenuItem>
 
@@ -638,13 +671,10 @@ const ResearchTable = () => {
             ))}
           </Select>
         </FormControl>
-        <TextField
-          placeholder="Find Text"
-          variant="outlined"
-          size="small"
+        <TextFields
+          placeholder={"Find Text"}
           value={secondSearchValue}
-          onChange={(e) => setSecondSearchValue(e.target.value)}
-          InputProps={{ style: { fontSize: "0.8rem", height: 25, top: 6 } }}
+          onChange={handleSecondSearchValue}
         />
         <Button btnText={"Find"} onClick={handleSearch} />
       </div>
@@ -730,14 +760,20 @@ const ResearchTable = () => {
             <tr className="sticky left-0 top-0 bg-[#150734]">
               {" "}
               {tableHeaders.length > 0 && (
-                <TableCell size="small">
-                  <Checkbox
-                    sx={{ transform: "scale(0.8)" }}
+                <td style={{ display: "flex", justifyItems: "center" }}>
+                  <input
+                    type="checkbox"
+                    style={{
+                      width: "17px",
+                      height: "17px",
+                      marginLeft: "1rem",
+                      marginTop: "0.5rem",
+                    }}
                     checked={selectedRowData.length === tableData.length}
                     onChange={handleMasterCheckboxChange}
                     className={classes.headerCheckBox}
                   />
-                </TableCell>
+                </td>
               )}
               {showTableData &&
                 tableHeaders?.map((header) => (
@@ -774,7 +810,9 @@ const ResearchTable = () => {
                         }}
                       />
                     </span>
-                    {getHeaderAbbreviation(header)}
+                    <span className="ml-2">
+                      {getHeaderAbbreviation(header)}
+                    </span>
                   </td>
                 ))}
             </tr>

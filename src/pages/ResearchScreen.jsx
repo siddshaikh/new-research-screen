@@ -53,8 +53,8 @@ const ReasearchScreen = () => {
   // loading state for the tableData fetching
   const [tableDataLoading, setTableDataLoading] = useState(false);
   // converting arrays to the string.
-  const [langsTostring, setLangsToString] = useState("");
-  const [continentsTostring, setContinentsToString] = useState("");
+  const [langsToString, setLangsToString] = useState("");
+  const [continentsToString, setContinentsToString] = useState("");
   const [countriesToString, setCountriesToString] = useState("");
   const [qc1byuserToString, setQc1byuserToString] = useState("");
   const [qc2byuserToString, setQc2byuserToString] = useState("");
@@ -308,9 +308,9 @@ const ReasearchScreen = () => {
             qc2byuserToString
           );
           addPropertyIfConditionIsTrue(
-            continentsTostring,
+            continentsToString,
             "continent",
-            continentsTostring
+            continentsToString
           );
           addPropertyIfConditionIsTrue(
             countriesToString,
@@ -318,9 +318,9 @@ const ReasearchScreen = () => {
             countriesToString
           );
           addPropertyIfConditionIsTrue(
-            langsTostring,
+            langsToString,
             "language",
-            langsTostring
+            langsToString
           );
 
           const requestDataJSON = JSON.stringify(requestData);
@@ -749,7 +749,7 @@ const ReasearchScreen = () => {
             </button>
           </div>
           {/* divider */}
-          <Divider variant="middle" sx={{ marginTop: 1 }} />
+          <Divider sx={{ marginTop: 1 }} />
           {/* table */}
           <div ref={researchTableRef}>
             <ResearchTable />

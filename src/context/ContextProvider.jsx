@@ -9,34 +9,7 @@ const ContextProvider = ({ children }) => {
   // auto logout
   const [logoutTimer, setLogoutTimer] = useState(null);
   const [userToken, setUserToken] = useState("");
-  const handleLogout = () => {
-    if (logoutTimer) {
-      clearTimeout(logoutTimer);
-    }
-    setUserToken("");
-    localStorage.removeItem("user");
-    setQc1by([]);
-    setQc2by([]);
-    setClientId("");
-    setUnsavedChanges(false);
-    navigate("/login");
-  };
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setUserToken(""); // Clear user token
-      localStorage.removeItem("user"); // Remove token from storage
-      toast.warning("Session Expired.");
-      navigate("/login");
-    }, 30 * 60 * 1000); // 30 minutes in milliseconds
 
-    setLogoutTimer(timer);
-
-    return () => {
-      if (timer) {
-        clearTimeout(timer);
-      }
-    };
-  }, [userToken]);
   //state for the login component
   const [researchOpen, setResearchOpen] = useState(false);
   const [name, setName] = useState("");
@@ -100,6 +73,36 @@ const ContextProvider = ({ children }) => {
   // qc2print
   const [qc2Open, setQc2Open] = useState(false);
   const [qc2PrintTableData, setQc2PrintTableData] = useState([]);
+  // when seearch direct move to table
+
+  const handleLogout = () => {
+    if (logoutTimer) {
+      clearTimeout(logoutTimer);
+    }
+    setUserToken("");
+    localStorage.removeItem("user");
+    setQc1by([]);
+    setQc2by([]);
+    setClientId("");
+    setUnsavedChanges(false);
+    navigate("/login");
+  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setUserToken(""); // Clear user token
+      localStorage.removeItem("user"); // Remove token from storage
+      toast.warning("Session Expired.");
+      navigate("/login");
+    }, 30 * 60 * 1000); // 30 minutes in milliseconds
+
+    setLogoutTimer(timer);
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [userToken]);
   return (
     <ResearchContext.Provider
       value={{
