@@ -1,14 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
-  Checkbox,
   FormControl,
   MenuItem,
   Select,
-  TableCell,
-  TableRow,
-  TextField,
   Typography,
-  Tooltip,
   RadioGroup,
   Radio,
   FormControlLabel,
@@ -21,10 +16,9 @@ import { toast } from "react-toastify";
 import { DDSearchValues } from "../../utils/dataArray";
 import Button from "../custom/Button";
 import TableDropdown from "../dropdowns/TableDropdown";
-import { IoIosArrowRoundDown, IoIosArrowRoundUp } from "react-icons/io";
-import getHeaderAbbreviation from "../../utils/concatHeader";
 import Loader from "../loader/Loader";
 import TextFields from "../TextFields/TextField";
+import MainTable from "../table/MainTable";
 
 const useStyles = makeStyles(() => ({
   dropDowns: {
@@ -53,12 +47,10 @@ const ResearchTable = () => {
     userToken,
     companies,
     company,
-    showTableData,
     companyId,
     setCompanyId,
     tableData,
     setTableData,
-    tableHeaders,
     setUnsavedChanges,
   } = useContext(ResearchContext);
 
@@ -78,6 +70,7 @@ const ResearchTable = () => {
   const [secondHeaderForSearch, setSecondHeaderForSearch] = useState("");
   const [secondSearchValue, setSecondSearchValue] = useState("");
   const [searchedData, setSearchedData] = useState([]);
+  const [findLoading, setFindLoading] = useState(false);
   // data for the edit
   const [editValue, setEditValue] = useState("");
   // Function to fetch table data
@@ -162,59 +155,16 @@ const ResearchTable = () => {
     setEditValue(editRowValues ? editRowValues.join(" ") : "");
   }, [selectedRowData, editRow]);
 
-  // Function to handle the selection of a row
-  const handleRowSelect = (rowData) => {
-    setSelectedRowData((prevSelectedRows) => {
-      const isSelected = prevSelectedRows.some((row) => row === rowData);
-
-      if (isSelected) {
-        return prevSelectedRows.filter((row) => row !== rowData);
-      } else {
-        if (searchedData.length > 0) {
-          // Check if the selected row is within the searched data
-          if (searchedData.includes(rowData)) {
-            return [...prevSelectedRows, rowData];
-          }
-        } else {
-          return [...prevSelectedRows, rowData];
-        }
-      }
-      return prevSelectedRows;
-    });
-  };
-  const handleMasterCheckboxChange = () => {
-    const allSelected = selectedRowData.length === tableData.length;
-
-    if (searchedData.length > 0) {
-      setSelectedRowData(allSelected ? [] : [...searchedData]);
-    } else {
-      setSelectedRowData(allSelected ? [] : [...tableData]);
-    }
-  };
-
-  const handleSort = (clickedHeader) => {
-    if (sortColumn === clickedHeader) {
-      // Toggle sort direction if the same column is clicked
-      setSortDirection((prevSortDirection) =>
-        prevSortDirection === "asc" ? "desc" : "asc"
-      );
-    } else {
-      // Set the new column to sort and reset the direction to ascending
-      setSortColumn(clickedHeader);
-      setSortDirection("asc");
-    }
-  };
   const applySort = async () => {
-    setSortLoading(true); // Set sortLoading to true when sorting begins
+    setSortLoading(true);
     let sortedData = [];
 
     if (searchedData.length > 0) {
-      sortedData = [...searchedData]; // If searched data is present, sort that
+      sortedData = [...searchedData];
     } else {
-      sortedData = [...tableData]; // If not, use the original table data
+      sortedData = [...tableData];
     }
 
-    // Simulate sorting delay with a timeout
     await new Promise((resolve) => {
       setTimeout(() => {
         sortedData.sort((a, b) => {
@@ -230,9 +180,9 @@ const ResearchTable = () => {
         });
 
         if (searchedData.length > 0) {
-          setSearchedData(sortedData); // Update the sorted searchedData
+          setSearchedData(sortedData);
         } else {
-          setTableData(sortedData); // Update the sorted tableData
+          setTableData(sortedData);
         }
 
         resolve();
@@ -249,89 +199,38 @@ const ResearchTable = () => {
   // search function using table header
   const hanleTableSearchUsingHeader = (event) => {
     setHeaderForSearch(event.target.value);
-    setSearchedData([]);
     setSearchValue("");
+    setSelectedRadioValue(null);
+    setSecondHeaderForSearch("");
   };
   const handleSecondSearchUsingHeader = (event) => {
+    if (!selectedRadioValue) {
+      toast.warning("Please select AND or OR condition first!", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 2000,
+      });
+      return;
+    }
     setSecondHeaderForSearch(event.target.value);
     setSecondSearchValue("");
-  };
-  const handleFirstSearchValue = (e) => {
-    setSearchValue(e.target.value);
-  };
-  const handleSecondSearchValue = (e) => {
-    setSecondSearchValue(e.target.value);
   };
   // radio change
   const handleChange = (event) => {
     setSelectedRadioValue(event.target.value);
   };
   // handle Search Table Values
-
   const handleSearch = () => {
-    if (selectedRadioValue === "and") {
-      // Logic for 'AND' operation
-      const output =
-        searchValue.trim() !== "" && headerForSearch
-          ? tableData.filter(
-              (rowData) =>
-                rowData[headerForSearch] &&
-                rowData[headerForSearch]
-                  .toString()
-                  .toLowerCase()
-                  .includes(searchValue.toLowerCase())
-            )
-          : [];
+    setFindLoading(true);
 
-      const secondOutput =
-        secondSearchValue.trim() !== "" && secondHeaderForSearch
-          ? tableData.filter(
-              (rowData) =>
-                rowData[secondHeaderForSearch] &&
-                rowData[secondHeaderForSearch]
-                  .toString()
-                  .toLowerCase()
-                  .includes(secondSearchValue.toLowerCase())
-            )
-          : [];
+    let output = [];
 
-      // Apply AND logic
-      const combinedOutput = output.filter((row) => secondOutput.includes(row));
-
-      setSearchedData(combinedOutput);
-    } else if (selectedRadioValue === "or") {
-      // Logic for 'OR' operation
-      const output =
-        searchValue.trim() !== "" && headerForSearch
-          ? tableData.filter(
-              (rowData) =>
-                rowData[headerForSearch] &&
-                rowData[headerForSearch]
-                  .toString()
-                  .toLowerCase()
-                  .includes(searchValue.toLowerCase())
-            )
-          : [];
-
-      const secondOutput =
-        secondSearchValue.trim() !== "" && secondHeaderForSearch
-          ? tableData.filter(
-              (rowData) =>
-                rowData[secondHeaderForSearch] &&
-                rowData[secondHeaderForSearch]
-                  .toString()
-                  .toLowerCase()
-                  .includes(secondSearchValue.toLowerCase())
-            )
-          : [];
-
-      // Apply OR logic
-      const combinedOutput = [...output, ...secondOutput];
-
-      setSearchedData(combinedOutput);
+    if (headerForSearch === "all") {
+      output = tableData.filter((rowData) => {
+        const allRowValues = Object.values(rowData).join(" ").toLowerCase();
+        return allRowValues.includes(searchValue.toLowerCase());
+      });
     } else {
-      // Different operation when it's neither 'AND' nor 'OR'
-      const output =
+      output =
         searchValue.trim() !== "" && headerForSearch
           ? tableData.filter(
               (rowData) =>
@@ -342,15 +241,68 @@ const ResearchTable = () => {
                   .includes(searchValue.toLowerCase())
             )
           : [];
-
-      setSearchedData(output);
     }
+
+    let combinedOutput = output.slice();
+
+    if (selectedRadioValue === "and" || selectedRadioValue === "or") {
+      let secondOutput = [];
+
+      if (secondHeaderForSearch && secondHeaderForSearch !== headerForSearch) {
+        if (secondHeaderForSearch === "all") {
+          secondOutput = tableData.filter((rowData) => {
+            const allRowValues = Object.values(rowData).join(" ").toLowerCase();
+            return allRowValues.includes(secondSearchValue.toLowerCase());
+          });
+        } else {
+          secondOutput =
+            secondSearchValue.trim() !== "" && secondHeaderForSearch
+              ? tableData.filter(
+                  (rowData) =>
+                    rowData[secondHeaderForSearch] &&
+                    rowData[secondHeaderForSearch]
+                      .toString()
+                      .toLowerCase()
+                      .includes(secondSearchValue.toLowerCase())
+                )
+              : [];
+        }
+      }
+
+      if (selectedRadioValue === "and" && secondOutput.length > 0) {
+        combinedOutput = combinedOutput.filter((row) =>
+          secondOutput.includes(row)
+        );
+      } else if (selectedRadioValue === "or" && secondOutput.length > 0) {
+        combinedOutput = [...combinedOutput, ...secondOutput];
+      }
+    }
+
+    if (!combinedOutput.length && secondHeaderForSearch !== "all") {
+      if (!output.length && secondSearchValue.trim()) {
+        toast.warning("No results", {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 2000,
+        });
+      } else if (!output.length && !secondSearchValue.trim()) {
+        toast.warning("No results", {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 2000,
+        });
+      } else {
+        setSearchedData(tableData);
+      }
+      setFindLoading(false);
+      return;
+    }
+
+    setSearchedData(combinedOutput);
+    setFindLoading(false);
   };
 
   //updating tabledata
   const handleApplyChanges = () => {
     if (selectedRowData.length > 0) {
-      setUnsavedChanges(true);
       const updatedSelectedRows = selectedRowData.map((row) => ({
         ...row,
         reporting_tone: reportingTone || row.reporting_tone,
@@ -367,10 +319,23 @@ const ResearchTable = () => {
         return updatedRow || row;
       });
 
+      // Update only the items that exist in selectedRowData in both searchedData and tableData
+      const updatedSearchedData = searchedData.map((row) => {
+        const updatedRow = updatedSelectedRows.find(
+          (selectedRow) => selectedRow.social_feed_id === row.social_feed_id
+        );
+        return updatedRow || row;
+      });
+
       setUpdatedRows(updatedSelectedRows);
       setTableData(updatedTableData);
+      setSearchedData(updatedSearchedData);
+      setUnsavedChanges(true);
     } else {
-      toast.warning("Please select at least one item to update");
+      toast.warning("Please select at least one item to update", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+      });
     }
   };
 
@@ -447,141 +412,12 @@ const ResearchTable = () => {
       return () => clearTimeout(timeoutId);
     }
   }, [savedSuccess]);
-  const highlightSearch = (text, header) => {
-    if (
-      ((headerForSearch === header && searchValue.trim()) ||
-        (secondHeaderForSearch === header && secondSearchValue.trim())) &&
-      text
-    ) {
-      const searchRegex = new RegExp(
-        `(${headerForSearch === header ? searchValue : secondSearchValue})`,
-        "gi"
-      );
-      const parts = text.split(searchRegex);
 
-      return parts.map((part, index) => {
-        if (searchRegex.test(part)) {
-          return (
-            <span
-              key={index}
-              className={`text-white ${
-                headerForSearch === header ? "bg-yellow-400" : "bg-gray-500"
-              }`}
-            >
-              {part}
-            </span>
-          );
-        } else {
-          return part;
-        }
-      });
-    }
-
-    return text;
-  };
-
-  const renderTableData = () => {
-    const dataToRender = searchedData.length > 0 ? searchedData : tableData;
-
-    return tableData.length > 0 && showTableData ? (
-      dataToRender.map((rowData, rowIndex) => (
-        <TableRow key={rowIndex}>
-          <TableCell
-            size="small"
-            padding="checkbox"
-            style={{
-              position: "sticky",
-              top: 28,
-              backgroundColor: "#e6e1e1",
-              fontSize: "0.8em",
-            }}
-            sx={{
-              padding: "10px",
-            }}
-          >
-            <Checkbox
-              size="small"
-              checked={selectedRowData.includes(rowData)}
-              onChange={() => handleRowSelect(rowData)}
-              style={{ color: "black" }}
-            />
-          </TableCell>
-          {tableHeaders?.map((header) => (
-            <React.Fragment key={header}>
-              {(header === "HEADLINE" ||
-                header === "REPORTING SUBJECT" ||
-                header === "DETAIL SUMMARY" ||
-                header === "KEYWORD") && (
-                <TableCell
-                  sx={{
-                    padding: "10px",
-                  }}
-                >
-                  <Tooltip
-                    title={rowData[header.toLowerCase().replace(/ /g, "_")]}
-                    placement="top"
-                    enterDelay={1000}
-                    leaveDelay={200}
-                    TransitionProps={{ timeout: 1500 }}
-                  >
-                    <div
-                      style={{
-                        display: "-webkit-box",
-                        WebkitBoxOrient: "vertical",
-                        WebkitLineClamp: 2,
-                        fontSize: "0.8em",
-                        fontWeight: "bold",
-                      }}
-                      className={`text-xs w-28 text-black overflow-hidden whitespace-normal" ${
-                        (header === "REPORTING SUBJECT" && "w-16") ||
-                        (header === "HEADLINE" && "w-72") ||
-                        (header === "DETAIL SUMMARY" && "w-[25rem]")
-                      }`}
-                    >
-                      {highlightSearch(
-                        rowData[header.toLowerCase().replace(/ /g, "_")],
-                        header.toLowerCase().replace(/ /g, "_")
-                      )}
-                    </div>
-                  </Tooltip>
-                </TableCell>
-              )}
-              {header !== "HEADLINE" &&
-                header !== "REPORTING SUBJECT" &&
-                header !== "DETAIL SUMMARY" &&
-                header !== "KEYWORD" && (
-                  <TableCell size="small">
-                    <div
-                      className="text-xs w-16 text-black overflow-hidden whitespace-normal mx-3"
-                      style={{
-                        display: "-webkit-box",
-                        WebkitBoxOrient: "vertical",
-                        WebkitLineClamp: 2,
-                        marginLeft: -3,
-                        fontSize: "0.8em",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {highlightSearch(
-                        rowData[header.toLowerCase().replace(/ /g, "_")],
-                        header.toLowerCase().replace(/ /g, "_")
-                      )}
-                    </div>
-                  </TableCell>
-                )}
-            </React.Fragment>
-          ))}
-        </TableRow>
-      ))
-    ) : (
-      <table className="bg-primary w-screen border h-screen text-gray-400 text-sm text-center py-4"></table>
-    );
-  };
   return (
     <div className="relative">
       {sortLoading && (
         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 bg-opacity-50 z-50">
-          <Loader /> {/* Replace this with your Loader component */}
+          <Loader />
         </div>
       )}
       {/* filters for editing the cells */}
@@ -615,7 +451,7 @@ const ResearchTable = () => {
         <TextFields
           placeholder={"Find Text"}
           value={searchValue}
-          onChange={handleFirstSearchValue}
+          setValue={setSearchValue}
         />
         {/* radio button */}
         <FormControl component="fieldset" sx={{ height: 25 }}>
@@ -660,7 +496,7 @@ const ResearchTable = () => {
               <em>select</em>
             </MenuItem>
 
-            {DDSearchValues.map((item) => (
+            {DDSearchValues.slice(1).map((item) => (
               <MenuItem
                 value={item.value}
                 key={item.title}
@@ -674,9 +510,12 @@ const ResearchTable = () => {
         <TextFields
           placeholder={"Find Text"}
           value={secondSearchValue}
-          onChange={handleSecondSearchValue}
+          setValue={setSecondSearchValue}
         />
-        <Button btnText={"Find"} onClick={handleSearch} />
+        <Button
+          btnText={findLoading ? "Loading..." : "Find"}
+          onClick={handleSearch}
+        />
       </div>
       <hr className="mt-1" />
       <div className="flex items-center flex-wrap gap-4">
@@ -721,7 +560,7 @@ const ResearchTable = () => {
             inputProps={{ "aria-label": "Without label" }}
             MenuProps={{ PaperProps: { style: { height: 200 } } }}
           >
-            <MenuItem value="" disabled>
+            <MenuItem value="" sx={{ color: "lightgrey" }}>
               <em>Select</em>
             </MenuItem>
             <MenuItem value="detail_summary" sx={{ fontSize: "0.8em" }}>
@@ -729,12 +568,10 @@ const ResearchTable = () => {
             </MenuItem>
           </Select>
         </FormControl>
-        <TextField
+        <TextFields
+          placeholder={"Select a Summary"}
           value={editValue}
-          onChange={(e) => setEditValue(e.target.value)}
-          size="small"
-          variant="outlined"
-          InputProps={{ style: { fontSize: "0.8rem", height: 25, top: 6 } }}
+          setValue={setEditValue}
         />
         <Button btnText={"Apply"} onClick={handleApplyChanges} />
         <button
@@ -752,75 +589,21 @@ const ResearchTable = () => {
           )}
         </div>
       </div>
-
-      {/* main table */}
-      <div className="mt-2 overflow-scroll h-screen">
-        <table>
-          <thead>
-            <tr className="sticky left-0 top-0 bg-[#150734]">
-              {" "}
-              {tableHeaders.length > 0 && (
-                <td style={{ display: "flex", justifyItems: "center" }}>
-                  <input
-                    type="checkbox"
-                    style={{
-                      width: "17px",
-                      height: "17px",
-                      marginLeft: "1rem",
-                      marginTop: "0.5rem",
-                    }}
-                    checked={selectedRowData.length === tableData.length}
-                    onChange={handleMasterCheckboxChange}
-                    className={classes.headerCheckBox}
-                  />
-                </td>
-              )}
-              {showTableData &&
-                tableHeaders?.map((header) => (
-                  <td
-                    key={header}
-                    onClick={() =>
-                      handleSort(header.toLowerCase().replace(/ /g, "_"))
-                    }
-                    className={
-                      "text-white cursor-pointer font-thin text-xs tracking-widest"
-                    }
-                  >
-                    <span className="flex items-center text-sm">
-                      <IoIosArrowRoundUp
-                        style={{
-                          fontSize: "x-small",
-                          color:
-                            sortColumn ===
-                              header.toLowerCase().replace(/ /g, "_") &&
-                            sortDirection === "asc"
-                              ? "red"
-                              : "#fff",
-                        }}
-                      />
-                      <IoIosArrowRoundDown
-                        style={{
-                          fontSize: "x-small",
-                          color:
-                            sortColumn ===
-                              header.toLowerCase().replace(/ /g, "_") &&
-                            sortDirection === "desc"
-                              ? "red"
-                              : "#fff",
-                        }}
-                      />
-                    </span>
-                    <span className="ml-2">
-                      {getHeaderAbbreviation(header)}
-                    </span>
-                  </td>
-                ))}
-            </tr>
-          </thead>
-
-          <tbody className="bg-[#e6e1e1]">{renderTableData()}</tbody>
-        </table>
-      </div>
+      <MainTable
+        searchedData={searchedData}
+        selectedRowData={selectedRowData}
+        setSelectedRowData={setSelectedRowData}
+        sortColumn={sortColumn}
+        sortDirection={sortDirection}
+        setSortDirection={setSortDirection}
+        setSortColumn={setSortColumn}
+        // second part
+        // highlightFlag={highlightFlag}
+        // headerForSearch={headerForSearch}
+        // secondHeaderForSearch={secondHeaderForSearch}
+        // searchValue={searchValue}
+        // secondSearchValue={secondSearchValue}
+      />
     </div>
   );
 };

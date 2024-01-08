@@ -44,10 +44,29 @@ const ReasearchScreen = () => {
   const classes = useStyle();
   const [clients, setClients] = useState([]);
 
-  // const [clientName, setClientName] = useState([]);
+  //languages
+  const [language, setLanguage] = useState([]);
+  // selecting continent
+  const [continent, setContinent] = useState([]);
+  // basis onn the selection of the continent showing th country
+  const [country, setCountry] = useState([]);
   //languages from getting an api
   const [languages, setLanguages] = useState([]);
+  // image
+  const [isImage, setIsImage] = useState(0);
+  // video
+  const [isVideo, setIsVideo] = useState(0);
   // qcusers data
+  // data type separate
+  const [dateType, setDateType] = useState("article");
+  // qc by defaut it will be null
+  const [qc1done, setQc1done] = useState(0);
+  // qc2done
+  const [qc2done, setQc2done] = useState(0);
+  // qc1by
+  const [qc1by, setQc1by] = useState([]);
+  // qc2by
+  const [qc2by, setQc2by] = useState([]);
   const [qcUsersData, setQcUsersData] = useState([]);
   const [filteredCountries, setFilteredCountries] = useState([]);
   // loading state for the tableData fetching
@@ -70,29 +89,9 @@ const ReasearchScreen = () => {
     setFromDate,
     dateNow,
     setDateNow,
-    qc1done,
-    setQc1done,
-    qc2done,
-    setQc2done,
-    qc1by,
-    setQc1by,
-    qc2by,
-    setQc2by,
-    isImage,
-    setIsImage,
-    isVideo,
-    setIsVideo,
     // searchValue,
     // setSearchValue,
     setShowTableData,
-    dateType,
-    setDateType,
-    language,
-    setLanguage,
-    continent,
-    setContinent,
-    country,
-    setCountry,
     companyId,
     userToken,
     setTableData,
@@ -266,7 +265,10 @@ const ReasearchScreen = () => {
     setTableData([]);
     if (clientId) {
       if (unsavedChanges) {
-        toast.error("You might be missing to save");
+        toast.error("You might be missing to save", {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 3000,
+        });
       } else {
         setShowTableData(companies ? true : false);
         setTableDataLoading(true);
@@ -363,7 +365,10 @@ const ReasearchScreen = () => {
         }
       }
     } else {
-      toast.warn("Please select a client.");
+      toast.warn("Please select a client.", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+      });
     }
   };
   const selectedUsernamesqc1 = qcUsersData

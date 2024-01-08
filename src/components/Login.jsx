@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -40,8 +40,8 @@ const useStyles = makeStyles(() => ({
 
 const Login = () => {
   const classes = useStyles();
-  const [password, setPassword] = useState("");
-  const { name, setName, setUserToken } = useContext(ResearchContext);
+  const { name, setName, password, setPassword, setUserToken } =
+    useContext(ResearchContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -62,10 +62,16 @@ const Login = () => {
         sessionStorage.setItem("user", true);
         setUserToken(localStorage.getItem("user"));
         navigate("/");
-        toast.success(`Welcome ${loginname}`);
+        toast.success(`Welcome ${loginname}`, {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 3000,
+        });
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message, {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+      });
     }
   };
 

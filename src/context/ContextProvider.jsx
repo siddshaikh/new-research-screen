@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 export const ResearchContext = createContext(null);
 const ContextProvider = ({ children }) => {
@@ -13,6 +14,7 @@ const ContextProvider = ({ children }) => {
   //state for the login component
   const [researchOpen, setResearchOpen] = useState(false);
   const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
   // for logout timer
   const [timerId, setTimerId] = useState(null);
   // clientId for the fetching company
@@ -29,20 +31,6 @@ const ContextProvider = ({ children }) => {
   // table headers in uppercase
   const [tableHeaders, setTableHeaders] = useState([]);
 
-  // data type separate
-  const [dateType, setDateType] = useState("article");
-  // qc by defaut it will be null
-  const [qc1done, setQc1done] = useState(0);
-  // qc2done
-  const [qc2done, setQc2done] = useState(0);
-  // qc1by
-  const [qc1by, setQc1by] = useState([]);
-  // qc2by
-  const [qc2by, setQc2by] = useState([]);
-  // image
-  const [isImage, setIsImage] = useState(0);
-  // video
-  const [isVideo, setIsVideo] = useState(0);
   // search text
   // const [searchValue, setSearchValue] = useState("");
   // dates
@@ -62,12 +50,7 @@ const ContextProvider = ({ children }) => {
 
   // dates end
   const [showTableData, setShowTableData] = useState(false);
-  //languages
-  const [language, setLanguage] = useState([]);
-  // selecting continent
-  const [continent, setContinent] = useState([]);
-  // basis onn the selection of the continent showing th country
-  const [country, setCountry] = useState([]);
+
   // if user forgot the save the data after apply changes in  table
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   // qc2print
@@ -81,19 +64,32 @@ const ContextProvider = ({ children }) => {
     }
     setUserToken("");
     localStorage.removeItem("user");
-    setQc1by([]);
-    setQc2by([]);
     setClientId("");
     setUnsavedChanges(false);
     navigate("/login");
   };
+  const getAutoToken = async () => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}authenticate/`,
+        {
+          loginname: name,
+          password: password,
+        }
+      );
+      localStorage.setItem("user", res.data.access_token);
+      setUserToken(localStorage.getItem("user"));
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     const timer = setTimeout(() => {
-      setUserToken(""); // Clear user token
-      localStorage.removeItem("user"); // Remove token from storage
-      toast.warning("Session Expired.");
+      setUserToken("");
+      getAutoToken();
+      toast.success("New Session Started");
       navigate("/login");
-    }, 30 * 60 * 1000); // 30 minutes in milliseconds
+    }, 30 * 60 * 1000);
 
     setLogoutTimer(timer);
 
@@ -111,6 +107,8 @@ const ContextProvider = ({ children }) => {
         setResearchOpen,
         name,
         setName,
+        password,
+        setPassword,
         setUserToken,
         userToken,
         timerId,
@@ -125,32 +123,12 @@ const ContextProvider = ({ children }) => {
         setFromDate,
         dateNow,
         setDateNow,
-        qc1done,
-        setQc1done,
-        qc2done,
-        setQc2done,
-        qc1by,
-        setQc1by,
-        qc2by,
-        setQc2by,
-        isImage,
-        setIsImage,
-        isVideo,
-        setIsVideo,
         // searchValue,
         // setSearchValue,
         tableFetchLoading,
         setTableFetchLoading,
         showTableData,
         setShowTableData,
-        dateType,
-        setDateType,
-        language,
-        setLanguage,
-        continent,
-        setContinent,
-        country,
-        setCountry,
         companyId,
         setCompanyId,
         tableData,

@@ -249,6 +249,10 @@ export const countriesByContinent = [
 ];
 export const DDSearchValues = [
   {
+    title: "All",
+    value: "all",
+  },
+  {
     title: "Headline",
     value: "headline",
   },
