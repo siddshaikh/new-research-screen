@@ -234,10 +234,17 @@ const ResearchTable = () => {
         autoClose: 2000,
       });
     }
+
     setTableLoading(true);
     let output = [];
-
-    if (headerForSearch === "all") {
+    if (headerForSearch !== "all" && secondHeaderForSearch === "all") {
+      toast.warning("Please select valid case", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 2000,
+      });
+      output = [...tableData];
+    } else if (headerForSearch === "all") {
+      // Search across all data
       if (secondHeaderForSearch === "all" && secondSearchValue.trim() !== "") {
         output = tableData.filter((rowData) => {
           const allRowValues = Object.values(rowData).join(" ").toLowerCase();
@@ -254,78 +261,67 @@ const ResearchTable = () => {
           secondSearchValue.trim() !== ""
         ) {
           output = output.filter((rowData) => {
-            const secondAllRowValues = rowData[secondHeaderForSearch]
-              ?.toString()
+            const secondAllRowValues = (rowData[secondHeaderForSearch] ?? "")
+              .toString()
               .toLowerCase();
             return secondAllRowValues.includes(secondSearchValue.toLowerCase());
           });
         }
       }
-    } else if (
-      secondHeaderForSearch === headerForSearch &&
-      secondHeaderForSearch !== "all"
-    ) {
-      output = tableData.filter((rowData) => {
-        const allRowValues = rowData[headerForSearch]?.toString().toLowerCase();
-        return (
-          allRowValues.includes(searchValue.toLowerCase()) &&
-          allRowValues.includes(secondSearchValue.toLowerCase())
-        );
-      });
-    } else {
-      let firstOutput =
-        searchValue.trim() !== "" && headerForSearch
-          ? tableData.filter(
-              (rowData) =>
-                rowData[headerForSearch] &&
-                rowData[headerForSearch]
-                  .toString()
-                  .toLowerCase()
-                  .includes(searchValue.toLowerCase())
-            )
-          : [];
 
-      let secondOutput =
-        secondSearchValue.trim() !== "" && secondHeaderForSearch
-          ? tableData.filter(
-              (rowData) =>
-                rowData[secondHeaderForSearch] &&
-                rowData[secondHeaderForSearch]
-                  .toString()
-                  .toLowerCase()
-                  .includes(secondSearchValue.toLowerCase())
-            )
-          : [];
-
-      if (secondHeaderForSearch !== "all" && secondOutput.length === 0) {
-        toast.warning("No results found for the second search", {
+      if (output.length === 0) {
+        output = tableData;
+        toast.warning("No results found. Showing all data.", {
           position: toast.POSITION.TOP_CENTER,
           autoClose: 2000,
         });
       }
-
-      if (
-        selectedRadioValue === "and" &&
-        firstOutput.length > 0 &&
-        secondOutput.length > 0
-      ) {
-        output = firstOutput.filter((row) => secondOutput.includes(row));
-      } else if (
-        selectedRadioValue === "or" &&
-        (firstOutput.length > 0 || secondOutput.length > 0)
-      ) {
-        output = [...firstOutput, ...secondOutput];
-      }
-    }
-
-    if (
-      output.length === 0 &&
-      (headerForSearch !== "all" || secondHeaderForSearch !== "all")
-    ) {
-      toast.warning("No results", {
-        position: toast.POSITION.TOP_CENTER,
-        autoClose: 2000,
+    } else {
+      // Specific header selection
+      output = tableData.filter((rowData) => {
+        const specificRowValue = (rowData[headerForSearch] ?? "")
+          .toString()
+          .toLowerCase();
+        return specificRowValue.includes(searchValue?.toLowerCase());
       });
+
+      if (output.length === 0) {
+        toast.warning(
+          "No results found for the first header. Showing all data.",
+          {
+            position: toast.POSITION.TOP_CENTER,
+            autoClose: 2000,
+          }
+        );
+        output = tableData;
+      } else if (
+        secondHeaderForSearch !== "all" &&
+        secondHeaderForSearch !== headerForSearch &&
+        secondSearchValue.trim() !== ""
+      ) {
+        const secondOutput = tableData.filter((rowData) => {
+          const specificSecondRowValue = (rowData[secondHeaderForSearch] ?? "")
+            .toString()
+            .toLowerCase();
+          return specificSecondRowValue.includes(
+            secondSearchValue.toLowerCase()
+          );
+        });
+
+        if (selectedRadioValue === "and") {
+          output = output.filter((row) => secondOutput.includes(row));
+        } else if (selectedRadioValue === "or") {
+          output = [...new Set([...output, ...secondOutput])];
+        }
+
+        if (output.length === 0) {
+          toast.warning("No results found. Showing all data.", {
+            position: toast.POSITION.TOP_CENTER,
+            autoClose: 2000,
+          });
+          output = tableData;
+        }
+      }
     }
 
     setSearchedData(output);
