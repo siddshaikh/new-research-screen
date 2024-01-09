@@ -221,16 +221,15 @@ const ResearchTable = () => {
   };
   // handle Search Table Values
   const handleSearch = () => {
+    setTableLoading(true);
     let output = [];
 
     if (headerForSearch === "all") {
-      setTableLoading(true);
       output = tableData.filter((rowData) => {
         const allRowValues = Object.values(rowData).join(" ").toLowerCase();
         return allRowValues.includes(searchValue.toLowerCase());
       });
     } else {
-      setTableLoading(true);
       output =
         searchValue.trim() !== "" && headerForSearch
           ? tableData.filter(
@@ -242,11 +241,9 @@ const ResearchTable = () => {
                   .includes(searchValue.toLowerCase())
             )
           : [];
-      setTableLoading(true);
     }
 
     if (secondHeaderForSearch === headerForSearch) {
-      setTableLoading(true);
       // If the second header is the same as the first, search in the entire dataset
       output = tableData.filter((rowData) => {
         const allRowValues = Object.values(rowData).join(" ").toLowerCase();
@@ -257,7 +254,6 @@ const ResearchTable = () => {
       secondHeaderForSearch !== headerForSearch &&
       secondHeaderForSearch !== "all"
     ) {
-      setTableLoading(true);
       let secondOutput =
         secondSearchValue.trim() !== "" && secondHeaderForSearch
           ? tableData.filter(
