@@ -88,7 +88,6 @@ const ContextProvider = ({ children }) => {
       setUserToken("");
       getAutoToken();
       toast.success("New Session Started");
-      navigate("/login");
     }, 30 * 60 * 1000);
 
     setLogoutTimer(timer);

@@ -70,7 +70,7 @@ const ResearchTable = () => {
   const [secondHeaderForSearch, setSecondHeaderForSearch] = useState("");
   const [secondSearchValue, setSecondSearchValue] = useState("");
   const [searchedData, setSearchedData] = useState([]);
-  const [findLoading, setFindLoading] = useState(false);
+  const [tableLoading, setTableLoading] = useState(false);
   // data for the edit
   const [editValue, setEditValue] = useState("");
   // Function to fetch table data
@@ -152,7 +152,7 @@ const ResearchTable = () => {
     const editRowValues = selectedRowData
       ?.map((item) => item[editRow])
       .filter((value) => value !== undefined);
-    setEditValue(editRowValues ? editRowValues.join(" ") : "");
+    setEditValue(editRowValues[0]);
   }, [selectedRowData, editRow]);
 
   const applySort = async () => {
@@ -202,6 +202,7 @@ const ResearchTable = () => {
     setSearchValue("");
     setSelectedRadioValue(null);
     setSecondHeaderForSearch("");
+    setSecondSearchValue("");
   };
   const handleSecondSearchUsingHeader = (event) => {
     if (!selectedRadioValue) {
@@ -220,16 +221,16 @@ const ResearchTable = () => {
   };
   // handle Search Table Values
   const handleSearch = () => {
-    setFindLoading(true);
-
     let output = [];
 
     if (headerForSearch === "all") {
+      setTableLoading(true);
       output = tableData.filter((rowData) => {
         const allRowValues = Object.values(rowData).join(" ").toLowerCase();
         return allRowValues.includes(searchValue.toLowerCase());
       });
     } else {
+      setTableLoading(true);
       output =
         searchValue.trim() !== "" && headerForSearch
           ? tableData.filter(
@@ -241,44 +242,47 @@ const ResearchTable = () => {
                   .includes(searchValue.toLowerCase())
             )
           : [];
+      setTableLoading(true);
     }
 
-    let combinedOutput = output.slice();
-
-    if (selectedRadioValue === "and" || selectedRadioValue === "or") {
-      let secondOutput = [];
-
-      if (secondHeaderForSearch && secondHeaderForSearch !== headerForSearch) {
-        if (secondHeaderForSearch === "all") {
-          secondOutput = tableData.filter((rowData) => {
-            const allRowValues = Object.values(rowData).join(" ").toLowerCase();
-            return allRowValues.includes(secondSearchValue.toLowerCase());
-          });
-        } else {
-          secondOutput =
-            secondSearchValue.trim() !== "" && secondHeaderForSearch
-              ? tableData.filter(
-                  (rowData) =>
-                    rowData[secondHeaderForSearch] &&
-                    rowData[secondHeaderForSearch]
-                      .toString()
-                      .toLowerCase()
-                      .includes(secondSearchValue.toLowerCase())
-                )
-              : [];
-        }
-      }
+    if (secondHeaderForSearch === headerForSearch) {
+      setTableLoading(true);
+      // If the second header is the same as the first, search in the entire dataset
+      output = tableData.filter((rowData) => {
+        const allRowValues = Object.values(rowData).join(" ").toLowerCase();
+        return allRowValues.includes(secondSearchValue.toLowerCase());
+      });
+    } else if (
+      secondHeaderForSearch &&
+      secondHeaderForSearch !== headerForSearch &&
+      secondHeaderForSearch !== "all"
+    ) {
+      setTableLoading(true);
+      let secondOutput =
+        secondSearchValue.trim() !== "" && secondHeaderForSearch
+          ? tableData.filter(
+              (rowData) =>
+                rowData[secondHeaderForSearch] &&
+                rowData[secondHeaderForSearch]
+                  .toString()
+                  .toLowerCase()
+                  .includes(secondSearchValue.toLowerCase())
+            )
+          : [];
 
       if (selectedRadioValue === "and" && secondOutput.length > 0) {
-        combinedOutput = combinedOutput.filter((row) =>
-          secondOutput.includes(row)
-        );
+        setTableLoading(true);
+        output = output.filter((row) => secondOutput.includes(row));
+        setTableLoading(false);
       } else if (selectedRadioValue === "or" && secondOutput.length > 0) {
-        combinedOutput = [...combinedOutput, ...secondOutput];
+        setTableLoading(true);
+        output = [...output, ...secondOutput];
+        setTableLoading(false);
       }
     }
 
-    if (!combinedOutput.length && secondHeaderForSearch !== "all") {
+    if (!output.length && secondHeaderForSearch !== "all") {
+      // Handling cases where no results are found
       if (!output.length && secondSearchValue.trim()) {
         toast.warning("No results", {
           position: toast.POSITION.TOP_CENTER,
@@ -290,16 +294,16 @@ const ResearchTable = () => {
           autoClose: 2000,
         });
       } else {
+        setTableLoading(true);
         setSearchedData(tableData);
+        setTableLoading(false);
       }
-      setFindLoading(false);
       return;
     }
 
-    setSearchedData(combinedOutput);
-    setFindLoading(false);
+    setSearchedData(output);
+    setTableLoading(false);
   };
-
   //updating tabledata
   const handleApplyChanges = () => {
     if (selectedRowData.length > 0) {
@@ -415,11 +419,12 @@ const ResearchTable = () => {
 
   return (
     <div className="relative">
-      {sortLoading && (
-        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 bg-opacity-50 z-50">
-          <Loader />
-        </div>
-      )}
+      {sortLoading ||
+        (tableLoading && (
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 bg-opacity-50 z-50">
+            <Loader />
+          </div>
+        ))}
       {/* filters for editing the cells */}
       <div className="flex items-center gap-2 flex-wrap">
         {/* first find */}
@@ -496,7 +501,7 @@ const ResearchTable = () => {
               <em>select</em>
             </MenuItem>
 
-            {DDSearchValues.slice(1).map((item) => (
+            {DDSearchValues.map((item) => (
               <MenuItem
                 value={item.value}
                 key={item.title}
@@ -512,10 +517,7 @@ const ResearchTable = () => {
           value={secondSearchValue}
           setValue={setSecondSearchValue}
         />
-        <Button
-          btnText={findLoading ? "Loading..." : "Find"}
-          onClick={handleSearch}
-        />
+        <Button btnText={"Find"} onClick={handleSearch} />
       </div>
       <hr className="mt-1" />
       <div className="flex items-center flex-wrap gap-4">
@@ -597,12 +599,6 @@ const ResearchTable = () => {
         sortDirection={sortDirection}
         setSortDirection={setSortDirection}
         setSortColumn={setSortColumn}
-        // second part
-        // highlightFlag={highlightFlag}
-        // headerForSearch={headerForSearch}
-        // secondHeaderForSearch={secondHeaderForSearch}
-        // searchValue={searchValue}
-        // secondSearchValue={secondSearchValue}
       />
     </div>
   );
