@@ -217,20 +217,63 @@ const ResearchTable = () => {
   };
   // radio change
   const handleChange = (event) => {
+    if (!headerForSearch) {
+      toast.error("Please Select a Header first", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 2000,
+      });
+      return;
+    }
     setSelectedRadioValue(event.target.value);
   };
   // handle Search Table Values
   const handleSearch = () => {
+    if (!headerForSearch) {
+      return toast.warning("Please select a Header", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 2000,
+      });
+    }
     setTableLoading(true);
     let output = [];
 
     if (headerForSearch === "all") {
+      if (secondHeaderForSearch === "all" && secondSearchValue.trim() !== "") {
+        output = tableData.filter((rowData) => {
+          const allRowValues = Object.values(rowData).join(" ").toLowerCase();
+          return allRowValues.includes(secondSearchValue.toLowerCase());
+        });
+      } else {
+        output = tableData.filter((rowData) => {
+          const allRowValues = Object.values(rowData).join(" ").toLowerCase();
+          return allRowValues.includes(searchValue.toLowerCase());
+        });
+
+        if (
+          secondHeaderForSearch !== "all" &&
+          secondSearchValue.trim() !== ""
+        ) {
+          output = output.filter((rowData) => {
+            const secondAllRowValues = rowData[secondHeaderForSearch]
+              ?.toString()
+              .toLowerCase();
+            return secondAllRowValues.includes(secondSearchValue.toLowerCase());
+          });
+        }
+      }
+    } else if (
+      secondHeaderForSearch === headerForSearch &&
+      secondHeaderForSearch !== "all"
+    ) {
       output = tableData.filter((rowData) => {
-        const allRowValues = Object.values(rowData).join(" ").toLowerCase();
-        return allRowValues.includes(searchValue.toLowerCase());
+        const allRowValues = rowData[headerForSearch]?.toString().toLowerCase();
+        return (
+          allRowValues.includes(searchValue.toLowerCase()) &&
+          allRowValues.includes(secondSearchValue.toLowerCase())
+        );
       });
     } else {
-      output =
+      let firstOutput =
         searchValue.trim() !== "" && headerForSearch
           ? tableData.filter(
               (rowData) =>
@@ -241,19 +284,7 @@ const ResearchTable = () => {
                   .includes(searchValue.toLowerCase())
             )
           : [];
-    }
 
-    if (secondHeaderForSearch === headerForSearch) {
-      // If the second header is the same as the first, search in the entire dataset
-      output = tableData.filter((rowData) => {
-        const allRowValues = Object.values(rowData).join(" ").toLowerCase();
-        return allRowValues.includes(secondSearchValue.toLowerCase());
-      });
-    } else if (
-      secondHeaderForSearch &&
-      secondHeaderForSearch !== headerForSearch &&
-      secondHeaderForSearch !== "all"
-    ) {
       let secondOutput =
         secondSearchValue.trim() !== "" && secondHeaderForSearch
           ? tableData.filter(
@@ -266,34 +297,41 @@ const ResearchTable = () => {
             )
           : [];
 
-      if (selectedRadioValue === "and" && secondOutput.length > 0) {
-        output = output.filter((row) => secondOutput.includes(row));
-      } else if (selectedRadioValue === "or" && secondOutput.length > 0) {
-        output = [...output, ...secondOutput];
+      if (secondHeaderForSearch !== "all" && secondOutput.length === 0) {
+        toast.warning("No results found for the second search", {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 2000,
+        });
+      }
+
+      if (
+        selectedRadioValue === "and" &&
+        firstOutput.length > 0 &&
+        secondOutput.length > 0
+      ) {
+        output = firstOutput.filter((row) => secondOutput.includes(row));
+      } else if (
+        selectedRadioValue === "or" &&
+        (firstOutput.length > 0 || secondOutput.length > 0)
+      ) {
+        output = [...firstOutput, ...secondOutput];
       }
     }
 
-    if (!output.length && secondHeaderForSearch !== "all") {
-      // Handling cases where no results are found
-      if (!output.length && secondSearchValue.trim()) {
-        toast.warning("No results", {
-          position: toast.POSITION.TOP_CENTER,
-          autoClose: 2000,
-        });
-      } else if (!output.length && !secondSearchValue.trim()) {
-        toast.warning("No results", {
-          position: toast.POSITION.TOP_CENTER,
-          autoClose: 2000,
-        });
-      } else {
-        setSearchedData(tableData);
-      }
-      return;
+    if (
+      output.length === 0 &&
+      (headerForSearch !== "all" || secondHeaderForSearch !== "all")
+    ) {
+      toast.warning("No results", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 2000,
+      });
     }
 
     setSearchedData(output);
     setTableLoading(false);
   };
+
   //updating tabledata
   const handleApplyChanges = () => {
     if (selectedRowData.length > 0) {
