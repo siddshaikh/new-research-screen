@@ -271,13 +271,9 @@ const ResearchTable = () => {
           : [];
 
       if (selectedRadioValue === "and" && secondOutput.length > 0) {
-        setTableLoading(true);
         output = output.filter((row) => secondOutput.includes(row));
-        setTableLoading(false);
       } else if (selectedRadioValue === "or" && secondOutput.length > 0) {
-        setTableLoading(true);
         output = [...output, ...secondOutput];
-        setTableLoading(false);
       }
     }
 
@@ -294,9 +290,7 @@ const ResearchTable = () => {
           autoClose: 2000,
         });
       } else {
-        setTableLoading(true);
         setSearchedData(tableData);
-        setTableLoading(false);
       }
       return;
     }
