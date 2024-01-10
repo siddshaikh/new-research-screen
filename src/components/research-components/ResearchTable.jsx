@@ -618,15 +618,25 @@ const ResearchTable = () => {
               <em>select</em>
             </MenuItem>
 
-            {DDSearchValues.map((item) => (
-              <MenuItem
-                value={item.value}
-                key={item.title}
-                sx={{ fontSize: "0.8em" }}
-              >
-                {item.title}
-              </MenuItem>
-            ))}
+            {headerForSearch === "all"
+              ? DDSearchValues.slice(1).map((item) => (
+                  <MenuItem
+                    value={item.value}
+                    key={item.title}
+                    sx={{ fontSize: "0.8em" }}
+                  >
+                    {item.title}
+                  </MenuItem>
+                ))
+              : DDSearchValues.map((item) => (
+                  <MenuItem
+                    value={item.value}
+                    key={item.title}
+                    sx={{ fontSize: "0.8em" }}
+                  >
+                    {item.title}
+                  </MenuItem>
+                ))}
           </Select>
         </FormControl>
         <TextFields
