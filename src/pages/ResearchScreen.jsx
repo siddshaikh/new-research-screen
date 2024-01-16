@@ -44,7 +44,8 @@ const useStyle = makeStyles(() => ({
 const ReasearchScreen = () => {
   const classes = useStyle();
   const [clients, setClients] = useState([]);
-
+  const [company, setCompany] = useState([]);
+  const [companies, setCompanies] = useState([]);
   //languages
   const [language, setLanguage] = useState([]);
   // selecting continent
@@ -82,10 +83,6 @@ const ReasearchScreen = () => {
   const {
     clientId,
     setClientId,
-    company,
-    setCompany,
-    companies,
-    setCompanies,
     fromDate,
     setFromDate,
     dateNow,
@@ -759,7 +756,12 @@ const ReasearchScreen = () => {
           <Divider sx={{ marginTop: 1 }} />
           {/* table */}
           <div ref={researchTableRef}>
-            <ResearchTable tableData={tableData} setTableData={setTableData} />
+            <ResearchTable
+              tableData={tableData}
+              setTableData={setTableData}
+              company={company}
+              companies={companies}
+            />
           </div>
         </>
       )}

@@ -13,7 +13,7 @@ import axios from "axios";
 import { ResearchContext } from "../../context/ContextProvider";
 import useFetchData from "../../hooks/useFetchData";
 import { toast } from "react-toastify";
-import { DDSearchValues } from "../../utils/dataArray";
+import { DDEditValues, DDSearchValues } from "../../utils/dataArray";
 import Button from "../custom/Button";
 import TableDropdown from "../dropdowns/TableDropdown";
 import Loader from "../loader/Loader";
@@ -40,18 +40,11 @@ const useStyles = makeStyles(() => ({
     color: "white",
   },
 }));
-const ResearchTable = ({ tableData, setTableData }) => {
+const ResearchTable = ({ tableData, setTableData, company, companies }) => {
   const classes = useStyles();
   // context values
-  const {
-    name,
-    userToken,
-    companies,
-    company,
-    companyId,
-    setCompanyId,
-    setUnsavedChanges,
-  } = useContext(ResearchContext);
+  const { name, userToken, companyId, setCompanyId, setUnsavedChanges } =
+    useContext(ResearchContext);
 
   // state variables for posting data to database
   const [currentDateWithTime, setCurrentDateWithTime] = useState("");
@@ -430,7 +423,8 @@ const ResearchTable = ({ tableData, setTableData }) => {
         reporting_subject: subject || row.reporting_subject,
         subcategory: category || row.subcategory,
         prominence: prominence || row.prominence,
-        // detail_summary: editValue || row.detail_summary,
+        detail_summary:
+          (editRow === "detail_summary" && editValue) || row.detail_summary,
         headline: (editRow === "headline" && editValue) || row.headline,
         headsummary:
           (editRow === "headsummary" && editValue) || row.headsummary,
@@ -716,12 +710,15 @@ const ResearchTable = ({ tableData, setTableData }) => {
             <MenuItem value="" sx={{ color: "lightgrey" }}>
               <em>Select</em>
             </MenuItem>
-            <MenuItem value="headsummary" sx={{ fontSize: "0.8em" }}>
-              HeadSummary
-            </MenuItem>
-            <MenuItem value="headline" sx={{ fontSize: "0.8em" }}>
-              Headline
-            </MenuItem>
+            {DDEditValues.map((item) => (
+              <MenuItem
+                key={item.id}
+                value={item.value}
+                sx={{ fontSize: "0.8em" }}
+              >
+                {item.title}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <span className="mt-1">
@@ -747,8 +744,10 @@ const ResearchTable = ({ tableData, setTableData }) => {
   );
 };
 
-ResearchTable.prototype = {
-  tableData: PropTypes.array,
-  setTableData: PropTypes.func,
+ResearchTable.propTypes = {
+  tableData: PropTypes.array.isRequired,
+  setTableData: PropTypes.func.isRequired,
+  company: PropTypes.string.isRequired,
+  companies: PropTypes.array.isRequired,
 };
 export default ResearchTable;

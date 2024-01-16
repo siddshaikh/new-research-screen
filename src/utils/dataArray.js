@@ -297,3 +297,20 @@ export const DDSearchValues = [
     value: "headsummary",
   },
 ];
+export const DDEditValues = [
+  {
+    id: 1,
+    title: "Headline",
+    value: "headline",
+  },
+  {
+    id: 2,
+    title: "Summary",
+    value: "detail_summary",
+  },
+  {
+    id: 3,
+    title: "Head Summary",
+    value: "headsummary",
+  },
+];

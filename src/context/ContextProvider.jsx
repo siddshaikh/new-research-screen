@@ -17,9 +17,8 @@ const ContextProvider = ({ children }) => {
   // for logout timer
   const [timerId, setTimerId] = useState(null);
   // clientId for the fetching company
-  const [clientId, setClientId] = useState("");
   // company setting when getting clientId from the clients
-  const [company, setCompany] = useState([]);
+  const [clientId, setClientId] = useState("");
   // selected compnies
   const [companies, setCompanies] = useState([]);
   // loading state while fetching tableData
@@ -110,8 +109,6 @@ const ContextProvider = ({ children }) => {
         setTimerId,
         clientId,
         setClientId,
-        company,
-        setCompany,
         companies,
         setCompanies,
         fromDate,
