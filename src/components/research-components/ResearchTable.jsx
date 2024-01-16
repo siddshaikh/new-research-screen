@@ -721,12 +721,18 @@ const ResearchTable = ({ tableData, setTableData, company, companies }) => {
             ))}
           </Select>
         </FormControl>
-        <span className="mt-1">
-          <TextFields
+        <span className="mt-4">
+          {/* <TextFields
             placeholder={"Select a Summary"}
             value={editValue}
             setValue={setEditValue}
-            width={800}
+            width={"large"}
+          /> */}
+          <input
+            placeholder="select a summary"
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            className="bg-secondory border-gray-300 border-2 rounded-md px-4 outline-none md:w-[1300px] sm:w-full"
           />
         </span>
       </div>
