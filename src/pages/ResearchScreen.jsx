@@ -745,7 +745,7 @@ const ReasearchScreen = () => {
             </div>
             <button
               onClick={handleSearch}
-              className={`bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white ${
+              className={`bg-primary border border-gray-400 rounded px-10 mt-4 uppercase text-white ${
                 tableDataLoading ? "text-yellow-300" : "text-white"
               }`}
             >
