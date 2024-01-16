@@ -13,6 +13,7 @@ import {
   qc1Array,
   continents,
   countriesByContinent,
+  qc2Array,
 } from "../utils/dataArray";
 import ResearchTable from "../components/research-components/ResearchTable";
 import { ResearchContext } from "../context/ContextProvider";
@@ -60,9 +61,9 @@ const ReasearchScreen = () => {
   // data type separate
   const [dateType, setDateType] = useState("article");
   // qc by defaut it will be null
-  const [qc1done, setQc1done] = useState(0);
+  const [qc1done, setQc1done] = useState("");
   // qc2done
-  const [qc2done, setQc2done] = useState(0);
+  const [qc2done, setQc2done] = useState("");
   // qc1by
   const [qc1by, setQc1by] = useState([]);
   // qc2by
@@ -94,13 +95,12 @@ const ReasearchScreen = () => {
     setShowTableData,
     companyId,
     userToken,
-    setTableData,
     setTableHeaders,
     // data saved or not
     unsavedChanges,
     setUnsavedChanges,
-    tableData,
   } = useContext(ResearchContext);
+  const [tableData, setTableData] = useState([]);
   const researchTableRef = useRef(null);
   useEffect(() => {
     if (tableData.length > 1 && researchTableRef.current) {
@@ -283,8 +283,8 @@ const ReasearchScreen = () => {
             // search_text: searchValue,
             // qc1_by: "qc1_user", //optional using condition
             // qc2_by: "qc2_user", //optional using condition
-            is_qc1: qc1done,
-            is_qc2: qc2done,
+            //is_qc1: qc1done, //optional using condition
+            //is_qc2: qc2done, //optional using condition
             has_image: isImage,
             has_video: isVideo,
             // continent: "Asia", //optional using condition
@@ -309,6 +309,8 @@ const ReasearchScreen = () => {
             "qc2_by",
             qc2byuserToString
           );
+          addPropertyIfConditionIsTrue(qc1done, "is_qc1", qc1done);
+          addPropertyIfConditionIsTrue(qc2done, "is_qc2", qc2done);
           addPropertyIfConditionIsTrue(
             continentsToString,
             "continent",
@@ -387,7 +389,7 @@ const ReasearchScreen = () => {
       ) : (
         <>
           <div className="flex items-center gap-1 flex-wrap mt-2">
-            <div className="flex items-center mt-1" style={{ height: 25 }}>
+            <div className="flex items-center mt-2" style={{ height: 25 }}>
               <SearchableDropDown
                 options={clients}
                 setTestClient={setClientId}
@@ -458,7 +460,7 @@ const ReasearchScreen = () => {
               </FormControl>
             </div>
             {/* date filter from date */}
-            <div style={{ height: 25 }} className="flex items-center">
+            <div style={{ height: 25 }} className="flex items-center mt-1">
               <FormControl>
                 <TextField
                   size="small"
@@ -473,7 +475,7 @@ const ReasearchScreen = () => {
               </FormControl>
             </div>
             {/* date filter to now date */}
-            <div style={{ height: 25 }} className="flex items-center">
+            <div style={{ height: 25 }} className="flex items-center mt-1">
               <FormControl>
                 <TextField
                   type="datetime-local"
@@ -596,7 +598,7 @@ const ReasearchScreen = () => {
                   <MenuItem value="" disabled>
                     <em>qc2 done</em>
                   </MenuItem>
-                  {qc1Array.map((item) => (
+                  {qc2Array.map((item) => (
                     <MenuItem
                       key={item.id}
                       value={item.value}
@@ -610,7 +612,7 @@ const ReasearchScreen = () => {
             </div>
             {/* image checkbox */}
             <div className="flex items-center" style={{ height: 25 }}>
-              <div className="mt-2">
+              <div className="mt-4">
                 <CheckboxComp
                   value={isImage}
                   setValue={setIsImage}
@@ -620,7 +622,7 @@ const ReasearchScreen = () => {
             </div>
             {/* video checkbox */}
             <div style={{ height: 25 }} className="flex items-center">
-              <div className="mt-2">
+              <div className="mt-4">
                 <CheckboxComp
                   value={isVideo}
                   setValue={setIsVideo}
@@ -757,7 +759,7 @@ const ReasearchScreen = () => {
           <Divider sx={{ marginTop: 1 }} />
           {/* table */}
           <div ref={researchTableRef}>
-            <ResearchTable />
+            <ResearchTable tableData={tableData} setTableData={setTableData} />
           </div>
         </>
       )}

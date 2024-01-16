@@ -19,6 +19,7 @@ import TableDropdown from "../dropdowns/TableDropdown";
 import Loader from "../loader/Loader";
 import TextFields from "../TextFields/TextField";
 import MainTable from "../table/MainTable";
+import PropTypes from "prop-types";
 
 const useStyles = makeStyles(() => ({
   dropDowns: {
@@ -39,7 +40,7 @@ const useStyles = makeStyles(() => ({
     color: "white",
   },
 }));
-const ResearchTable = () => {
+const ResearchTable = ({ tableData, setTableData }) => {
   const classes = useStyles();
   // context values
   const {
@@ -49,8 +50,6 @@ const ResearchTable = () => {
     company,
     companyId,
     setCompanyId,
-    tableData,
-    setTableData,
     setUnsavedChanges,
   } = useContext(ResearchContext);
 
@@ -301,6 +300,7 @@ const ResearchTable = () => {
           output = tableData; // Show all data when no matching rows are found
         }
       }
+      // eslint-disable-next-line no-dupe-else-if
     } else if (headerForSearch === "all" && secondHeaderForSearch === "all") {
       if (!selectedRadioValue) {
         toast.warning("Please select AND or OR condition first!", {
@@ -430,7 +430,10 @@ const ResearchTable = () => {
         reporting_subject: subject || row.reporting_subject,
         subcategory: category || row.subcategory,
         prominence: prominence || row.prominence,
-        detail_summary: editValue || row.detail_summary,
+        // detail_summary: editValue || row.detail_summary,
+        headline: (editRow === "headline" && editValue) || row.headline,
+        headsummary:
+          (editRow === "headsummary" && editValue) || row.headsummary,
       }));
 
       const updatedTableData = tableData.map((row) => {
@@ -489,6 +492,8 @@ const ResearchTable = () => {
       REPORTINGTONE: row.reporting_tone,
       SOCIALFEEDID: row.social_feed_id,
       SUBCATEGORY: row.subcategory,
+      HEADLINE: row.headline,
+      HEADSUMMARY: row.headsummary,
     }));
 
     try {
@@ -510,6 +515,8 @@ const ResearchTable = () => {
         setCategory("");
         setProminence("");
         setUnsavedChanges(false);
+        setEditValue("");
+        setEditRow("");
       } else {
         setSuccessMessage("No data to save.");
         setPostingLoading(false);
@@ -533,7 +540,6 @@ const ResearchTable = () => {
       return () => clearTimeout(timeoutId);
     }
   }, [savedSuccess]);
-
   return (
     <div className="relative">
       {sortLoading ||
@@ -574,6 +580,7 @@ const ResearchTable = () => {
           placeholder={"Find Text"}
           value={searchValue}
           setValue={setSearchValue}
+          width="200"
         />
         {/* radio button */}
         <FormControl component="fieldset" sx={{ height: 25 }}>
@@ -678,30 +685,6 @@ const ResearchTable = () => {
           placeholder={"Category"}
           mappingValue={categories}
         />
-        {/* Details summary */}
-        <FormControl className="w-28">
-          <Select
-            value={editRow}
-            onChange={(e) => setEditRow(e.target.value)}
-            variant="outlined"
-            className={classes.dropDowns}
-            displayEmpty
-            inputProps={{ "aria-label": "Without label" }}
-            MenuProps={{ PaperProps: { style: { height: 200 } } }}
-          >
-            <MenuItem value="" sx={{ color: "lightgrey" }}>
-              <em>Select</em>
-            </MenuItem>
-            <MenuItem value="detail_summary" sx={{ fontSize: "0.8em" }}>
-              Summary
-            </MenuItem>
-          </Select>
-        </FormControl>
-        <TextFields
-          placeholder={"Select a Summary"}
-          value={editValue}
-          setValue={setEditValue}
-        />
         <Button btnText={"Apply"} onClick={handleApplyChanges} />
         <button
           className={` bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white tracking-wider ${
@@ -718,6 +701,38 @@ const ResearchTable = () => {
           )}
         </div>
       </div>
+      <div className="flex items-center gap-2 flex-wrap">
+        {/* head summary & headline*/}
+        <FormControl className="w-28">
+          <Select
+            value={editRow}
+            onChange={(e) => setEditRow(e.target.value)}
+            variant="outlined"
+            className={classes.dropDowns}
+            displayEmpty
+            inputProps={{ "aria-label": "Without label" }}
+            MenuProps={{ PaperProps: { style: { height: 200 } } }}
+          >
+            <MenuItem value="" sx={{ color: "lightgrey" }}>
+              <em>Select</em>
+            </MenuItem>
+            <MenuItem value="headsummary" sx={{ fontSize: "0.8em" }}>
+              HeadSummary
+            </MenuItem>
+            <MenuItem value="headline" sx={{ fontSize: "0.8em" }}>
+              Headline
+            </MenuItem>
+          </Select>
+        </FormControl>
+        <span className="mt-1">
+          <TextFields
+            placeholder={"Select a Summary"}
+            value={editValue}
+            setValue={setEditValue}
+            width={800}
+          />
+        </span>
+      </div>
       <MainTable
         searchedData={searchedData}
         selectedRowData={selectedRowData}
@@ -726,9 +741,14 @@ const ResearchTable = () => {
         sortDirection={sortDirection}
         setSortDirection={setSortDirection}
         setSortColumn={setSortColumn}
+        tableData={tableData}
       />
     </div>
   );
 };
 
+ResearchTable.prototype = {
+  tableData: PropTypes.array,
+  setTableData: PropTypes.func,
+};
 export default ResearchTable;

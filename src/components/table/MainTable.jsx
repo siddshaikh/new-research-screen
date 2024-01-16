@@ -26,6 +26,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 const MainTable = ({
+  tableData,
   searchedData,
   selectedRowData,
   setSelectedRowData,
@@ -34,9 +35,9 @@ const MainTable = ({
   setSortDirection,
   setSortColumn,
 }) => {
-  const { tableHeaders, tableData, showTableData } =
-    useContext(ResearchContext);
+  const { tableHeaders, showTableData } = useContext(ResearchContext);
   const classes = useStyles();
+
   const handleRowSelect = (rowData) => {
     setSelectedRowData((prevSelectedRows) => {
       const isSelected = prevSelectedRows.some((row) => row === rowData);
@@ -83,41 +84,6 @@ const MainTable = ({
       setSortDirection("asc");
     }
   };
-  // const highlightSearch = (text, header) => {
-  //   if (
-  //     ((headerForSearch === header && searchValue.trim()) ||
-  //       (secondHeaderForSearch === header && secondSearchValue.trim())) &&
-  //     text
-  //   ) {
-  //     const searchRegex = new RegExp(
-  //       `(${headerForSearch === header ? searchValue : secondSearchValue})`,
-  //       "gi"
-  //     );
-  //     const parts = text.split(searchRegex);
-
-  //     return parts.map((part, index) => {
-  //       if (searchRegex.test(part)) {
-  //         return (
-  //           <span
-  //             key={index}
-  //             className={`text-white ${
-  //               headerForSearch === header
-  //                 ? "bg-yellow-400"
-  //                 : "bg-gray-500" ||
-  //                   (headerForSearch === "all" && "bg-blue-500")
-  //             }`}
-  //           >
-  //             {part}
-  //           </span>
-  //         );
-  //       } else {
-  //         return part;
-  //       }
-  //     });
-  //   }
-
-  //   return text;
-  // };
   const renderTableData = () => {
     const dataToRender = searchedData.length > 0 ? searchedData : tableData;
 
@@ -130,8 +96,9 @@ const MainTable = ({
             style={{
               position: "sticky",
               top: 28,
-              backgroundColor: "#e6e1e1",
+              left: 0,
               fontSize: "0.8em",
+              background: "#ffff",
             }}
             sx={{
               padding: "10px",
@@ -141,7 +108,7 @@ const MainTable = ({
               size="small"
               checked={selectedRowData.includes(rowData)}
               onChange={() => handleRowSelect(rowData)}
-              style={{ color: "black" }}
+              style={{ color: "gray" }}
             />
           </TableCell>
           {tableHeaders?.map((header) => (
@@ -149,7 +116,10 @@ const MainTable = ({
               {(header === "HEADLINE" ||
                 header === "REPORTING SUBJECT" ||
                 header === "DETAIL SUMMARY" ||
-                header === "KEYWORD") && (
+                header === "KEYWORD" ||
+                header === "PUBLICATION" ||
+                header === "AUTHOR" ||
+                header === "HEADSUMMARY") && (
                 <TableCell
                   sx={{
                     padding: "10px",
@@ -173,15 +143,10 @@ const MainTable = ({
                       className={`text-xs w-28 text-black overflow-hidden whitespace-normal" ${
                         (header === "REPORTING SUBJECT" && "w-16") ||
                         (header === "HEADLINE" && "w-72") ||
-                        (header === "DETAIL SUMMARY" && "w-[25rem]")
+                        (header === "DETAIL SUMMARY" && "w-[25rem]") ||
+                        (header === "HEADSUMMARY" && "w-[25rem]")
                       }`}
                     >
-                      {/* {highlightFlag
-                        ? highlightSearch(
-                            rowData[header.toLowerCase().replace(/ /g, "_")],
-                            header.toLowerCase().replace(/ /g, "_")
-                          )
-                        : */}
                       {rowData[header.toLowerCase().replace(/ /g, "_")]}
                     </div>
                   </Tooltip>
@@ -190,7 +155,10 @@ const MainTable = ({
               {header !== "HEADLINE" &&
                 header !== "REPORTING SUBJECT" &&
                 header !== "DETAIL SUMMARY" &&
-                header !== "KEYWORD" && (
+                header !== "KEYWORD" &&
+                header !== "PUBLICATION" &&
+                header !== "AUTHOR" &&
+                header !== "HEADSUMMARY" && (
                   <TableCell size="small">
                     <div
                       className="text-xs w-16 text-black overflow-hidden whitespace-normal mx-3"
@@ -203,12 +171,6 @@ const MainTable = ({
                         fontWeight: "bold",
                       }}
                     >
-                      {/* {highlightFlag
-                        ? highlightSearch(
-                            rowData[header.toLowerCase().replace(/ /g, "_")],
-                            header.toLowerCase().replace(/ /g, "_")
-                          )
-                        : rowData[header.toLowerCase().replace(/ /g, "_")]} */}
                       {rowData[header.toLowerCase().replace(/ /g, "_")]}
                     </div>
                   </TableCell>
@@ -218,17 +180,25 @@ const MainTable = ({
         </TableRow>
       ))
     ) : (
-      <table className="bg-primary w-screen border h-screen text-gray-400 text-sm text-center py-4"></table>
+      <table className="bg-white w-screen border h-screen text-gray-400 text-sm text-center py-4"></table>
     );
   };
   return (
     <div className="mt-2 overflow-scroll h-screen">
       <table>
         <thead>
-          <tr className="sticky left-0 top-0 bg-[#150734]">
+          <tr className="sticky left-0 top-0 bg-primary ">
             {" "}
             {tableHeaders?.length > 0 && (
-              <td style={{ display: "flex", justifyItems: "center" }}>
+              <td
+                style={{
+                  display: "flex",
+                  justifyItems: "center",
+                  position: "sticky",
+                  left: 0,
+                }}
+                className="bg-primary"
+              >
                 <input
                   type="checkbox"
                   style={{
@@ -284,12 +254,13 @@ const MainTable = ({
           </tr>
         </thead>
 
-        <tbody className="bg-[#e6e1e1]">{renderTableData()}</tbody>
+        <tbody className="bg-thirdOne">{renderTableData()}</tbody>
       </table>
     </div>
   );
 };
 MainTable.propTypes = {
+  tableData: PropTypes.array,
   selectedRowData: PropTypes.array,
   sortColumn: PropTypes.string,
   sortDirection: PropTypes.oneOf(["asc", "desc"]),
@@ -297,8 +268,5 @@ MainTable.propTypes = {
   setSelectedRowData: PropTypes.func,
   setSortDirection: PropTypes.func,
   setSortColumn: PropTypes.func,
-  tableHeaders: PropTypes.array,
-  tableData: PropTypes.array,
-  showTableData: PropTypes.bool,
 };
 export default memo(MainTable);

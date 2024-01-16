@@ -19,7 +19,7 @@ function App() {
   }, []);
 
   return (
-    <div className="App bg-white">
+    <div className="App bg-secondory">
       <ToastContainer />
       <Routes>
         <Route path="/login" element={<Login />} />

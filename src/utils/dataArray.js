@@ -15,11 +15,27 @@ export const qc1Array = [
   },
   {
     id: 3,
-    option: "All",
+    option: " QC1 All",
     value: "",
   },
 ];
-
+export const qc2Array = [
+  {
+    id: 1,
+    option: "Yes",
+    value: 1,
+  },
+  {
+    id: 2,
+    option: "No",
+    value: 0,
+  },
+  {
+    id: 3,
+    option: " QC2 All",
+    value: "",
+  },
+];
 export const continents = ["Africa", "Asia", "Europe", "America", "Australia"];
 export const countriesByContinent = [
   {
@@ -275,5 +291,9 @@ export const DDSearchValues = [
   {
     title: "Keyword",
     value: "keyword",
+  },
+  {
+    title: "HeadSummary",
+    value: "headsummary",
   },
 ];

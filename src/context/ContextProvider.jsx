@@ -1,7 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import axios from "axios";
 
 export const ResearchContext = createContext(null);
@@ -26,7 +25,6 @@ const ContextProvider = ({ children }) => {
   // loading state while fetching tableData
   const [companyId, setCompanyId] = useState([]);
   // fetching table data using client and companyid and multiple params
-  const [tableData, setTableData] = useState([]);
   const [tableFetchLoading, setTableFetchLoading] = useState(false);
   // table headers in uppercase
   const [tableHeaders, setTableHeaders] = useState([]);
@@ -87,9 +85,7 @@ const ContextProvider = ({ children }) => {
     const timer = setTimeout(() => {
       setUserToken("");
       getAutoToken();
-      toast.success("New Session Started");
     }, 30 * 60 * 1000);
-
     setLogoutTimer(timer);
 
     return () => {
@@ -130,8 +126,6 @@ const ContextProvider = ({ children }) => {
         setShowTableData,
         companyId,
         setCompanyId,
-        tableData,
-        setTableData,
         tableHeaders,
         setTableHeaders,
         // data saved or not
