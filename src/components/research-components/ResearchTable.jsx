@@ -553,6 +553,7 @@ const ResearchTable = ({ tableData, setTableData, company, companies }) => {
             displayEmpty
             inputProps={{ "aria-label": "Without label" }}
             MenuProps={{ PaperProps: { style: { height: 200 } } }}
+            sx={{ fontSize: "0.8em" }}
           >
             <MenuItem value="" sx={{ color: "lightgray" }}>
               <em>select</em>
@@ -614,6 +615,7 @@ const ResearchTable = ({ tableData, setTableData, company, companies }) => {
             displayEmpty
             inputProps={{ "aria-label": "Without label" }}
             MenuProps={{ PaperProps: { style: { height: 200 } } }}
+            sx={{ fontSize: "0.8em" }}
           >
             <MenuItem value="" sx={{ color: "lightgray" }}>
               <em>select</em>
@@ -706,6 +708,7 @@ const ResearchTable = ({ tableData, setTableData, company, companies }) => {
             displayEmpty
             inputProps={{ "aria-label": "Without label" }}
             MenuProps={{ PaperProps: { style: { height: 200 } } }}
+            sx={{ fontSize: "0.8em" }}
           >
             <MenuItem value="" sx={{ color: "lightgrey" }}>
               <em>Select</em>

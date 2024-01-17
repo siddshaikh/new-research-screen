@@ -37,7 +37,6 @@ const useStyle = makeStyles(() => ({
   menuPaper: {
     maxHeight: 200,
     width: 200,
-    // marginTop: 5,
     background: "#d4c8c7",
   },
 }));
@@ -386,7 +385,7 @@ const ReasearchScreen = () => {
       ) : (
         <>
           <div className="flex items-center gap-1 flex-wrap mt-2">
-            <div className="flex items-center mt-2" style={{ height: 25 }}>
+            <div className="flex items-center mt-1" style={{ height: 25 }}>
               <SearchableDropDown
                 options={clients}
                 setTestClient={setClientId}
@@ -406,7 +405,10 @@ const ReasearchScreen = () => {
                   onChange={handleSelectedCompanies}
                   input={<OutlinedInput label="Name" />}
                   className={classes.dropDowns}
-                  MenuProps={{ PaperProps: { style: { height: 200 } } }}
+                  sx={{ fontSize: "0.8em" }}
+                  MenuProps={{
+                    PaperProps: { style: { height: 200 } },
+                  }}
                   displayEmpty
                   renderValue={(selected) => {
                     if (selected.length === 0) {
@@ -440,6 +442,7 @@ const ReasearchScreen = () => {
                   className={classes.dropDowns}
                   displayEmpty
                   inputProps={{ "aria-label": "Without label" }}
+                  sx={{ fontSize: "0.8em" }}
                 >
                   <MenuItem value="" disabled>
                     <em>Datetype</em>
@@ -457,7 +460,7 @@ const ReasearchScreen = () => {
               </FormControl>
             </div>
             {/* date filter from date */}
-            <div style={{ height: 25 }} className="flex items-center mt-1">
+            <div style={{ height: 25 }} className="flex items-center">
               <FormControl>
                 <TextField
                   size="small"
@@ -472,7 +475,7 @@ const ReasearchScreen = () => {
               </FormControl>
             </div>
             {/* date filter to now date */}
-            <div style={{ height: 25 }} className="flex items-center mt-1">
+            <div style={{ height: 25 }} className="flex items-center">
               <FormControl>
                 <TextField
                   type="datetime-local"
@@ -497,6 +500,7 @@ const ReasearchScreen = () => {
                   multiple
                   MenuProps={{ PaperProps: { style: { height: 200 } } }}
                   displayEmpty
+                  sx={{ fontSize: "0.8em" }}
                   inputProps={{ "aria-label": "Without label" }}
                   renderValue={() => {
                     if (selectedUsernamesqc1.length === 0) {
@@ -532,6 +536,7 @@ const ReasearchScreen = () => {
                   className={classes.dropDowns}
                   displayEmpty
                   inputProps={{ "aria-label": "Without label" }}
+                  sx={{ fontSize: "0.8em" }}
                 >
                   <MenuItem value="" disabled>
                     <em>qc1 done</em>
@@ -559,6 +564,7 @@ const ReasearchScreen = () => {
                   MenuProps={{ PaperProps: { style: { height: 200 } } }}
                   displayEmpty
                   inputProps={{ "aria-label": "Without label" }}
+                  sx={{ fontSize: "0.8em" }}
                   renderValue={() => {
                     if (selectedUsernamesqc2.length === 0) {
                       return <em>Qc2 by</em>;
@@ -591,6 +597,7 @@ const ReasearchScreen = () => {
                   onChange={handleQc2done}
                   className={classes.dropDowns}
                   inputProps={{ "aria-label": "Without label" }}
+                  sx={{ fontSize: "0.8em" }}
                 >
                   <MenuItem value="" disabled>
                     <em>qc2 done</em>
@@ -652,6 +659,7 @@ const ReasearchScreen = () => {
                   input={<OutlinedInput />}
                   MenuProps={{ PaperProps: { style: { height: 200 } } }}
                   inputProps={{ "aria-label": "Without label" }}
+                  sx={{ fontSize: "0.8em" }}
                   renderValue={(selected) => {
                     if (selected.length === 0) {
                       return <em>Languages</em>;
@@ -686,6 +694,7 @@ const ReasearchScreen = () => {
                   onChange={handleContinentChange}
                   input={<OutlinedInput label="Name" />}
                   inputProps={{ "aria-label": "Without label" }}
+                  sx={{ fontSize: "0.8em" }}
                   renderValue={(selected) => {
                     if (selected.length === 0) {
                       return <em>Continents</em>;
@@ -721,6 +730,7 @@ const ReasearchScreen = () => {
                   className={classes.dropDowns}
                   MenuProps={{ PaperProps: { style: { height: 200 } } }}
                   inputProps={{ "aria-label": "Without label" }}
+                  sx={{ fontSize: "0.8em" }}
                   renderValue={(selected) => {
                     if (selected.length === 0) {
                       return <em>Countries</em>;
@@ -745,7 +755,7 @@ const ReasearchScreen = () => {
             </div>
             <button
               onClick={handleSearch}
-              className={`bg-primary border border-gray-400 rounded px-10 mt-4 uppercase text-white ${
+              className={`bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white ${
                 tableDataLoading ? "text-yellow-300" : "text-white"
               }`}
             >

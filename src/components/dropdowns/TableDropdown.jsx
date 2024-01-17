@@ -27,6 +27,7 @@ export default function TableDropdown({
         displayEmpty
         inputProps={{ "aria-label": "Without label" }}
         MenuProps={{ PaperProps: { style: { height: 200, width: 200 } } }}
+        sx={{ fontSize: "0.8em" }}
       >
         <MenuItem value="" disabled>
           <em>{placeholder}</em>

@@ -29,9 +29,9 @@ const useStyles = makeStyles(() => ({
     },
   },
   smallerText: {
-    fontSize: "0.8em",
+    fontSize: "0.9em",
     "& input::placeholder": {
-      fontSize: "1em",
+      fontSize: "0.8em",
       color: "black",
       fontStyle: "italic",
       opacity: 1,
@@ -79,7 +79,7 @@ const SearchableDropdown = ({
               ...params.InputProps,
               style: {
                 height: 25,
-                fontSize: "0.9em",
+                fontSize: "0.8em",
                 padding: "0 5px 0 0",
                 margin: 0,
                 color: "black",
