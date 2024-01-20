@@ -16,31 +16,28 @@ const ContextProvider = ({ children }) => {
   const [password, setPassword] = useState("");
   // for logout timer
   const [timerId, setTimerId] = useState(null);
-  // clientId for the fetching company
-  // company setting when getting clientId from the clients
-  const [clientId, setClientId] = useState("");
-  // selected compnies
-  const [companies, setCompanies] = useState([]);
   // loading state while fetching tableData
-  const [companyId, setCompanyId] = useState([]);
   // fetching table data using client and companyid and multiple params
   const [tableFetchLoading, setTableFetchLoading] = useState(false);
   // table headers in uppercase
   const [tableHeaders, setTableHeaders] = useState([]);
 
-  // search text
-  // const [searchValue, setSearchValue] = useState("");
-  // dates
   const currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
 
-  // Get the date for 24 hours later
-  const nextDay = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
-
-  const formattedDate = currentDate
+  const nextDay = new Date(currentDate.getTime() + 12 * 60 * 60 * 1000);
+  const formattedDate = new Date(
+    currentDate.getTime() - currentDate.getTimezoneOffset() * 60000
+  )
     .toISOString()
     .slice(0, 16)
     .replace("T", " ");
-  const formattedNextDay = nextDay.toISOString().slice(0, 16).replace("T", " ");
+  const formattedNextDay = new Date(
+    nextDay.getTime() - nextDay.getTimezoneOffset() * 60000
+  )
+    .toISOString()
+    .slice(0, 16)
+    .replace("T", " ");
 
   const [fromDate, setFromDate] = useState(formattedDate);
   const [dateNow, setDateNow] = useState(formattedNextDay);
@@ -61,7 +58,6 @@ const ContextProvider = ({ children }) => {
     }
     setUserToken("");
     localStorage.removeItem("user");
-    setClientId("");
     setUnsavedChanges(false);
     navigate("/login");
   };
@@ -107,22 +103,14 @@ const ContextProvider = ({ children }) => {
         userToken,
         timerId,
         setTimerId,
-        clientId,
-        setClientId,
-        companies,
-        setCompanies,
         fromDate,
         setFromDate,
         dateNow,
         setDateNow,
-        // searchValue,
-        // setSearchValue,
         tableFetchLoading,
         setTableFetchLoading,
         showTableData,
         setShowTableData,
-        companyId,
-        setCompanyId,
         tableHeaders,
         setTableHeaders,
         // data saved or not

@@ -9,17 +9,17 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import axios from "axios";
 import { ResearchContext } from "../../context/ContextProvider";
 import useFetchData from "../../hooks/useFetchData";
 import { toast } from "react-toastify";
-import { DDEditValues, DDSearchValues } from "../../utils/dataArray";
+import { DDEditValues, DDSearchValues } from "../../constants/dataArray";
 import Button from "../custom/Button";
 import TableDropdown from "../dropdowns/TableDropdown";
 import Loader from "../loader/Loader";
 import TextFields from "../TextFields/TextField";
 import MainTable from "../table/MainTable";
 import PropTypes from "prop-types";
+import handlePostData from "../../utils/handlePost";
 
 const useStyles = makeStyles(() => ({
   dropDowns: {
@@ -40,11 +40,17 @@ const useStyles = makeStyles(() => ({
     color: "white",
   },
 }));
-const ResearchTable = ({ tableData, setTableData, company, companies }) => {
+const ResearchTable = ({
+  tableData,
+  setTableData,
+  company,
+  companies,
+  companyId,
+  setCompanyId,
+}) => {
   const classes = useStyles();
   // context values
-  const { name, userToken, companyId, setCompanyId, setUnsavedChanges } =
-    useContext(ResearchContext);
+  const { name, userToken, setUnsavedChanges } = useContext(ResearchContext);
 
   // state variables for posting data to database
   const [currentDateWithTime, setCurrentDateWithTime] = useState("");
@@ -63,6 +69,7 @@ const ResearchTable = ({ tableData, setTableData, company, companies }) => {
   const [secondSearchValue, setSecondSearchValue] = useState("");
   const [searchedData, setSearchedData] = useState([]);
   const [tableLoading, setTableLoading] = useState(false);
+  // loading state for checkbox selection
   // data for the edit
   const [editValue, setEditValue] = useState("");
   // Function to fetch table data
@@ -71,7 +78,6 @@ const ResearchTable = ({ tableData, setTableData, company, companies }) => {
   // saved success
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-  // showing tooltip when hover the table cell
   // sotrting
   const [sortLoading, setSortLoading] = useState(false);
   const [sortDirection, setSortDirection] = useState("asc");
@@ -146,7 +152,6 @@ const ResearchTable = ({ tableData, setTableData, company, companies }) => {
       .filter((value) => value !== undefined);
     setEditValue(editRowValues[0]);
   }, [selectedRowData, editRow]);
-
   const applySort = async () => {
     setSortLoading(true);
     let sortedData = [];
@@ -218,8 +223,66 @@ const ResearchTable = ({ tableData, setTableData, company, companies }) => {
     }
     setSelectedRadioValue(event.target.value);
   };
-  // handle Search Table Values
+
+  // handle editrow change
+  const handleEditRowChange = (e) => {
+    const { value } = e.target;
+    setEditRow(value);
+    setEditValue("");
+  };
+  //updating tabledata
+  const handleApplyChanges = () => {
+    if (selectedRowData.length > 0) {
+      const updatedSelectedRows = selectedRowData.map((row) => ({
+        ...row,
+        reporting_tone: reportingTone || row.reporting_tone,
+        reporting_subject: subject || row.reporting_subject,
+        subcategory: category || row.subcategory,
+        prominence: prominence || row.prominence,
+        detail_summary:
+          (editRow === "detail_summary" && editValue) || row.detail_summary,
+        headline: (editRow === "headline" && editValue) || row.headline,
+        headsummary:
+          (editRow === "headsummary" && editValue) || row.headsummary,
+        author_name:
+          (editRow === "author_name" && editValue) || row.author_name,
+        keyword: (editRow === "keyword" && editValue) || row.keyword,
+      }));
+
+      const updatedTableData = tableData.map((row) => {
+        const updatedRow = updatedSelectedRows.find(
+          (selectedRow) => selectedRow.social_feed_id === row.social_feed_id
+        );
+        return updatedRow || row;
+      });
+
+      // Update only the items that exist in selectedRowData in both searchedData and tableData
+      const updatedSearchedData = searchedData.map((row) => {
+        const updatedRow = updatedSelectedRows.find(
+          (selectedRow) => selectedRow.social_feed_id === row.social_feed_id
+        );
+        return updatedRow || row;
+      });
+
+      setUpdatedRows(updatedSelectedRows);
+      setTableData(updatedTableData);
+      setSearchedData(updatedSearchedData);
+      setUnsavedChanges(true);
+    } else {
+      toast.warning("Please select at least one item to update", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000,
+      });
+    }
+  };
   const handleSearch = () => {
+    if (selectedRowData.length > 0) {
+      var userChoice = confirm("Do you want to uncheck previous selection?");
+
+      if (userChoice) {
+        setSelectedRowData([]);
+      }
+    }
     setTableLoading(true);
     let output = [];
 
@@ -413,115 +476,12 @@ const ResearchTable = ({ tableData, setTableData, company, companies }) => {
     setSearchedData(output);
     setTableLoading(false);
   };
-
-  //updating tabledata
-  const handleApplyChanges = () => {
-    if (selectedRowData.length > 0) {
-      const updatedSelectedRows = selectedRowData.map((row) => ({
-        ...row,
-        reporting_tone: reportingTone || row.reporting_tone,
-        reporting_subject: subject || row.reporting_subject,
-        subcategory: category || row.subcategory,
-        prominence: prominence || row.prominence,
-        detail_summary:
-          (editRow === "detail_summary" && editValue) || row.detail_summary,
-        headline: (editRow === "headline" && editValue) || row.headline,
-        headsummary:
-          (editRow === "headsummary" && editValue) || row.headsummary,
-      }));
-
-      const updatedTableData = tableData.map((row) => {
-        const updatedRow = updatedSelectedRows.find(
-          (selectedRow) => selectedRow.social_feed_id === row.social_feed_id
-        );
-        return updatedRow || row;
-      });
-
-      // Update only the items that exist in selectedRowData in both searchedData and tableData
-      const updatedSearchedData = searchedData.map((row) => {
-        const updatedRow = updatedSelectedRows.find(
-          (selectedRow) => selectedRow.social_feed_id === row.social_feed_id
-        );
-        return updatedRow || row;
-      });
-
-      setUpdatedRows(updatedSelectedRows);
-      setTableData(updatedTableData);
-      setSearchedData(updatedSearchedData);
-      setUnsavedChanges(true);
-    } else {
-      toast.warning("Please select at least one item to update", {
-        position: toast.POSITION.TOP_CENTER,
-        autoClose: 3000,
-      });
-    }
-  };
-
   // getting current date with time for the posting data to database
   useEffect(() => {
     const dateNow = new Date();
     const formattedDate = dateNow.toISOString().slice(0, 19).replace("T", " ");
     setCurrentDateWithTime(formattedDate);
   }, []);
-
-  //posting updated tabledata to database
-  const handlePostData = async () => {
-    setSavedSuccess(true);
-    setPostingLoading(true);
-    // if company has not selected(get company ids)
-    const comapnyNames = updatedRows.map((item) => item.company_name);
-    let foundCompanyIds = comapnyNames.map((name) => {
-      let foundObject = company.find((obj) => obj.companyname === name);
-      return foundObject ? foundObject.companyid : null;
-    });
-
-    const dataToSending = updatedRows.map((row, index) => ({
-      COMPANYID: foundCompanyIds[index] || "", // Fetching the ID corresponding to the row
-      DETAILSUMMARY: row.detail_summary,
-      KEYWORD: "",
-      MODIFIEDBY: name,
-      MODIFIEDON: currentDateWithTime,
-      PROMINENCE: row.prominence,
-      REPORTINGSUBJECT: row.reporting_subject,
-      REPORTINGTONE: row.reporting_tone,
-      SOCIALFEEDID: row.social_feed_id,
-      SUBCATEGORY: row.subcategory,
-      HEADLINE: row.headline,
-      HEADSUMMARY: row.headsummary,
-    }));
-
-    try {
-      const url = `http://51.68.220.77:8000/update2database/`;
-      if (dataToSending.length > 0) {
-        await axios.post(url, dataToSending, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + userToken,
-          },
-        });
-        setUpdatedRows([]);
-        setPostingLoading(false);
-        setSuccessMessage("Data updated successfully!");
-        setSelectedRowData([]);
-        // Clearing the dropdown values
-        setReportingTone("");
-        setSubject("");
-        setCategory("");
-        setProminence("");
-        setUnsavedChanges(false);
-        setEditValue("");
-        setEditRow("");
-      } else {
-        setSuccessMessage("No data to save.");
-        setPostingLoading(false);
-      }
-    } catch (error) {
-      if (error.message === "Network Error") {
-        setSuccessMessage("Please check your internet connection.");
-        setPostingLoading(false);
-      }
-    }
-  };
 
   // showing success or failure message for the limited time
   useEffect(() => {
@@ -686,7 +646,27 @@ const ResearchTable = ({ tableData, setTableData, company, companies }) => {
           className={` bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white tracking-wider ${
             postingLoading ? "text-yellow-300" : "text-white"
           }`}
-          onClick={handlePostData}
+          onClick={() =>
+            handlePostData(
+              updatedRows,
+              company,
+              name,
+              currentDateWithTime,
+              setSavedSuccess,
+              setPostingLoading,
+              setUpdatedRows,
+              setSuccessMessage,
+              setSelectedRowData,
+              setReportingTone,
+              setSubject,
+              setCategory,
+              setProminence,
+              setUnsavedChanges,
+              setEditValue,
+              setEditRow,
+              userToken
+            )
+          }
         >
           {postingLoading ? "Loading..." : "Save"}
         </button>
@@ -698,11 +678,11 @@ const ResearchTable = ({ tableData, setTableData, company, companies }) => {
         </div>
       </div>
       <div className="flex items-center gap-2 flex-wrap">
-        {/* head summary & headline*/}
+        {/* dropdown headers ofr edit*/}
         <FormControl className="w-28">
           <Select
             value={editRow}
-            onChange={(e) => setEditRow(e.target.value)}
+            onChange={handleEditRowChange}
             variant="outlined"
             className={classes.dropDowns}
             displayEmpty
@@ -724,13 +704,7 @@ const ResearchTable = ({ tableData, setTableData, company, companies }) => {
             ))}
           </Select>
         </FormControl>
-        <span className="mt-4">
-          {/* <TextFields
-            placeholder={"Select a Summary"}
-            value={editValue}
-            setValue={setEditValue}
-            width={"large"}
-          /> */}
+        <span className="mt-3">
           <input
             placeholder="select a summary"
             value={editValue}
@@ -758,5 +732,7 @@ ResearchTable.propTypes = {
   setTableData: PropTypes.func.isRequired,
   company: PropTypes.string.isRequired,
   companies: PropTypes.array.isRequired,
+  companyId: PropTypes.array.isRequired,
+  setCompanyId: PropTypes.func.isRequired,
 };
 export default ResearchTable;

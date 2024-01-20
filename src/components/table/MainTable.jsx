@@ -1,6 +1,6 @@
 import { makeStyles } from "@mui/styles";
 import { IoIosArrowRoundDown, IoIosArrowRoundUp } from "react-icons/io";
-import getHeaderAbbreviation from "../../utils/concatHeader";
+import getHeaderAbbreviation from "../../constants/concatHeader";
 import React, { memo, useContext } from "react";
 import PropTypes from "prop-types";
 import { Checkbox, TableCell, TableRow, Tooltip } from "@mui/material";
