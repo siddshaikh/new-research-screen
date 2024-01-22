@@ -21,7 +21,6 @@ const useStyles = makeStyles(() => ({
     "& .MuiAutocomplete-inputRoot[class*='MuiInput-root']": {
       display: "flex",
       alignItems: "center",
-      color: "red",
     },
     "& .MuiInputLabel-root": {
       fontSize: "0.8em",
@@ -32,7 +31,7 @@ const useStyles = makeStyles(() => ({
     fontSize: "0.9em",
     "& input::placeholder": {
       fontSize: "0.8em",
-      color: "black",
+      color: "black !important",
       fontStyle: "italic",
       opacity: 1,
     },
@@ -82,7 +81,7 @@ const SearchableDropdown = ({
                 fontSize: "0.8em",
                 padding: "0 5px 0 0",
                 margin: 0,
-                color: "black",
+                color: "black !important",
                 textAlign: "center",
               },
             }}

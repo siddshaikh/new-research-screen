@@ -64,6 +64,7 @@ const ResearchTable = ({
   const [secondSearchValue, setSecondSearchValue] = useState("");
   const [searchedData, setSearchedData] = useState([]);
   const [tableLoading, setTableLoading] = useState(false);
+  const [applyLoading, setApplyLoading] = useState(false);
   // loading state for checkbox selection
   // data for the edit
   const [editValue, setEditValue] = useState("");
@@ -227,6 +228,7 @@ const ResearchTable = ({
   };
   //updating tabledata
   const handleApplyChanges = () => {
+    setApplyLoading(true);
     if (selectedRowData.length > 0) {
       const updatedSelectedRows = selectedRowData.map((row) => ({
         ...row,
@@ -269,6 +271,7 @@ const ResearchTable = ({
         autoClose: 3000,
       });
     }
+    setApplyLoading(false);
   };
   const handleSearch = () => {
     if (selectedRowData.length > 0) {
@@ -492,6 +495,7 @@ const ResearchTable = ({
   return (
     <div className="relative">
       {sortLoading ||
+        applyLoading ||
         (tableLoading && (
           <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 bg-opacity-50 z-50">
             <Loader />
