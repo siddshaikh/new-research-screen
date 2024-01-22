@@ -200,7 +200,6 @@ const ResearchTable = ({
   const handleSecondSearchUsingHeader = (event) => {
     if (!selectedRadioValue) {
       toast.warning("Please select AND or OR condition first!", {
-        position: toast.POSITION.TOP_CENTER,
         autoClose: 2000,
       });
       return;
@@ -212,7 +211,6 @@ const ResearchTable = ({
   const handleChange = (event) => {
     if (!headerForSearch) {
       toast.error("Please Select a Header first", {
-        position: toast.POSITION.TOP_CENTER,
         autoClose: 2000,
       });
       return;
@@ -267,7 +265,6 @@ const ResearchTable = ({
       setUnsavedChanges(true);
     } else {
       toast.warning("Please select at least one item to update", {
-        position: toast.POSITION.TOP_CENTER,
         autoClose: 3000,
       });
     }
@@ -294,7 +291,6 @@ const ResearchTable = ({
       if (output.length === 0) {
         output = tableData;
         toast.warning("No results found. Showing all data.", {
-          position: toast.POSITION.TOP_CENTER,
           autoClose: 2000,
         });
       }
@@ -309,7 +305,6 @@ const ResearchTable = ({
 
       if (output.length === 0) {
         toast.warning("No results found. Showing all data.", {
-          position: toast.POSITION.TOP_CENTER,
           autoClose: 2000,
         });
         output = tableData; // Show all data when no matching rows are found
@@ -318,7 +313,6 @@ const ResearchTable = ({
       if (!selectedRadioValue) {
         // No AND or OR condition selected
         toast.warning("Please select AND or OR condition first!", {
-          position: toast.POSITION.TOP_CENTER,
           autoClose: 2000,
         });
         output = [...tableData];
@@ -348,7 +342,6 @@ const ResearchTable = ({
 
         if (output.length === 0) {
           toast.warning("No results found. Showing all data.", {
-            position: toast.POSITION.TOP_CENTER,
             autoClose: 2000,
           });
           output = tableData; // Show all data when no matching rows are found
@@ -358,7 +351,6 @@ const ResearchTable = ({
     } else if (headerForSearch === "all" && secondHeaderForSearch === "all") {
       if (!selectedRadioValue) {
         toast.warning("Please select AND or OR condition first!", {
-          position: toast.POSITION.TOP_CENTER,
           autoClose: 2000,
         });
         output = [...tableData];
@@ -382,7 +374,6 @@ const ResearchTable = ({
 
         if (output.length === 0) {
           toast.warning("No results found. Showing all data.", {
-            position: toast.POSITION.TOP_CENTER,
             autoClose: 2000,
           });
           output = tableData; // Show all data when no matching rows are found
@@ -397,7 +388,6 @@ const ResearchTable = ({
       if (!selectedRadioValue) {
         // No AND or OR condition selected
         toast.warning("Please select AND or OR condition first!", {
-          position: toast.POSITION.TOP_CENTER,
           autoClose: 2000,
         });
         output = [...tableData];
@@ -424,7 +414,6 @@ const ResearchTable = ({
 
         if (output.length === 0) {
           toast.warning("No results found. Showing all data.", {
-            position: toast.POSITION.TOP_CENTER,
             autoClose: 2000,
           });
           output = tableData; // Show all data when no matching rows are found
@@ -463,7 +452,6 @@ const ResearchTable = ({
 
       if (output.length === 0) {
         toast.warning("No results found. Showing all data.", {
-          position: toast.POSITION.TOP_CENTER,
           autoClose: 2000,
         });
         output = tableData; // Show all data when no matching rows are found

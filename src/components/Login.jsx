@@ -63,13 +63,11 @@ const Login = () => {
         setUserToken(localStorage.getItem("user"));
         navigate("/");
         toast.success(`Welcome ${loginname}`, {
-          position: toast.POSITION.TOP_CENTER,
           autoClose: 3000,
         });
       }
     } catch (error) {
       toast.error(error.message, {
-        position: toast.POSITION.TOP_CENTER,
         autoClose: 3000,
       });
     }

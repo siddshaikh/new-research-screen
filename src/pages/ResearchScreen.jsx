@@ -201,7 +201,6 @@ const ReasearchScreen = () => {
     if (clientId) {
       if (unsavedChanges) {
         toast.error("You might be missing to save", {
-          position: toast.POSITION.TOP_CENTER,
           autoClose: 3000,
         });
       } else {
@@ -303,7 +302,6 @@ const ReasearchScreen = () => {
       }
     } else {
       toast.warn("Please select a client.", {
-        position: toast.POSITION.TOP_CENTER,
         autoClose: 3000,
       });
     }
