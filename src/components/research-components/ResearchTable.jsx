@@ -1,18 +1,9 @@
 import { useContext, useEffect, useState } from "react";
-import {
-  FormControl,
-  MenuItem,
-  Select,
-  Typography,
-  RadioGroup,
-  Radio,
-  FormControlLabel,
-} from "@mui/material";
+import { Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ResearchContext } from "../../context/ContextProvider";
 import useFetchData from "../../hooks/useFetchData";
 import { toast } from "react-toastify";
-import { DDEditValues, DDSearchValues } from "../../constants/dataArray";
 import Button from "../custom/Button";
 import TableDropdown from "../dropdowns/TableDropdown";
 import Loader from "../loader/Loader";
@@ -20,6 +11,10 @@ import TextFields from "../TextFields/TextField";
 import MainTable from "../table/MainTable";
 import PropTypes from "prop-types";
 import handlePostData from "../../utils/handlePost";
+import FirstFind from "../research-dropdowns/table-dropdowns/FirstFind";
+import TableRadio from "../table-radio/TableRadio";
+import SecondFind from "../research-dropdowns/table-dropdowns/SecondFind";
+import HeaderForEdits from "../research-dropdowns/table-dropdowns/HeaderForEdits";
 
 const useStyles = makeStyles(() => ({
   dropDowns: {
@@ -194,7 +189,7 @@ const ResearchTable = ({
   }, [sortColumn, sortDirection]);
 
   // search function using table header
-  const hanleTableSearchUsingHeader = (event) => {
+  const handleTableSearchUsingHeader = (event) => {
     setHeaderForSearch(event.target.value);
     setSearchValue("");
     setSelectedRadioValue(null);
@@ -505,31 +500,11 @@ const ResearchTable = ({
       {/* filters for editing the cells */}
       <div className="flex items-center gap-2 flex-wrap">
         {/* first find */}
-        <FormControl className="w-28">
-          <Select
-            className={classes.dropDowns}
-            value={headerForSearch}
-            onChange={hanleTableSearchUsingHeader}
-            displayEmpty
-            inputProps={{ "aria-label": "Without label" }}
-            MenuProps={{ PaperProps: { style: { height: 200 } } }}
-            sx={{ fontSize: "0.8em" }}
-          >
-            <MenuItem value="" sx={{ color: "lightgray" }}>
-              <em>select</em>
-            </MenuItem>
-
-            {DDSearchValues.map((item) => (
-              <MenuItem
-                value={item.value}
-                key={item.title}
-                sx={{ fontSize: "0.8em" }}
-              >
-                {item.title}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <FirstFind
+          classes={classes}
+          headerForSearch={headerForSearch}
+          handleTableSearchUsingHeader={handleTableSearchUsingHeader}
+        />
         {/* searchfield for the searching tableData */}
         <TextFields
           placeholder={"Find Text"}
@@ -538,70 +513,17 @@ const ResearchTable = ({
           width="200"
         />
         {/* radio button */}
-        <FormControl component="fieldset" sx={{ height: 25 }}>
-          <RadioGroup
-            aria-label="and-or-label"
-            name="and-or-label"
-            value={selectedRadioValue}
-            onChange={handleChange}
-            row
-          >
-            <FormControlLabel
-              value="and"
-              control={<Radio size="small" />}
-              label="AND"
-              sx={{
-                fontSize: "0.8em",
-                "& .MuiTypography-root": { fontSize: "0.8em" },
-              }}
-            />
-            <FormControlLabel
-              value="or"
-              control={<Radio size="small" />}
-              label="OR"
-              sx={{
-                fontSize: "0.8em",
-                "& .MuiTypography-root": { fontSize: "0.8em" },
-              }}
-            />
-          </RadioGroup>
-        </FormControl>
+        <TableRadio
+          selectedRadioValue={selectedRadioValue}
+          handleChange={handleChange}
+        />
         {/* second find */}
-        <FormControl className="w-28">
-          <Select
-            className={classes.dropDowns}
-            value={secondHeaderForSearch}
-            onChange={handleSecondSearchUsingHeader}
-            displayEmpty
-            inputProps={{ "aria-label": "Without label" }}
-            MenuProps={{ PaperProps: { style: { height: 200 } } }}
-            sx={{ fontSize: "0.8em" }}
-          >
-            <MenuItem value="" sx={{ color: "lightgray" }}>
-              <em>select</em>
-            </MenuItem>
-
-            {headerForSearch === "all"
-              ? DDSearchValues.slice(1).map((item) => (
-                  <MenuItem
-                    value={item.value}
-                    key={item.title}
-                    sx={{ fontSize: "0.8em" }}
-                  >
-                    {item.title}
-                  </MenuItem>
-                ))
-              : DDSearchValues.map((item) => (
-                  <MenuItem
-                    value={item.value}
-                    key={item.title}
-                    sx={{ fontSize: "0.8em" }}
-                  >
-                    {item.title}
-                  </MenuItem>
-                ))}
-          </Select>
-        </FormControl>
+        <SecondFind
+          classes={classes}
+          secondHeaderForSearch={secondHeaderForSearch}
+          handleSecondSearchUsingHeader={handleSecondSearchUsingHeader}
+          headerForSearch={headerForSearch}
+        />
         <TextFields
           placeholder={"Find Text"}
           value={secondSearchValue}
@@ -679,31 +601,11 @@ const ResearchTable = ({
       </div>
       <div className="flex items-center gap-2 flex-wrap">
         {/* dropdown headers ofr edit*/}
-        <FormControl className="w-28">
-          <Select
-            value={editRow}
-            onChange={handleEditRowChange}
-            variant="outlined"
-            className={classes.dropDowns}
-            displayEmpty
-            inputProps={{ "aria-label": "Without label" }}
-            MenuProps={{ PaperProps: { style: { height: 200 } } }}
-            sx={{ fontSize: "0.8em" }}
-          >
-            <MenuItem value="" sx={{ color: "lightgrey" }}>
-              <em>Select</em>
-            </MenuItem>
-            {DDEditValues.map((item) => (
-              <MenuItem
-                key={item.id}
-                value={item.value}
-                sx={{ fontSize: "0.8em" }}
-              >
-                {item.title}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <HeaderForEdits
+          editRow={editRow}
+          handleEditRowChange={handleEditRowChange}
+          classes={classes}
+        />
         <span className="mt-3">
           <input
             placeholder="select a summary"

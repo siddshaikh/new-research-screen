@@ -1,9 +1,9 @@
+import React, { useContext, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Home from "./pages/Home";
-import { useContext, useEffect } from "react";
+const Home = React.lazy(() => import("./pages/Home"));
 import NotFound from "./components/NotFound";
 import { ResearchContext } from "./context/ContextProvider";
 import { checkUserAuthenticate } from "./auth/auth";
@@ -23,7 +23,19 @@ function App() {
       <ToastContainer />
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={userToken ? <Home /> : <Login />} />
+        <Route
+          path="/"
+          element={
+            userToken ? (
+              <React.Suspense fallback={<div>Loading...</div>}>
+                {" "}
+                <Home />{" "}
+              </React.Suspense>
+            ) : (
+              <Login />
+            )
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

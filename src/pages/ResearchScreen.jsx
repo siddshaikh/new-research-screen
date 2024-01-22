@@ -94,7 +94,6 @@ const ReasearchScreen = () => {
     setShowTableData,
     userToken,
     setTableHeaders,
-    // data saved or not
     unsavedChanges,
     setUnsavedChanges,
   } = useContext(ResearchContext);

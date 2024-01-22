@@ -11,7 +11,7 @@ export const handleSearch = ({
   toast,
   setSearchedData,
 }) => {
-  if (selectedRowData.length > 0) {
+  if (selectedRowData && selectedRowData.length > 0) {
     var userChoice = confirm("Do you want to uncheck previous selection?");
 
     if (userChoice) {
