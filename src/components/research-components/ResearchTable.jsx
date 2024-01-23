@@ -15,6 +15,8 @@ import FirstFind from "../research-dropdowns/table-dropdowns/FirstFind";
 import TableRadio from "../table-radio/TableRadio";
 import SecondFind from "../research-dropdowns/table-dropdowns/SecondFind";
 import HeaderForEdits from "../research-dropdowns/table-dropdowns/HeaderForEdits";
+import SubjectSearchable from "../research-dropdowns/table-dropdowns/SubjectSearchable";
+import SearchableCategory from "../research-dropdowns/table-dropdowns/SearchableCategory";
 
 const useStyles = makeStyles(() => ({
   dropDowns: {
@@ -542,19 +544,22 @@ const ResearchTable = ({
           mappingValue={prominences}
         />
         {/* Reporting subject */}
-        <TableDropdown
-          value={subject}
-          setValues={setSubject}
-          placeholder={"Subject"}
-          mappingValue={subjects}
-        />
-        {/*category */}
-        <TableDropdown
-          value={category}
-          setValues={setCategory}
-          placeholder={"Category"}
-          mappingValue={categories}
-        />
+        <div className="mt-1 flex items-center gap-2">
+          <SubjectSearchable
+            width={120}
+            subjects={subjects}
+            label={"Subject"}
+            setSubject={setSubject}
+            subject={subject}
+          />
+          <SearchableCategory
+            categories={categories}
+            label={"Category"}
+            setCategory={setCategory}
+            category={category}
+            width={120}
+          />{" "}
+        </div>
         <Button btnText={"Apply"} onClick={handleApplyChanges} />
         <button
           className={` bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white tracking-wider ${

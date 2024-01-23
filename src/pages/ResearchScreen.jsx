@@ -326,6 +326,7 @@ const ReasearchScreen = () => {
               />
             </div>
             {/* comapany */}
+
             <Company
               companies={companies}
               setCompanies={setCompanies}

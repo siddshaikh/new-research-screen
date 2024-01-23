@@ -30,7 +30,7 @@ const useStyles = makeStyles(() => ({
   smallerText: {
     fontSize: "0.9em",
     "& input::placeholder": {
-      fontSize: "0.8em",
+      fontSize: "0.9em",
       color: "black !important",
       fontStyle: "italic",
       opacity: 1,
@@ -38,18 +38,17 @@ const useStyles = makeStyles(() => ({
     },
   },
 }));
-
-const SearchableDropdown = ({
-  options,
+const SearchableCategory = ({
+  categories,
   label,
-  setTestClient,
-  testclient,
+  setCategory,
+  category,
   width,
 }) => {
   const classes = useStyles();
 
   const handleSelectChange = (event, newValue) => {
-    setTestClient(newValue?.clientid || null);
+    setCategory(newValue || null);
   };
 
   const CustomAutocomplete = styled(Autocomplete)({
@@ -57,18 +56,16 @@ const SearchableDropdown = ({
   });
 
   const selectedOption =
-    (options && options.find((option) => option.clientid === testclient)) ||
-    null;
-
+    (categories && categories.find((option) => option === category)) || null;
   return (
     <ThemeProvider theme={theme}>
       <CustomAutocomplete
         className={classes.autocomplete}
-        options={options || []}
-        getOptionLabel={(option) => option.clientname}
-        renderValue={(selected) => selected.join(", ")}
+        options={categories || []}
         disableClearable
         ListboxProps={{ style: { maxHeight: 200 } }}
+        getOptionLabel={(option) => option}
+        renderValue={(selected) => selected.join(", ")}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -81,8 +78,8 @@ const SearchableDropdown = ({
               ...params.InputProps,
               style: {
                 height: 25,
-                fontSize: "0.8em",
-                padding: "0 5px 0 0",
+                fontSize: "0.9em",
+                padding: "0 5px 8px 0",
                 margin: 0,
                 color: "black !important",
                 textAlign: "center",
@@ -96,13 +93,11 @@ const SearchableDropdown = ({
     </ThemeProvider>
   );
 };
-
-export default memo(SearchableDropdown);
-
-SearchableDropdown.propTypes = {
-  options: PropTypes.array.isRequired,
+SearchableCategory.propTypes = {
+  categories: PropTypes.arrayOf(PropTypes.string),
   label: PropTypes.string.isRequired,
-  setTestClient: PropTypes.func.isRequired,
-  testclient: PropTypes.number,
+  setCategory: PropTypes.func.isRequired,
+  category: PropTypes.string,
   width: PropTypes.string,
 };
+export default memo(SearchableCategory);
