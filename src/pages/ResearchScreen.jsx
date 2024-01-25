@@ -262,7 +262,7 @@ const ReasearchScreen = () => {
           );
 
           const requestDataJSON = JSON.stringify(requestData);
-          const url = `${import.meta.env.VITE_BASE_URL}listArticlebyQC/`;
+          const url = `${import.meta.env.VITE_BASE_URL}listArticlebyQCTemp/`; //listArticlebyQC
           const response = await axios.post(url, requestDataJSON, {
             headers: {
               "Content-Type": "application/json",
@@ -306,7 +306,6 @@ const ReasearchScreen = () => {
       });
     }
   };
-
   return (
     <div className="h-full ml-4">
       {/* Category dropdowns filter out */}

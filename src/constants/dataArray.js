@@ -296,6 +296,10 @@ export const DDSearchValues = [
     title: "HeadSummary",
     value: "headsummary",
   },
+  {
+    title: "Remarks",
+    value: "remarks",
+  },
 ];
 export const DDEditValues = [
   {
@@ -322,5 +326,10 @@ export const DDEditValues = [
     id: 5,
     title: "Head Summary",
     value: "headsummary",
+  },
+  {
+    id: 6,
+    title: "Remarks",
+    value: "remarks",
   },
 ];

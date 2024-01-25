@@ -42,10 +42,11 @@ const handlePostData = async (
     HEADLINE: row.headline,
     HEADSUMMARY: row.headsummary,
     AUTHOR: row.author_name,
+    REMARKS: row.remarks,
   }));
 
   try {
-    const url = `http://51.68.220.77:8000/update2database/`;
+    const url = `http://51.68.220.77:8000/update2databaseTemp/`; //update2database
     if (dataToSending.length > 0) {
       await axios.post(url, dataToSending, {
         headers: {

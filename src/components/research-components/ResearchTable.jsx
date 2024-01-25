@@ -17,6 +17,7 @@ import SecondFind from "../research-dropdowns/table-dropdowns/SecondFind";
 import HeaderForEdits from "../research-dropdowns/table-dropdowns/HeaderForEdits";
 import SubjectSearchable from "../research-dropdowns/table-dropdowns/SubjectSearchable";
 import SearchableCategory from "../research-dropdowns/table-dropdowns/SearchableCategory";
+import DeleteTableData from "../deleteData/DeleteTableData";
 
 const useStyles = makeStyles(() => ({
   dropDowns: {
@@ -244,6 +245,7 @@ const ResearchTable = ({
         author_name:
           (editRow === "author_name" && editValue) || row.author_name,
         keyword: (editRow === "keyword" && editValue) || row.keyword,
+        remarks: (editRow === "remarks" && editValue) || row.remarks,
       }));
 
       const updatedTableData = tableData.map((row) => {
@@ -491,6 +493,7 @@ const ResearchTable = ({
             <Loader />
           </div>
         ))}
+      {/* delete data */}
       {/* filters for editing the cells */}
       <div className="flex items-center gap-2 flex-wrap">
         {/* first find */}
@@ -589,6 +592,7 @@ const ResearchTable = ({
         >
           {postingLoading ? "Loading..." : "Save"}
         </button>
+        {selectedRowData.length > 0 && <DeleteTableData />}
         {/* saved or not */}
         <div>
           {savedSuccess && (
