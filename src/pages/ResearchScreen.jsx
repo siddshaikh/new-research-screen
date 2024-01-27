@@ -16,7 +16,6 @@ import { toast } from "react-toastify";
 import Loader from "../components/loader/Loader";
 import SearchableDropDown from "../components/dropdowns/SearchableDropdown";
 import CheckboxComp from "../components/checkbox/Checkbox";
-import Company from "../components/research-dropdowns/Company";
 import Datetype from "../components/research-dropdowns/Datetype";
 import FromDate from "../components/research-dropdowns/FromDate";
 import ToDate from "../components/research-dropdowns/ToDate";
@@ -27,6 +26,7 @@ import Qc2By from "../components/research-dropdowns/Qc2By";
 import Languages from "../components/research-dropdowns/Languages";
 import Continents from "../components/research-dropdowns/Continents";
 import Countries from "../components/research-dropdowns/Countries";
+import CustomAutocomplete from "../components/custom/Autocomplet";
 
 const useStyle = makeStyles(() => ({
   dropDowns: {
@@ -325,11 +325,9 @@ const ReasearchScreen = () => {
               />
             </div>
             {/* comapany */}
-
-            <Company
+            <CustomAutocomplete
               companies={companies}
               setCompanies={setCompanies}
-              classes={classes}
               company={company}
             />
             {/* Datetype */}
