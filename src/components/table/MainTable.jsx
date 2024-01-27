@@ -1,10 +1,12 @@
 import { makeStyles } from "@mui/styles";
 import { IoIosArrowRoundDown, IoIosArrowRoundUp } from "react-icons/io";
 import getHeaderAbbreviation from "../../constants/concatHeader";
-import React, { memo, useContext } from "react";
+import React, { memo, useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { Checkbox, TableCell, TableRow, Tooltip } from "@mui/material";
+import { TableCell, TableRow, Tooltip } from "@mui/material";
 import { ResearchContext } from "../../context/ContextProvider";
+import TableRowCheckBox from "./TableRow";
+import { AiOutlineLoading } from "react-icons/ai";
 
 const useStyles = makeStyles(() => ({
   dropDowns: {
@@ -37,41 +39,39 @@ const MainTable = ({
 }) => {
   const { tableHeaders, showTableData } = useContext(ResearchContext);
   const classes = useStyles();
+  const [checkBoxLoading, setCheckBoxLoading] = useState(false);
+  useEffect(() => {
+    if (checkBoxLoading) {
+      // Add a slight delay before setting checkBoxLoading to false
+      const timeoutId = setTimeout(() => {
+        setCheckBoxLoading(false);
+      }, 200); // Adjust the delay time as needed
 
-  const handleRowSelect = (rowData) => {
-    setSelectedRowData((prevSelectedRows) => {
-      const isSelected = prevSelectedRows.some((row) => row === rowData);
-
-      if (isSelected) {
-        return prevSelectedRows.filter((row) => row !== rowData);
-      } else {
-        if (searchedData.length > 0) {
-          // Check if the selected row is within the searched data
-          if (searchedData.includes(rowData)) {
-            return [...prevSelectedRows, rowData];
-          }
-        } else {
-          return [...prevSelectedRows, rowData];
-        }
-      }
-      return prevSelectedRows;
-    });
-  };
-  const handleMasterCheckboxChange = () => {
-    const allSelected = selectedRowData.length === tableData.length;
-
-    if (searchedData.length > 0) {
-      const allSearchedSelected =
-        selectedRowData.length === searchedData.length;
-
-      if (allSearchedSelected) {
-        setSelectedRowData([]);
-      } else {
-        setSelectedRowData([...searchedData]);
-      }
-    } else {
-      setSelectedRowData(allSelected ? [] : [...tableData]);
+      // Cleanup the timeout to avoid memory leaks
+      return () => clearTimeout(timeoutId);
     }
+  }, [checkBoxLoading]);
+  const handleMasterCheckboxChange = () => {
+    setCheckBoxLoading(true);
+
+    setTimeout(() => {
+      const allSelected = selectedRowData.length === tableData.length;
+
+      if (searchedData.length > 0) {
+        const allSearchedSelected =
+          selectedRowData.length === searchedData.length;
+
+        if (allSearchedSelected) {
+          setSelectedRowData([]);
+        } else {
+          setSelectedRowData([...searchedData]);
+        }
+      } else {
+        setSelectedRowData(allSelected ? [] : [...tableData]);
+      }
+
+      setCheckBoxLoading(false);
+    }, 0);
   };
 
   const handleSort = (clickedHeader) => {
@@ -104,11 +104,11 @@ const MainTable = ({
               padding: "10px",
             }}
           >
-            <Checkbox
-              size="small"
-              checked={selectedRowData.includes(rowData)}
-              onChange={() => handleRowSelect(rowData)}
-              style={{ color: "gray" }}
+            <TableRowCheckBox
+              selectedRowData={selectedRowData}
+              rowData={rowData}
+              searchedData={searchedData}
+              setSelectedRowData={setSelectedRowData}
             />
           </TableCell>
           {tableHeaders?.map((header) => (
@@ -187,10 +187,9 @@ const MainTable = ({
     <div className="mt-2 overflow-scroll h-screen">
       <table>
         <thead>
-          <tr className="sticky left-0 top-0 bg-primary ">
-            {" "}
+          <tr className="sticky left-0 top-0 bg-primary">
             {tableHeaders?.length > 0 && (
-              <td
+              <th
                 style={{
                   display: "flex",
                   justifyItems: "center",
@@ -199,23 +198,30 @@ const MainTable = ({
                 }}
                 className="bg-primary"
               >
-                <input
-                  type="checkbox"
-                  style={{
-                    width: "17px",
-                    height: "17px",
-                    marginLeft: "1rem",
-                    marginTop: "0.5rem",
-                  }}
-                  checked={selectedRowData?.length === tableData.length}
-                  onChange={handleMasterCheckboxChange}
-                  className={classes.headerCheckBox}
-                />
-              </td>
+                {checkBoxLoading ? (
+                  <span className="rotating-element ml-3 mt-1">
+                    <AiOutlineLoading />
+                  </span>
+                ) : (
+                  <input
+                    type="checkbox"
+                    style={{
+                      width: "17px",
+                      height: "17px",
+                      marginLeft: "1rem",
+                      marginTop: "0.5rem",
+                      cursor: "pointer",
+                    }}
+                    checked={selectedRowData?.length === tableData.length}
+                    onChange={handleMasterCheckboxChange}
+                    className={classes.headerCheckBox}
+                  />
+                )}
+              </th>
             )}
             {showTableData &&
               tableHeaders?.map((header) => (
-                <td
+                <th
                   key={header}
                   onClick={() =>
                     handleSort(header.toLowerCase().replace(/ /g, "_"))
@@ -249,7 +255,7 @@ const MainTable = ({
                     />
                   </span>
                   <span className="ml-2">{getHeaderAbbreviation(header)}</span>
-                </td>
+                </th>
               ))}
           </tr>
         </thead>

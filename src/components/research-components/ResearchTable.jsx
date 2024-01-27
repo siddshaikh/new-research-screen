@@ -17,7 +17,7 @@ import SecondFind from "../research-dropdowns/table-dropdowns/SecondFind";
 import HeaderForEdits from "../research-dropdowns/table-dropdowns/HeaderForEdits";
 import SubjectSearchable from "../research-dropdowns/table-dropdowns/SubjectSearchable";
 import SearchableCategory from "../research-dropdowns/table-dropdowns/SearchableCategory";
-import DeleteTableData from "../deleteData/DeleteTableData";
+// import DeleteTableData from "../deleteData/DeleteTableData";
 
 const useStyles = makeStyles(() => ({
   dropDowns: {
@@ -493,7 +493,6 @@ const ResearchTable = ({
             <Loader />
           </div>
         ))}
-      {/* delete data */}
       {/* filters for editing the cells */}
       <div className="flex items-center gap-2 flex-wrap">
         {/* first find */}
@@ -592,7 +591,7 @@ const ResearchTable = ({
         >
           {postingLoading ? "Loading..." : "Save"}
         </button>
-        {selectedRowData.length > 0 && <DeleteTableData />}
+        {/* {selectedRowData.length > 0 && <DeleteTableData />} */}
         {/* saved or not */}
         <div>
           {savedSuccess && (
