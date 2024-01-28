@@ -53,9 +53,9 @@ const TableRowCheckBox = ({
   return (
     <>
       {checkBoxLoading ? (
-        <span className="rotating-element">
+        <div className="loading-spinner">
           <AiOutlineLoading />
-        </span>
+        </div>
       ) : (
         <Checkbox
           size="small"
