@@ -29,6 +29,11 @@ const TableRowCheckBox = ({
     // Simulate an asynchronous operation (replace this with your actual logic)
     setTimeout(() => {
       setSelectedRowData((prevSelectedRows) => {
+        if (!Array.isArray(prevSelectedRows)) {
+          // If prevSelectedRows is not an array, initialize it as an empty array
+          prevSelectedRows = [];
+        }
+
         const isSelected = prevSelectedRows.some((row) => row === rowData);
 
         if (isSelected) {
@@ -47,7 +52,7 @@ const TableRowCheckBox = ({
       });
 
       setCheckBoxLoading(false);
-    }, 0); // The timeout of 0 ensures it's executed in the next event loop cycle
+    }, 0);
   };
 
   return (

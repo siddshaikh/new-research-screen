@@ -191,6 +191,7 @@ const ResearchTable = ({
   useEffect(() => {
     applySort();
   }, [sortColumn, sortDirection]);
+  console.log(selectedRowData);
 
   // search function using table header
   const handleTableSearchUsingHeader = (event) => {
@@ -273,6 +274,7 @@ const ResearchTable = ({
       });
     }
     setApplyLoading(false);
+    setSelectedRowData([]);
   };
   const handleSearch = () => {
     if (selectedRowData.length > 0) {

@@ -25,6 +25,9 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
       setListOpen(true);
     }
   };
+  const handleArrowClick = () => {
+    setListOpen(!isListOpen);
+  };
   const selectedCompaniesString =
     companies.length > 0
       ? `${
@@ -83,6 +86,7 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
           setCompanies([]);
         }
       } else if (
+        // eslint-disable-next-line no-dupe-else-if
         e.key === "Backspace" &&
         inputValue === "" &&
         companies.length > 0
@@ -110,15 +114,17 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
         onClick={handleInputClick}
         aria-label="Companies"
         placeholder="Companies"
-        className="border-2 border-gray-400 mt-2 focus:outline-none h-[25px] text-[0.8em] w-[200px] text-left px-4 placeholder-style bg-secondory hover:border-black"
+        className="border border-gray-400 mt-2 focus:outline-none h-[25px] text-[0.8em] w-[200px] text-left px-4 placeholder-style bg-secondory hover:border-black"
         style={{ borderRadius: "3px" }}
       />
       <div
-        className="absolute right-6 top-3 text-[#555] text[0.8em] cursor-pointer"
-        onClick={() => setListOpen(!isListOpen)}
+        role="button"
+        className="absolute right-4 top-3 text-[#555] text-[0.8em] cursor-pointer bg-secondory px-3"
+        onClick={handleArrowClick}
       >
         {isListOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
       </div>
+
       {isListOpen && (
         <ul className="absolute top-10 left-0 bg-white border border-gray-300 rounded-md z-50 w-[200px] h-[200px] overflow-scroll text-[0.8em]">
           <li

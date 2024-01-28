@@ -62,11 +62,31 @@ const MainTable = ({
           selectedRowData.length === searchedData.length;
 
         if (allSearchedSelected) {
-          setSelectedRowData([]);
+          // If all rows in searchedData are already selected, remove them from selectedRowData
+          setSelectedRowData((prevSelectedRows) =>
+            prevSelectedRows.filter(
+              (row) =>
+                !searchedData.some(
+                  (searchedRow) =>
+                    searchedRow.social_feed_id === row.social_feed_id
+                )
+            )
+          );
         } else {
-          setSelectedRowData([...searchedData]);
+          // Add all rows in searchedData to selectedRowData
+          setSelectedRowData((prevSelectedRows) => [
+            ...prevSelectedRows,
+            ...searchedData.filter(
+              (searchedRow) =>
+                !prevSelectedRows.some(
+                  (selectedRow) =>
+                    selectedRow.social_feed_id === searchedRow.social_feed_id
+                )
+            ),
+          ]);
         }
       } else {
+        // Toggle selection for all rows in tableData
         setSelectedRowData(allSelected ? [] : [...tableData]);
       }
 
@@ -140,7 +160,7 @@ const MainTable = ({
                         fontSize: "0.8em",
                         fontWeight: "bold",
                       }}
-                      className={`text-xs w-28 text-black overflow-hidden whitespace-normal" ${
+                      className={`text-xs w-26 text-black overflow-hidden whitespace-normal" ${
                         (header === "REPORTING SUBJECT" && "w-16") ||
                         (header === "HEADLINE" && "w-72") ||
                         (header === "DETAIL SUMMARY" && "w-[25rem]") ||
