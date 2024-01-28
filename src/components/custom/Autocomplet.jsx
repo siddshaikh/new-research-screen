@@ -110,7 +110,7 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
         onClick={handleInputClick}
         aria-label="Companies"
         placeholder="Companies"
-        className="border-2 border-gray-400 mt-2 focus:outline-none h-[25px] text-[0.8em] w-[200px] text-center placeholder-style bg-secondory hover:border-black"
+        className="border-2 border-gray-400 mt-2 focus:outline-none h-[25px] text-[0.8em] w-[200px] text-left px-4 placeholder-style bg-secondory hover:border-black"
         style={{ borderRadius: "3px" }}
       />
       <div

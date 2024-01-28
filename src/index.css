@@ -56,18 +56,7 @@ html::-moz-scrollbar-thumb:hover {
   color: #555; /* Set the color of the placeholder text */
   font-style: italic; /* Make the placeholder text italic */
 }
-@keyframes rotate360 {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
 
-.rotating-element {
-  animation: rotate360 infinite 2s linear;
-}
 /* Add this to your CSS file or style block */
 .loading-spinner {
   display: inline-block;

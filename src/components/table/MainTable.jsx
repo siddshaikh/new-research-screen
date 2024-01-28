@@ -187,9 +187,10 @@ const MainTable = ({
     <div className="mt-2 overflow-scroll h-screen">
       <table>
         <thead>
-          <tr className="sticky left-0 top-0 bg-primary">
+          <tr className="sticky left-0 top-0 bg-primary ">
+            {" "}
             {tableHeaders?.length > 0 && (
-              <th
+              <td
                 style={{
                   display: "flex",
                   justifyItems: "center",
@@ -199,9 +200,9 @@ const MainTable = ({
                 className="bg-primary"
               >
                 {checkBoxLoading ? (
-                  <span className="rotating-element ml-3 mt-1">
+                  <div className="loading-spinner ml-3 mt-1">
                     <AiOutlineLoading />
-                  </span>
+                  </div>
                 ) : (
                   <input
                     type="checkbox"
@@ -217,11 +218,11 @@ const MainTable = ({
                     className={classes.headerCheckBox}
                   />
                 )}
-              </th>
+              </td>
             )}
             {showTableData &&
               tableHeaders?.map((header) => (
-                <th
+                <td
                   key={header}
                   onClick={() =>
                     handleSort(header.toLowerCase().replace(/ /g, "_"))
@@ -255,7 +256,7 @@ const MainTable = ({
                     />
                   </span>
                   <span className="ml-2">{getHeaderAbbreviation(header)}</span>
-                </th>
+                </td>
               ))}
           </tr>
         </thead>
