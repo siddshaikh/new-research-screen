@@ -93,7 +93,6 @@ const ResearchTable = ({
       setReportingTones(reportingTons.data.reportingtones_list);
     }
   }, [reportingTons]);
-  console.log(reportingTones);
   // prominence
   const [prominences, setProminences] = useState([]);
   const [prominence, setProminence] = useState("");
