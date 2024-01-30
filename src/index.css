@@ -74,3 +74,6 @@ html::-moz-scrollbar-thumb:hover {
 .selected-row {
   background-color: #ffeeba;
 }
+.updated-row {
+  background-color: #b1f0be;
+}

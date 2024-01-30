@@ -36,6 +36,7 @@ const MainTable = ({
   sortDirection,
   setSortDirection,
   setSortColumn,
+  updatedRows,
 }) => {
   const { tableHeaders, showTableData } = useContext(ResearchContext);
   const classes = useStyles();
@@ -112,7 +113,9 @@ const MainTable = ({
       dataToRender.map((rowData, rowIndex) => (
         <TableRow
           key={rowIndex}
-          className={selectedRowData.includes(rowData) ? "selected-row" : ""}
+          className={`${
+            selectedRowData.includes(rowData) ? "selected-row" : ""
+          } ${updatedRows.includes(rowData) ? "updated-row" : ""}`}
         >
           <TableCell
             size="small"
@@ -326,5 +329,6 @@ MainTable.propTypes = {
   setSelectedRowData: PropTypes.func,
   setSortDirection: PropTypes.func,
   setSortColumn: PropTypes.func,
+  updatedRows: PropTypes.array,
 };
 export default memo(MainTable);

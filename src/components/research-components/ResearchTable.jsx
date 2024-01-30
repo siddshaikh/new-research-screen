@@ -629,6 +629,7 @@ const ResearchTable = ({
         setSortDirection={setSortDirection}
         setSortColumn={setSortColumn}
         tableData={tableData}
+        updatedRows={updatedRows}
       />
       <TotalRecords searchedData={searchedData} tableData={tableData} />
     </div>
