@@ -34,8 +34,8 @@ export default function TableDropdown({
         </MenuItem>
         {mappingValue.map((item) => (
           <MenuItem
-            key={item.value || item}
-            value={item.value || item}
+            key={item.value || item.tonality || item.prominence || item}
+            value={item.value || item.tonality || item.prominence || item}
             sx={{ fontSize: "0.8em" }}
           >
             {item.tonality || item.prominence}
