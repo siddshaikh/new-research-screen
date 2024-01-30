@@ -4,6 +4,7 @@ import {
   styled,
   createTheme,
   ThemeProvider,
+  Paper,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import PropTypes from "prop-types";
@@ -89,6 +90,9 @@ const SearchableCategory = ({
         )}
         value={selectedOption}
         onChange={handleSelectChange}
+        PaperComponent={(props) => (
+          <Paper {...props} style={{ ...props.style, width: 200 }} />
+        )}
       />
     </ThemeProvider>
   );

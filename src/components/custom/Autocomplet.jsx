@@ -6,8 +6,8 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
   const [inputValue, setInputValue] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [isListOpen, setListOpen] = useState(false);
+  const [selectAllFlag, setSelectAllFlag] = useState(false);
   const componentRef = useRef();
-
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
     const filteredSuggestions = company.filter((suggestion) =>
@@ -104,6 +104,16 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
       inputElement.removeEventListener("keydown", handleKeyDown);
     };
   }, [inputValue, companies]);
+  const handleClickAll = () => {
+    const allCompanyIds = company.map((suggestion) => suggestion.companyid);
+    setCompanies(allCompanyIds);
+    setSelectAllFlag(true);
+  };
+
+  const handleDisselectAll = () => {
+    setCompanies([]);
+    setSelectAllFlag(false);
+  };
 
   return (
     <div ref={componentRef} className="relative mt-1">
@@ -124,22 +134,52 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
       >
         {isListOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
       </div>
-
       {isListOpen && (
         <ul className="absolute top-10 left-0 bg-white border border-gray-300 rounded-md z-50 w-[200px] h-[200px] overflow-scroll text-[0.8em]">
-          <li
-            aria-disabled
-            className="p-2 px-4 text-gray-500"
-            onClick={() => setCompanies([])}
-          >
-            Companies
+          {/* Select All and Deselect All buttons */}
+          <li className="p-2 px-4 text-gray-500 flex items-center gap-4">
+            <button
+              onClick={handleClickAll}
+              disabled={selectAllFlag}
+              className={`${selectAllFlag && "cursor-not-allowed"}`}
+              aria-disabled={selectAllFlag}
+            >
+              Select All
+            </button>
+            <button
+              onClick={handleDisselectAll}
+              disabled={!selectAllFlag}
+              className={`${!selectAllFlag && "cursor-not-allowed"}`}
+              aria-disabled={!selectAllFlag}
+            >
+              Deselect All
+            </button>
           </li>
+
+          {/* Display selected items at the top */}
+          {companies.map((selectedCompanyId) => {
+            const selectedSuggestion = company.find(
+              (suggestion) => suggestion.companyid === selectedCompanyId
+            );
+
+            return (
+              <li
+                key={selectedSuggestion.companyid}
+                onClick={() => handleSuggestionClick(selectedSuggestion)}
+                className={`cursor-pointer p-2 px-4 bg-secondory`}
+              >
+                {selectedSuggestion.companyname}
+              </li>
+            );
+          })}
+
+          {/* Display unselected items */}
           {filteredSuggestions.map((suggestion) => (
             <li
               key={suggestion.companyid}
               onClick={() => handleSuggestionClick(suggestion)}
               className={`cursor-pointer p-2 px-4 ${
-                companies.includes(suggestion.companyid) ? "bg-secondory" : ""
+                companies.includes(suggestion.companyid) ? "hidden" : ""
               }`}
             >
               {suggestion.companyname}

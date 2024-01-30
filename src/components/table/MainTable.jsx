@@ -91,7 +91,7 @@ const MainTable = ({
       }
 
       setCheckBoxLoading(false);
-    }, 0);
+    }, 1000);
   };
 
   const handleSort = (clickedHeader) => {
@@ -139,7 +139,8 @@ const MainTable = ({
                 header === "KEYWORD" ||
                 header === "PUBLICATION" ||
                 header === "AUTHOR" ||
-                header === "HEADSUMMARY") && (
+                header === "HEADSUMMARY" ||
+                header === "FEED-ID") && (
                 <TableCell
                   sx={{
                     padding: "10px",
@@ -181,7 +182,9 @@ const MainTable = ({
                 header !== "HEADSUMMARY" && (
                   <TableCell size="small">
                     <div
-                      className="text-xs w-16 text-black overflow-hidden whitespace-normal mx-3"
+                      className={`text-xs w-16 text-black overflow-hidden whitespace-normal mx-3 ${
+                        header === "SOCIAL FEED ID" && "w-20"
+                      }`}
                       style={{
                         display: "-webkit-box",
                         WebkitBoxOrient: "vertical",
@@ -189,6 +192,30 @@ const MainTable = ({
                         marginLeft: -3,
                         fontSize: "0.8em",
                         fontWeight: "bold",
+                        backgroundColor:
+                          header === "REPORTING TONE" &&
+                          rowData[
+                            "REPORTING TONE".toLowerCase().replace(/ /g, "_")
+                          ] === "Unknown"
+                            ? "#FF7F7F"
+                            : header === "PROMINENCE" &&
+                              rowData[
+                                "PROMINENCE".toLowerCase().replace(/ /g, "_")
+                              ] === "Unknown"
+                            ? "#FF7F7F"
+                            : "transparent",
+                        color:
+                          header === "REPORTING TONE" &&
+                          rowData[
+                            "REPORTING TONE".toLowerCase().replace(/ /g, "_")
+                          ] === "Unknown"
+                            ? "#fff"
+                            : header === "PROMINENCE" &&
+                              rowData[
+                                "PROMINENCE".toLowerCase().replace(/ /g, "_")
+                              ] === "Unknown"
+                            ? "#fff"
+                            : "black",
                       }}
                     >
                       {rowData[header.toLowerCase().replace(/ /g, "_")]}

@@ -17,6 +17,7 @@ import SecondFind from "../research-dropdowns/table-dropdowns/SecondFind";
 import HeaderForEdits from "../research-dropdowns/table-dropdowns/HeaderForEdits";
 import SubjectSearchable from "../research-dropdowns/table-dropdowns/SubjectSearchable";
 import SearchableCategory from "../research-dropdowns/table-dropdowns/SearchableCategory";
+import TotalRecords from "../total-Records/TotalRecords";
 // import DeleteTableData from "../deleteData/DeleteTableData";
 
 const useStyles = makeStyles(() => ({
@@ -191,7 +192,6 @@ const ResearchTable = ({
   useEffect(() => {
     applySort();
   }, [sortColumn, sortDirection]);
-  console.log(selectedRowData);
 
   // search function using table header
   const handleTableSearchUsingHeader = (event) => {
@@ -564,7 +564,10 @@ const ResearchTable = ({
             width={120}
           />{" "}
         </div>
-        <Button btnText={"Apply"} onClick={handleApplyChanges} />
+        <Button
+          btnText={applyLoading ? "Applying" : "Apply"}
+          onClick={handleApplyChanges}
+        />
         <button
           className={` bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white tracking-wider ${
             postingLoading ? "text-yellow-300" : "text-white"
@@ -627,6 +630,7 @@ const ResearchTable = ({
         setSortColumn={setSortColumn}
         tableData={tableData}
       />
+      <TotalRecords searchedData={searchedData} tableData={tableData} />
     </div>
   );
 };

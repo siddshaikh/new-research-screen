@@ -77,7 +77,7 @@ TableRowCheckBox.propTypes = {
   setSelectedRowData: PropTypes.func.isRequired,
   selectedRowData: PropTypes.array.isRequired,
   searchedData: PropTypes.array.isRequired,
-  rowData: PropTypes.array.isRequired,
+  rowData: PropTypes.object.isRequired,
 };
 
 export default memo(TableRowCheckBox);
