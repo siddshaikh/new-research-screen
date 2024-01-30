@@ -40,6 +40,7 @@ const MainTable = ({
   const { tableHeaders, showTableData } = useContext(ResearchContext);
   const classes = useStyles();
   const [checkBoxLoading, setCheckBoxLoading] = useState(false);
+
   useEffect(() => {
     if (checkBoxLoading) {
       // Add a slight delay before setting checkBoxLoading to false
@@ -109,7 +110,10 @@ const MainTable = ({
 
     return tableData.length > 0 && showTableData ? (
       dataToRender.map((rowData, rowIndex) => (
-        <TableRow key={rowIndex}>
+        <TableRow
+          key={rowIndex}
+          className={selectedRowData.includes(rowData) ? "selected-row" : ""}
+        >
           <TableCell
             size="small"
             padding="checkbox"

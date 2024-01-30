@@ -57,7 +57,6 @@ html::-moz-scrollbar-thumb:hover {
   font-style: italic; /* Make the placeholder text italic */
 }
 
-/* Add this to your CSS file or style block */
 .loading-spinner {
   display: inline-block;
   animation: rotate360 infinite 2s linear;
@@ -70,4 +69,8 @@ html::-moz-scrollbar-thumb:hover {
   to {
     transform: rotate(360deg);
   }
+}
+
+.selected-row {
+  background-color: #ffeeba;
 }

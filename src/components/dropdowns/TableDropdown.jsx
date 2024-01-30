@@ -38,7 +38,7 @@ export default function TableDropdown({
             value={item.value || item}
             sx={{ fontSize: "0.8em" }}
           >
-            {item}
+            {item.tonality || item.prominence}
           </MenuItem>
         ))}
       </Select>
