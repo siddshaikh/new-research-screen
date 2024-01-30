@@ -47,7 +47,6 @@ const SearchableCategory = ({
   width,
 }) => {
   const classes = useStyles();
-
   const handleSelectChange = (event, newValue) => {
     setCategory(newValue || null);
   };

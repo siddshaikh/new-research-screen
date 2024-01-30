@@ -309,27 +309,28 @@ export const DDEditValues = [
   },
   {
     id: 2,
-    title: "Author",
-    value: "author_name",
+    title: "Remarks",
+    value: "remarks",
   },
   {
     id: 3,
-    title: "Summary",
-    value: "detail_summary",
-  },
-  {
-    id: 4,
     title: "Keyword",
     value: "keyword",
   },
   {
-    id: 5,
-    title: "Head Summary",
-    value: "headsummary",
+    id: 4,
+    title: "Summary",
+    value: "detail_summary",
   },
   {
+    id: 5,
+    title: "Author",
+    value: "author_name",
+  },
+
+  {
     id: 6,
-    title: "Remarks",
-    value: "remarks",
+    title: "Head Summary",
+    value: "headsummary",
   },
 ];

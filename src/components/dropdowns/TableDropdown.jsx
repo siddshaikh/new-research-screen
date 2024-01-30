@@ -29,8 +29,8 @@ export default function TableDropdown({
         MenuProps={{ PaperProps: { style: { height: 200, width: 200 } } }}
         sx={{ fontSize: "0.8em" }}
       >
-        <MenuItem value="" disabled>
-          <em>{placeholder}</em>
+        <MenuItem value="">
+          <em className="text-gray-500">{placeholder}</em>
         </MenuItem>
         {mappingValue.map((item) => (
           <MenuItem
