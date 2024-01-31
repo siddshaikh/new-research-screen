@@ -166,7 +166,7 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
               <li
                 key={selectedSuggestion.companyid}
                 onClick={() => handleSuggestionClick(selectedSuggestion)}
-                className={`cursor-pointer p-2 px-4 bg-secondory`}
+                className={`cursor-pointer p-2 px-4 bg-[#e6faf9]`}
               >
                 {selectedSuggestion.companyname}
               </li>

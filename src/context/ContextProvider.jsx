@@ -41,8 +41,10 @@ const ContextProvider = ({ children }) => {
 
   const [fromDate, setFromDate] = useState(formattedDate);
   const [dateNow, setDateNow] = useState(formattedNextDay);
-
   // dates end
+  // pagination
+  const [pageNumber, setPageNumber] = useState(1);
+  const recordsPerPage = 500;
   const [showTableData, setShowTableData] = useState(false);
 
   // if user forgot the save the data after apply changes in  table
@@ -59,6 +61,7 @@ const ContextProvider = ({ children }) => {
     setUserToken("");
     localStorage.removeItem("user");
     setUnsavedChanges(false);
+    setPageNumber(1);
     navigate("/login");
   };
   const getAutoToken = async () => {
@@ -116,6 +119,10 @@ const ContextProvider = ({ children }) => {
         // data saved or not
         unsavedChanges,
         setUnsavedChanges,
+        // Pagination
+        pageNumber,
+        setPageNumber,
+        recordsPerPage,
         // qc2print
         qc2Open,
         setQc2Open,

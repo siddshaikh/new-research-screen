@@ -17,8 +17,8 @@ import SecondFind from "../research-dropdowns/table-dropdowns/SecondFind";
 import HeaderForEdits from "../research-dropdowns/table-dropdowns/HeaderForEdits";
 import SubjectSearchable from "../research-dropdowns/table-dropdowns/SubjectSearchable";
 import SearchableCategory from "../research-dropdowns/table-dropdowns/SearchableCategory";
-import TotalRecords from "../total-Records/TotalRecords";
 // import DeleteTableData from "../deleteData/DeleteTableData";
+import Pagination from "../../components/pagination/Pagination";
 
 const useStyles = makeStyles(() => ({
   dropDowns: {
@@ -40,6 +40,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 const ResearchTable = ({
+  tableDataLoading,
   tableData,
   setTableData,
   company,
@@ -490,7 +491,8 @@ const ResearchTable = ({
     <div className="relative">
       {sortLoading ||
         applyLoading ||
-        (tableLoading && (
+        tableLoading ||
+        (tableDataLoading && (
           <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 bg-opacity-50 z-50">
             <Loader />
           </div>
@@ -620,6 +622,8 @@ const ResearchTable = ({
           />
         </span>
       </div>
+      {/* pagination */}
+      {tableData.length > 0 && <Pagination tableData={tableData} />}
       <MainTable
         searchedData={searchedData}
         selectedRowData={selectedRowData}
@@ -631,12 +635,12 @@ const ResearchTable = ({
         tableData={tableData}
         updatedRows={updatedRows}
       />
-      <TotalRecords searchedData={searchedData} tableData={tableData} />
     </div>
   );
 };
 
 ResearchTable.propTypes = {
+  tableDataLoading: PropTypes.bool.isRequired,
   tableData: PropTypes.array.isRequired,
   setTableData: PropTypes.func.isRequired,
   company: PropTypes.string.isRequired,

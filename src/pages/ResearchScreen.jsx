@@ -96,6 +96,8 @@ const ReasearchScreen = () => {
     setTableHeaders,
     unsavedChanges,
     setUnsavedChanges,
+    pageNumber,
+    recordsPerPage,
   } = useContext(ResearchContext);
   const [tableData, setTableData] = useState([]);
   const researchTableRef = useRef(null);
@@ -223,6 +225,8 @@ const ReasearchScreen = () => {
             // continent: "Asia", //optional using condition
             // country: "India",  //optional using condition
             // language: langsTostring, //optional using condition
+            page: pageNumber,
+            items_per_page: recordsPerPage,
           };
 
           // eslint-disable-next-line no-inner-declarations
@@ -305,6 +309,10 @@ const ReasearchScreen = () => {
       });
     }
   };
+  // call for the pagination
+  useEffect(() => {
+    tableData.length > 0 && handleSearch();
+  }, [pageNumber]);
   return (
     <div className="h-full ml-4">
       {/* Category dropdowns filter out */}
@@ -422,9 +430,11 @@ const ReasearchScreen = () => {
           </div>
           {/* divider */}
           <Divider sx={{ marginTop: 1 }} />
+
           {/* table */}
           <div ref={researchTableRef}>
             <ResearchTable
+              tableDataLoading={tableDataLoading}
               tableData={tableData}
               setTableData={setTableData}
               company={company}
