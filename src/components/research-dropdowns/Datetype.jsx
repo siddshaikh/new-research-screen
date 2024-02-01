@@ -16,14 +16,14 @@ const Datetype = ({ dateType, setDateType, classes, dateTypes }) => {
           inputProps={{ "aria-label": "Without label" }}
           sx={{ fontSize: "0.8em" }}
         >
-          <MenuItem value="" disabled>
+          <MenuItem value="" sx={{ fontSize: "0.8em", opacity: 0.7 }}>
             <em>Datetype</em>
           </MenuItem>
           {dateTypes.map((dateType) => (
             <MenuItem
               key={dateType.id}
               value={dateType.value}
-              sx={{ fontSize: "0.8em" }}
+              sx={{ fontSize: "0.8em", opacity: 0.7 }}
             >
               {dateType.title}
             </MenuItem>

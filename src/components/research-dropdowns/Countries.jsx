@@ -22,11 +22,15 @@ const Countries = ({ country, setCountry, classes, filteredCountries }) => {
             return selected.join(", ");
           }}
         >
-          <MenuItem value="" disabled>
+          <MenuItem value="" sx={{ fontSize: "0.8em", opacity: 0.7 }}>
             <em>Countries</em>
           </MenuItem>
           {filteredCountries.map((country) => (
-            <MenuItem key={country} value={country} sx={{ fontSize: "0.8em" }}>
+            <MenuItem
+              key={country}
+              value={country}
+              sx={{ fontSize: "0.8em", opacity: 0.7 }}
+            >
               {country}
             </MenuItem>
           ))}

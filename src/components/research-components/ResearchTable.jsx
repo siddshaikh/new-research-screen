@@ -39,15 +39,7 @@ const useStyles = makeStyles(() => ({
     color: "white",
   },
 }));
-const ResearchTable = ({
-  tableDataLoading,
-  tableData,
-  setTableData,
-  company,
-  companies,
-  companyId,
-  setCompanyId,
-}) => {
+const ResearchTable = ({ tableDataLoading, tableData, setTableData }) => {
   const classes = useStyles();
   // context values
   const { name, userToken, setUnsavedChanges } = useContext(ResearchContext);
@@ -124,30 +116,6 @@ const ResearchTable = ({
     }
   }, [categoryLists]);
 
-  // Function to find company id based on selection
-  const getCompanyId = (companyData, companyNames) => {
-    if (!companyNames) {
-      return null;
-    }
-
-    let companyId = [];
-
-    for (const companyName of companyNames) {
-      const company = companyData.find(
-        (item) => item.companyname === companyName
-      );
-      companyId.push(company ? company.companyid : null);
-    }
-
-    return companyId;
-  };
-
-  useEffect(() => {
-    const companyIds = getCompanyId(company, companies);
-    companyIds
-      ? setCompanyId(companyIds?.map((item) => `'${item}'`).join(","))
-      : setCompanyId([]);
-  }, [companies, company, companyId, setCompanyId]);
   // effect for the setting data for the editing row data basis on dropdown selection
   useEffect(() => {
     const editRowValues = selectedRowData
@@ -579,7 +547,7 @@ const ResearchTable = ({
           onClick={handleApplyChanges}
         />
         <button
-          className={` bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white tracking-wider ${
+          className={` bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white tracking-wider text-[0.9em] ${
             postingLoading ? "text-yellow-300" : "text-white"
           }`}
           onClick={() =>
@@ -610,7 +578,9 @@ const ResearchTable = ({
         {/* saved or not */}
         <div>
           {savedSuccess && (
-            <Typography className="text-primary">{successMessage}</Typography>
+            <Typography className="text-primary" sx={{ fontSize: "0.8em" }}>
+              {successMessage}
+            </Typography>
           )}
         </div>
       </div>
@@ -652,9 +622,5 @@ ResearchTable.propTypes = {
   tableDataLoading: PropTypes.bool.isRequired,
   tableData: PropTypes.array.isRequired,
   setTableData: PropTypes.func.isRequired,
-  company: PropTypes.string.isRequired,
-  companies: PropTypes.array.isRequired,
-  companyId: PropTypes.array.isRequired,
-  setCompanyId: PropTypes.func.isRequired,
 };
 export default ResearchTable;

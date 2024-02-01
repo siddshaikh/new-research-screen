@@ -18,14 +18,14 @@ const Qc1All = ({ qc1done, setQc1done, classes, qc1Array }) => {
           inputProps={{ "aria-label": "Without label" }}
           sx={{ fontSize: "0.8em" }}
         >
-          <MenuItem value="" disabled>
+          <MenuItem value="" sx={{ fontSize: "0.8em", opacity: 0.7 }}>
             <em>qc1 done</em>
           </MenuItem>
           {qc1Array.map((item) => (
             <MenuItem
               key={item.id}
               value={item.value}
-              sx={{ fontSize: "0.8em" }}
+              sx={{ fontSize: "0.8em", opacity: 0.7 }}
             >
               {item.option}
             </MenuItem>

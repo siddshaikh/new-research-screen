@@ -44,14 +44,15 @@ const Continents = ({
           }}
           className={classes.dropDowns}
         >
-          <MenuItem value="" disabled>
+          <MenuItem value="" sx={{ fontSize: "0.8em", opacity: 0.7 }}>
+            {" "}
             <em>Continents</em>
           </MenuItem>
           {continents.map((continent) => (
             <MenuItem
               key={continent}
               value={continent}
-              sx={{ fontSize: "0.8em" }}
+              sx={{ fontSize: "0.8em", opacity: 0.7 }}
             >
               {continent}
             </MenuItem>

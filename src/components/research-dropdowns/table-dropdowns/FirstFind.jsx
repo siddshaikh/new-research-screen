@@ -18,15 +18,15 @@ const FirstFind = ({
         MenuProps={{ PaperProps: { style: { height: 200 } } }}
         sx={{ fontSize: "0.8em" }}
       >
-        <MenuItem value="" sx={{ color: "lightgray" }}>
-          <em>select</em>
+        <MenuItem value="" sx={{ fontSize: "0.8em", opacity: 0.7 }}>
+          <em>Select</em>
         </MenuItem>
 
         {DDSearchValues.map((item) => (
           <MenuItem
             value={item.value}
             key={item.title}
-            sx={{ fontSize: "0.8em" }}
+            sx={{ fontSize: "0.8em", opacity: 0.7 }}
           >
             {item.title}
           </MenuItem>

@@ -29,14 +29,14 @@ export default function TableDropdown({
         MenuProps={{ PaperProps: { style: { height: 200, width: 200 } } }}
         sx={{ fontSize: "0.8em" }}
       >
-        <MenuItem value="">
-          <em className="text-gray-500">{placeholder}</em>
+        <MenuItem value="" sx={{ fontSize: "0.8em", opacity: 0.7 }}>
+          <em>{placeholder}</em>
         </MenuItem>
         {mappingValue.map((item) => (
           <MenuItem
             key={item.value || item.tonality || item.prominence || item}
             value={item.value || item.tonality || item.prominence || item}
-            sx={{ fontSize: "0.8em" }}
+            sx={{ fontSize: "0.8em", opacity: 0.7 }}
           >
             {item.tonality || item.prominence}
           </MenuItem>

@@ -15,11 +15,15 @@ const HeaderForEdits = ({ editRow, handleEditRowChange, classes }) => {
         MenuProps={{ PaperProps: { style: { height: 200 } } }}
         sx={{ fontSize: "0.8em" }}
       >
-        <MenuItem value="" sx={{ color: "lightgrey" }}>
+        <MenuItem value="" sx={{ fontSize: "0.8em", opacity: 0.7 }}>
           <em>Select</em>
         </MenuItem>
         {DDEditValues.map((item) => (
-          <MenuItem key={item.id} value={item.value} sx={{ fontSize: "0.8em" }}>
+          <MenuItem
+            key={item.id}
+            value={item.value}
+            sx={{ fontSize: "0.8em", opacity: 0.7 }}
+          >
             {item.title}
           </MenuItem>
         ))}

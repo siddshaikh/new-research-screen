@@ -7,6 +7,7 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [isListOpen, setListOpen] = useState(false);
   const [selectAllFlag, setSelectAllFlag] = useState(false);
+
   const componentRef = useRef();
 
   const handleInputChange = (e) => {
@@ -92,6 +93,7 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
           setCompanies([]);
         }
       } else if (
+        // eslint-disable-next-line no-dupe-else-if
         e.key === "Backspace" &&
         inputValue === "" &&
         companies.length > 0
@@ -178,6 +180,7 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
 
             return (
               <li
+                style={{ opacity: 0.7 }}
                 key={selectedSuggestion.companyid}
                 onClick={() => handleSuggestionClick(selectedSuggestion)}
                 className={`cursor-pointer p-2 px-4 bg-[#e6faf9]`}
@@ -190,6 +193,7 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
           {/* Display unselected items */}
           {filteredSuggestions.map((suggestion) => (
             <li
+              style={{ opacity: 0.7 }}
               key={suggestion.companyid}
               onClick={() => handleSuggestionClick(suggestion)}
               className={`cursor-pointer p-2 px-4 ${

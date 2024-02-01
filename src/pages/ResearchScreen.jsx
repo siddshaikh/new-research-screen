@@ -186,11 +186,17 @@ const ReasearchScreen = () => {
     }
   };
   useEffect(() => {
+    companies
+      ? setCompanyId(companies?.map((item) => `'${item}'`).join(","))
+      : setCompanyId([]);
+  }, [companies]);
+  useEffect(() => {
     const langsV = arrayToString(language);
     const continentV = arrayToString(continent);
     const countriesV = arrayToString(country);
     const qc1_userV = arrayToString(qc1by);
     const qc2_userV = arrayToString(qc2by);
+
     setLangsToString(langsV);
     setContinentsToString(continentV);
     setCountriesToString(countriesV);
@@ -228,7 +234,6 @@ const ReasearchScreen = () => {
             page: pageNumber,
             items_per_page: recordsPerPage,
           };
-
           // eslint-disable-next-line no-inner-declarations
           function addPropertyIfConditionIsTrue(condition, property, value) {
             if (condition) {
@@ -265,7 +270,7 @@ const ReasearchScreen = () => {
           );
 
           const requestDataJSON = JSON.stringify(requestData);
-          const url = `${import.meta.env.VITE_BASE_URL}listArticlebyQCTemp/`; //listArticlebyQC
+          const url = `${import.meta.env.VITE_BASE_URL}listArticlebyQCTemp/`;
           const response = await axios.post(url, requestDataJSON, {
             headers: {
               "Content-Type": "application/json",
@@ -421,7 +426,7 @@ const ReasearchScreen = () => {
             />
             <button
               onClick={handleSearch}
-              className={`bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white ${
+              className={`bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white text-[0.9em] ${
                 tableDataLoading ? "text-yellow-300" : "text-white"
               }`}
             >
@@ -437,10 +442,6 @@ const ReasearchScreen = () => {
               tableDataLoading={tableDataLoading}
               tableData={tableData}
               setTableData={setTableData}
-              company={company}
-              companies={companies}
-              companyId={companyId}
-              setCompanyId={setCompanyId}
             />
           </div>
         </>

@@ -19,7 +19,7 @@ const SecondFind = ({
         MenuProps={{ PaperProps: { style: { height: 200 } } }}
         sx={{ fontSize: "0.8em" }}
       >
-        <MenuItem value="" sx={{ color: "lightgray" }}>
+        <MenuItem value="" sx={{ fontSize: "0.8em", opacity: 0.7 }}>
           <em>select</em>
         </MenuItem>
 
@@ -28,7 +28,7 @@ const SecondFind = ({
               <MenuItem
                 value={item.value}
                 key={item.title}
-                sx={{ fontSize: "0.8em" }}
+                sx={{ fontSize: "0.8em", opacity: 0.7 }}
               >
                 {item.title}
               </MenuItem>
@@ -37,7 +37,7 @@ const SecondFind = ({
               <MenuItem
                 value={item.value}
                 key={item.title}
-                sx={{ fontSize: "0.8em" }}
+                sx={{ fontSize: "0.8em", opacity: 0.7 }}
               >
                 {item.title}
               </MenuItem>

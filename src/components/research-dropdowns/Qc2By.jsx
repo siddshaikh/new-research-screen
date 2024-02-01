@@ -24,7 +24,7 @@ const Qc2By = ({ qcUsersData, classes, qc2by, setQc2by }) => {
             return selectedUsernamesqc2.join(", ");
           }}
         >
-          <MenuItem value="" disabled>
+          <MenuItem value="" sx={{ fontSize: "0.8em", opacity: 0.7 }}>
             <em>Qc2 by</em>
           </MenuItem>
           {qcUsersData &&
@@ -32,7 +32,7 @@ const Qc2By = ({ qcUsersData, classes, qc2by, setQc2by }) => {
               <MenuItem
                 key={items.usersid}
                 value={items.usersid}
-                sx={{ fontSize: "0.8em" }}
+                sx={{ fontSize: "0.8em", opacity: 0.7 }}
               >
                 {items.username}
               </MenuItem>

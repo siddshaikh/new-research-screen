@@ -31,11 +31,11 @@ const useStyles = makeStyles(() => ({
   smallerText: {
     fontSize: "0.9em",
     "& input::placeholder": {
-      fontSize: "0.9em",
-      color: "black !important",
+      fontSize: "11px",
+      color: "black",
       fontStyle: "italic",
-      opacity: 1,
-      letterSpacing: "1px",
+      opacity: 0.7,
+      letterSpacing: "1.1px",
     },
   },
 }));

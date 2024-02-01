@@ -23,7 +23,11 @@ export default function CheckboxComp({ value, setValue, label }) {
             />
           }
           label={
-            <Typography variant="body2" fontSize={"0.8em"}>
+            <Typography
+              variant="body2"
+              fontSize={"0.8em"}
+              sx={{ opacity: 0.7 }}
+            >
               {label}
             </Typography>
           }

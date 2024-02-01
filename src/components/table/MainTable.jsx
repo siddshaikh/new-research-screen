@@ -38,7 +38,6 @@ const MainTable = ({
   setSortColumn,
   highlightUpdatedRows,
 }) => {
-  console.log(highlightUpdatedRows);
   const { tableHeaders, showTableData } = useContext(ResearchContext);
   const classes = useStyles();
   const [checkBoxLoading, setCheckBoxLoading] = useState(false);
@@ -107,6 +106,7 @@ const MainTable = ({
       setSortDirection("asc");
     }
   };
+  console.log(tableData);
   const renderTableData = () => {
     const dataToRender = searchedData.length > 0 ? searchedData : tableData;
 
@@ -171,10 +171,11 @@ const MainTable = ({
                       }}
                       className={`text-xs w-26 text-black overflow-hidden whitespace-normal" ${
                         (header === "REPORTING SUBJECT" && "w-16") ||
-                        (header === "HEADLINE" && "w-72") ||
+                        (header === "HEADLINE" && "w-64") ||
                         (header === "DETAIL SUMMARY" && "w-[25rem]") ||
                         (header === "HEADSUMMARY" && "w-[25rem]") ||
-                        (header === "KEYWORD" && "w-72")
+                        (header === "KEYWORD" && "w-40") ||
+                        (header === "PUBLICATION" && "w-28")
                       }`}
                     >
                       {rowData[header.toLowerCase().replace(/ /g, "_")]}
@@ -192,7 +193,8 @@ const MainTable = ({
                   <TableCell size="small">
                     <div
                       className={`text-xs w-16 text-black overflow-hidden whitespace-normal mx-3 ${
-                        header === "SOCIAL FEED ID" && "w-20"
+                        (header === "SOCIAL FEED ID" && "w-20") ||
+                        (header === "LINK" && "w-6")
                       }`}
                       style={{
                         display: "-webkit-box",

@@ -44,7 +44,7 @@ const ContextProvider = ({ children }) => {
   // dates end
   // pagination
   const [pageNumber, setPageNumber] = useState(1);
-  const recordsPerPage = 500;
+  const recordsPerPage = 800;
   const [showTableData, setShowTableData] = useState(false);
 
   // if user forgot the save the data after apply changes in  table
