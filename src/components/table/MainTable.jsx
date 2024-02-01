@@ -36,8 +36,9 @@ const MainTable = ({
   sortDirection,
   setSortDirection,
   setSortColumn,
-  updatedRows,
+  highlightUpdatedRows,
 }) => {
+  console.log(highlightUpdatedRows);
   const { tableHeaders, showTableData } = useContext(ResearchContext);
   const classes = useStyles();
   const [checkBoxLoading, setCheckBoxLoading] = useState(false);
@@ -115,7 +116,7 @@ const MainTable = ({
           key={rowIndex}
           className={`${
             selectedRowData.includes(rowData) ? "selected-row" : ""
-          } ${updatedRows.includes(rowData) ? "updated-row" : ""}`}
+          } ${highlightUpdatedRows.includes(rowData) ? "updated-row" : ""}`}
         >
           <TableCell
             size="small"
@@ -172,7 +173,8 @@ const MainTable = ({
                         (header === "REPORTING SUBJECT" && "w-16") ||
                         (header === "HEADLINE" && "w-72") ||
                         (header === "DETAIL SUMMARY" && "w-[25rem]") ||
-                        (header === "HEADSUMMARY" && "w-[25rem]")
+                        (header === "HEADSUMMARY" && "w-[25rem]") ||
+                        (header === "KEYWORD" && "w-72")
                       }`}
                     >
                       {rowData[header.toLowerCase().replace(/ /g, "_")]}
@@ -329,6 +331,6 @@ MainTable.propTypes = {
   setSelectedRowData: PropTypes.func,
   setSortDirection: PropTypes.func,
   setSortColumn: PropTypes.func,
-  updatedRows: PropTypes.array,
+  highlightUpdatedRows: PropTypes.array,
 };
 export default memo(MainTable);

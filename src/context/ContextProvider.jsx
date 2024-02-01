@@ -25,7 +25,7 @@ const ContextProvider = ({ children }) => {
   const currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0);
 
-  const nextDay = new Date(currentDate.getTime() + 12 * 60 * 60 * 1000);
+  const nextDay = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
   const formattedDate = new Date(
     currentDate.getTime() - currentDate.getTimezoneOffset() * 60000
   )

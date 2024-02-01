@@ -8,15 +8,18 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
   const [isListOpen, setListOpen] = useState(false);
   const [selectAllFlag, setSelectAllFlag] = useState(false);
   const componentRef = useRef();
+
   const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-    const filteredSuggestions = company.filter((suggestion) =>
-      suggestion.companyname
-        .toLowerCase()
-        .includes(e.target.value.toLowerCase())
+    const value = e.target.value;
+    setInputValue(value);
+
+    setFilteredSuggestions(() =>
+      company.filter((suggestion) =>
+        suggestion.companyname.toLowerCase().includes(value.toLowerCase())
+      )
     );
-    setFilteredSuggestions(filteredSuggestions);
-    setListOpen(!!e.target.value.trim());
+
+    setListOpen(!!value.trim());
   };
 
   const handleInputClick = () => {
@@ -25,9 +28,11 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
       setListOpen(true);
     }
   };
+
   const handleArrowClick = () => {
     setListOpen(!isListOpen);
   };
+
   const selectedCompaniesString =
     companies.length > 0
       ? `${
@@ -72,6 +77,7 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
       document.removeEventListener("click", handleOutsideClick);
     };
   }, []);
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Backspace" && inputValue === "") {
@@ -86,7 +92,6 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
           setCompanies([]);
         }
       } else if (
-        // eslint-disable-next-line no-dupe-else-if
         e.key === "Backspace" &&
         inputValue === "" &&
         companies.length > 0
@@ -104,6 +109,7 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
       inputElement.removeEventListener("keydown", handleKeyDown);
     };
   }, [inputValue, companies]);
+
   const handleClickAll = () => {
     const allCompanyIds = company.map((suggestion) => suggestion.companyid);
     setCompanies(allCompanyIds);
@@ -111,8 +117,10 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
   };
 
   const handleDisselectAll = () => {
-    setCompanies([]);
-    setSelectAllFlag(false);
+    if (companies.length > 0) {
+      setCompanies([]);
+      setSelectAllFlag(false);
+    }
   };
 
   return (
@@ -138,22 +146,28 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
         <ul className="absolute top-10 left-0 bg-white border border-gray-300 rounded-md z-50 w-[200px] h-[200px] overflow-scroll text-[0.8em]">
           {/* Select All and Deselect All buttons */}
           <li className="p-2 px-4 text-gray-500 flex items-center gap-4">
-            <button
-              onClick={handleClickAll}
-              disabled={selectAllFlag}
-              className={`${selectAllFlag && "cursor-not-allowed"}`}
-              aria-disabled={selectAllFlag}
-            >
-              Select All
-            </button>
-            <button
-              onClick={handleDisselectAll}
-              disabled={!selectAllFlag}
-              className={`${!selectAllFlag && "cursor-not-allowed"}`}
-              aria-disabled={!selectAllFlag}
-            >
-              Deselect All
-            </button>
+            {company.length <= 0 ? (
+              <p>No Options</p>
+            ) : (
+              <>
+                <button
+                  onClick={handleClickAll}
+                  disabled={selectAllFlag}
+                  className={`${selectAllFlag && "cursor-not-allowed"}`}
+                >
+                  Select All
+                </button>
+                <button
+                  onClick={handleDisselectAll}
+                  disabled={companies.length === 0}
+                  className={`${
+                    companies.length === 0 && "cursor-not-allowed"
+                  }`}
+                >
+                  Deselect All
+                </button>
+              </>
+            )}
           </li>
 
           {/* Display selected items at the top */}

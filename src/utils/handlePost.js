@@ -2,7 +2,6 @@ import axios from "axios";
 
 const handlePostData = async (
   updatedRows,
-  company,
   name,
   currentDateWithTime,
   setSavedSuccess,
@@ -17,19 +16,14 @@ const handlePostData = async (
   setUnsavedChanges,
   setEditValue,
   setEditRow,
-  userToken
+  userToken,
+  setHighlightUpdatedRows
 ) => {
   setSavedSuccess(true);
   setPostingLoading(true);
-  // if company has not selected(get company ids)
-  const comapnyNames = updatedRows.map((item) => item.company_name);
-  let foundCompanyIds = comapnyNames.map((name) => {
-    let foundObject = company.find((obj) => obj.companyname === name);
-    return foundObject ? foundObject.companyid : null;
-  });
 
-  const dataToSending = updatedRows.map((row, index) => ({
-    COMPANYID: foundCompanyIds[index] || "", // Fetching the ID corresponding to the row
+  const dataToSending = updatedRows.map((row) => ({
+    COMPANYID: row.company_id,
     DETAILSUMMARY: row.detail_summary,
     KEYWORD: row.keyword,
     MODIFIEDBY: name,
@@ -58,6 +52,7 @@ const handlePostData = async (
       setPostingLoading(false);
       setSuccessMessage("Data updated successfully!");
       setSelectedRowData([]);
+      setHighlightUpdatedRows([]);
       // Clearing the dropdown values
       setReportingTone("");
       setSubject("");

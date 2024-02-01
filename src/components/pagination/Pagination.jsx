@@ -10,9 +10,12 @@ const Pagination = ({ tableData }) => {
   const isNextDisabled = tableData.length < recordsPerPage;
   // Calculate the range of items on the current page
   const startIndex = (pageNumber - 1) * recordsPerPage + 1;
-  const endIndex = Math.min(startIndex + recordsPerPage - 1, tableData.length);
+  const endIndex =
+    tableData.length < recordsPerPage
+      ? pageNumber * recordsPerPage - recordsPerPage + tableData.length
+      : recordsPerPage * pageNumber;
   const pageValueToShow =
-    tableData.length === 0 ? 0 : `${startIndex}-${endIndex * pageNumber}`;
+    tableData.length === 0 ? 0 : `${startIndex}-${endIndex}`;
 
   const handlePrev = () => {
     if (!isPrevDisabled) setPageNumber((prev) => prev - 1);

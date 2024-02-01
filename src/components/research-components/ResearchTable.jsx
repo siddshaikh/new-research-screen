@@ -76,6 +76,8 @@ const ResearchTable = ({
   // Function to fetch table data
   // updatedrows
   const [updatedRows, setUpdatedRows] = useState([]);
+  // for highlight purpose
+  const [highlightUpdatedRows, setHighlightUpdatedRows] = useState([]);
   // saved success
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -252,7 +254,9 @@ const ResearchTable = ({
 
       const updatedTableData = tableData.map((row) => {
         const updatedRow = updatedSelectedRows.find(
-          (selectedRow) => selectedRow.social_feed_id === row.social_feed_id
+          (selectedRow) =>
+            selectedRow.social_feed_id === row.social_feed_id &&
+            selectedRow.company_id === row.company_id
         );
         return updatedRow || row;
       });
@@ -260,12 +264,17 @@ const ResearchTable = ({
       // Update only the items that exist in selectedRowData in both searchedData and tableData
       const updatedSearchedData = searchedData.map((row) => {
         const updatedRow = updatedSelectedRows.find(
-          (selectedRow) => selectedRow.social_feed_id === row.social_feed_id
+          (selectedRow) =>
+            selectedRow.social_feed_id === row.social_feed_id &&
+            selectedRow.company_id === row.company_id
         );
         return updatedRow || row;
       });
 
       setUpdatedRows(updatedSelectedRows);
+      // hightlight purpose(setHighlightUPdatedRows)
+      setHighlightUpdatedRows((prev) => [...prev, ...updatedSelectedRows]);
+
       setTableData(updatedTableData);
       setSearchedData(updatedSearchedData);
       setUnsavedChanges(true);
@@ -487,16 +496,15 @@ const ResearchTable = ({
       return () => clearTimeout(timeoutId);
     }
   }, [savedSuccess]);
+  const loadingLoader =
+    sortLoading || applyLoading || tableLoading || tableDataLoading;
   return (
     <div className="relative">
-      {sortLoading ||
-        applyLoading ||
-        tableLoading ||
-        (tableDataLoading && (
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 bg-opacity-50 z-50">
-            <Loader />
-          </div>
-        ))}
+      {loadingLoader && (
+        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 bg-opacity-50 z-50">
+          <Loader />
+        </div>
+      )}
       {/* filters for editing the cells */}
       <div className="flex items-center gap-2 flex-wrap">
         {/* first find */}
@@ -577,7 +585,6 @@ const ResearchTable = ({
           onClick={() =>
             handlePostData(
               updatedRows,
-              company,
               name,
               currentDateWithTime,
               setSavedSuccess,
@@ -592,7 +599,8 @@ const ResearchTable = ({
               setUnsavedChanges,
               setEditValue,
               setEditRow,
-              userToken
+              userToken,
+              setHighlightUpdatedRows
             )
           }
         >
@@ -634,6 +642,7 @@ const ResearchTable = ({
         setSortColumn={setSortColumn}
         tableData={tableData}
         updatedRows={updatedRows}
+        highlightUpdatedRows={highlightUpdatedRows}
       />
     </div>
   );
