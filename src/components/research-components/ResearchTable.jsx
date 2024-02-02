@@ -19,6 +19,7 @@ import SubjectSearchable from "../research-dropdowns/table-dropdowns/SubjectSear
 import SearchableCategory from "../research-dropdowns/table-dropdowns/SearchableCategory";
 // import DeleteTableData from "../deleteData/DeleteTableData";
 import Pagination from "../../components/pagination/Pagination";
+import TotalRecords from "../total-records/TotalRecords";
 
 const useStyles = makeStyles(() => ({
   dropDowns: {
@@ -39,7 +40,14 @@ const useStyles = makeStyles(() => ({
     color: "white",
   },
 }));
-const ResearchTable = ({ tableDataLoading, tableData, setTableData }) => {
+const ResearchTable = ({
+  tableDataLoading,
+  tableData,
+  setTableData,
+  setIsRetrieveAfterSave,
+  totalRecordsCount,
+  setFetchingUsingPrevNext,
+}) => {
   const classes = useStyles();
   // context values
   const { name, userToken, setUnsavedChanges } = useContext(ResearchContext);
@@ -547,10 +555,10 @@ const ResearchTable = ({ tableDataLoading, tableData, setTableData }) => {
           onClick={handleApplyChanges}
         />
         <button
-          className={` bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white tracking-wider text-[0.9em] ${
+          className={`bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white tracking-wider text-[0.9em] ${
             postingLoading ? "text-yellow-300" : "text-white"
           }`}
-          onClick={() =>
+          onClick={() => {
             handlePostData(
               updatedRows,
               name,
@@ -568,9 +576,11 @@ const ResearchTable = ({ tableDataLoading, tableData, setTableData }) => {
               setEditValue,
               setEditRow,
               userToken,
-              setHighlightUpdatedRows
-            )
-          }
+              setHighlightUpdatedRows,
+              setIsRetrieveAfterSave
+            );
+            setFetchingUsingPrevNext(false);
+          }}
         >
           {postingLoading ? "Loading..." : "Save"}
         </button>
@@ -600,8 +610,16 @@ const ResearchTable = ({ tableDataLoading, tableData, setTableData }) => {
           />
         </span>
       </div>
-      {/* pagination */}
-      {tableData.length > 0 && <Pagination tableData={tableData} />}
+      {/* pagination & total records */}
+      <div className="flex items-center gap-2">
+        {tableData.length > 0 && (
+          <Pagination
+            tableData={tableData}
+            setFetchingUsingPrevNext={setFetchingUsingPrevNext}
+          />
+        )}
+        <TotalRecords totalRecordsCount={totalRecordsCount} />
+      </div>
       <MainTable
         searchedData={searchedData}
         selectedRowData={selectedRowData}
@@ -622,5 +640,8 @@ ResearchTable.propTypes = {
   tableDataLoading: PropTypes.bool.isRequired,
   tableData: PropTypes.array.isRequired,
   setTableData: PropTypes.func.isRequired,
+  setIsRetrieveAfterSave: PropTypes.func,
+  totalRecordsCount: PropTypes.array,
+  setFetchingUsingPrevNext: PropTypes.func,
 };
 export default ResearchTable;

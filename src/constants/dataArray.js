@@ -16,7 +16,7 @@ export const qc1Array = [
   {
     id: 3,
     option: " QC1 All",
-    value: "",
+    value: 2,
   },
 ];
 export const qc2Array = [
@@ -33,7 +33,7 @@ export const qc2Array = [
   {
     id: 3,
     option: " QC2 All",
-    value: "",
+    value: 2,
   },
 ];
 export const continents = ["Africa", "Asia", "Europe", "America", "Australia"];

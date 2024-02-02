@@ -17,7 +17,8 @@ const handlePostData = async (
   setEditValue,
   setEditRow,
   userToken,
-  setHighlightUpdatedRows
+  setHighlightUpdatedRows,
+  setIsRetrieveAfterSave
 ) => {
   setSavedSuccess(true);
   setPostingLoading(true);
@@ -40,7 +41,7 @@ const handlePostData = async (
   }));
 
   try {
-    const url = `http://51.68.220.77:8000/update2databaseTemp/`; //update2database
+    const url = `${import.meta.env.VITE_BASE_URL}update2databaseTemp/`; //update2database
     if (dataToSending.length > 0) {
       await axios.post(url, dataToSending, {
         headers: {
@@ -61,6 +62,7 @@ const handlePostData = async (
       setUnsavedChanges(false);
       setEditValue("");
       setEditRow("");
+      setIsRetrieveAfterSave(true);
     } else {
       setSuccessMessage("No data to save.");
       setPostingLoading(false);

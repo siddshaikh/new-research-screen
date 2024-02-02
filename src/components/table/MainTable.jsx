@@ -106,7 +106,6 @@ const MainTable = ({
       setSortDirection("asc");
     }
   };
-  console.log(tableData);
   const renderTableData = () => {
     const dataToRender = searchedData.length > 0 ? searchedData : tableData;
 

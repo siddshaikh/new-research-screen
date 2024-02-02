@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { ResearchContext } from "../../context/ContextProvider";
 import PropTypes from "prop-types";
 
-const Pagination = ({ tableData }) => {
+const Pagination = ({ tableData, setFetchingUsingPrevNext }) => {
   const { pageNumber, setPageNumber, recordsPerPage } =
     useContext(ResearchContext);
   const isPrevDisabled = pageNumber === 1;
@@ -18,10 +18,12 @@ const Pagination = ({ tableData }) => {
     tableData.length === 0 ? 0 : `${startIndex}-${endIndex}`;
 
   const handlePrev = () => {
+    setFetchingUsingPrevNext(true);
     if (!isPrevDisabled) setPageNumber((prev) => prev - 1);
   };
 
   const handleNext = () => {
+    setFetchingUsingPrevNext(true);
     setPageNumber((prev) => prev + 1);
   };
 
@@ -53,6 +55,7 @@ const Pagination = ({ tableData }) => {
 
 Pagination.propTypes = {
   tableData: PropTypes.array.isRequired,
+  setFetchingUsingPrevNext: PropTypes.func.isRequired,
 };
 
 export default Pagination;

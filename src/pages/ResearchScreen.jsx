@@ -85,7 +85,12 @@ const ReasearchScreen = () => {
   const [countriesToString, setCountriesToString] = useState("");
   const [qc1byuserToString, setQc1byuserToString] = useState("");
   const [qc2byuserToString, setQc2byuserToString] = useState("");
-
+  // retrieve dat after save
+  const [isRetrieveAfterSave, setIsRetrieveAfterSave] = useState(false);
+  const [fetchingUsingPrevNext, setFetchingUsingPrevNext] = useState(false);
+  // main data
+  const [tableData, setTableData] = useState([]);
+  const [totalRecords, setTotalRecords] = useState(0);
   const {
     fromDate,
     setFromDate,
@@ -99,7 +104,6 @@ const ReasearchScreen = () => {
     pageNumber,
     recordsPerPage,
   } = useContext(ResearchContext);
-  const [tableData, setTableData] = useState([]);
   const researchTableRef = useRef(null);
   useEffect(() => {
     if (tableData.length > 1 && researchTableRef.current) {
@@ -120,7 +124,7 @@ const ReasearchScreen = () => {
     } else {
       console.log(ClientEror);
     }
-  }, [clientData, setClients, ClientEror, setLanguage, setTableData]);
+  }, [clientData, setClients, ClientEror]);
   // fetching the companies
   const {
     data: companyData,
@@ -211,9 +215,8 @@ const ReasearchScreen = () => {
           autoClose: 3000,
         });
       } else {
-        setShowTableData(companies ? true : false);
+        setShowTableData(!!companies);
         setTableDataLoading(true);
-
         try {
           let requestData = {
             client_id: clientId,
@@ -224,8 +227,8 @@ const ReasearchScreen = () => {
             // search_text: searchValue,
             // qc1_by: "qc1_user", //optional using condition
             // qc2_by: "qc2_user", //optional using condition
-            //is_qc1: qc1done, //optional using condition
-            //is_qc2: qc2done, //optional using condition
+            is_qc1: qc1done,
+            is_qc2: qc2done,
             has_image: isImage,
             has_video: isVideo,
             // continent: "Asia", //optional using condition
@@ -233,6 +236,7 @@ const ReasearchScreen = () => {
             // language: langsTostring, //optional using condition
             page: pageNumber,
             items_per_page: recordsPerPage,
+            // count:'Y',   //optional using condition
           };
           // eslint-disable-next-line no-inner-declarations
           function addPropertyIfConditionIsTrue(condition, property, value) {
@@ -251,8 +255,6 @@ const ReasearchScreen = () => {
             "qc2_by",
             qc2byuserToString
           );
-          addPropertyIfConditionIsTrue(qc1done, "is_qc1", qc1done);
-          addPropertyIfConditionIsTrue(qc2done, "is_qc2", qc2done);
           addPropertyIfConditionIsTrue(
             continentsToString,
             "continent",
@@ -268,6 +270,7 @@ const ReasearchScreen = () => {
             "language",
             langsToString
           );
+          addPropertyIfConditionIsTrue(!fetchingUsingPrevNext, "count", "Y");
 
           const requestDataJSON = JSON.stringify(requestData);
           const url = `${import.meta.env.VITE_BASE_URL}listArticlebyQCTemp/`;
@@ -293,6 +296,10 @@ const ReasearchScreen = () => {
                 ),
               };
             });
+            setTotalRecords(
+              response.data.feed_count.map((item) => item.total_rows)
+            );
+
             setTableData(updatedData);
             const localeV = response.data.feed_data;
             setTableHeaders(
@@ -306,6 +313,7 @@ const ReasearchScreen = () => {
           console.log(error);
           setTableDataLoading(false);
           setTableData([]);
+          setIsRetrieveAfterSave(false);
         }
       }
     } else {
@@ -318,6 +326,10 @@ const ReasearchScreen = () => {
   useEffect(() => {
     tableData.length > 0 && handleSearch();
   }, [pageNumber]);
+  // call after data save
+  useEffect(() => {
+    isRetrieveAfterSave && handleSearch();
+  }, [isRetrieveAfterSave]);
   return (
     <div className="h-full ml-4">
       {/* Category dropdowns filter out */}
@@ -425,7 +437,10 @@ const ReasearchScreen = () => {
               filteredCountries={filteredCountries}
             />
             <button
-              onClick={handleSearch}
+              onClick={() => {
+                handleSearch();
+                setFetchingUsingPrevNext(false);
+              }}
               className={`bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white text-[0.9em] ${
                 tableDataLoading ? "text-yellow-300" : "text-white"
               }`}
@@ -442,6 +457,9 @@ const ReasearchScreen = () => {
               tableDataLoading={tableDataLoading}
               tableData={tableData}
               setTableData={setTableData}
+              setIsRetrieveAfterSave={setIsRetrieveAfterSave}
+              totalRecordsCount={totalRecords}
+              setFetchingUsingPrevNext={setFetchingUsingPrevNext}
             />
           </div>
         </>
