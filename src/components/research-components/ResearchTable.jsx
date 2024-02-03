@@ -51,7 +51,8 @@ const ResearchTable = ({
 }) => {
   const classes = useStyles();
   // context values
-  const { name, userToken, setUnsavedChanges } = useContext(ResearchContext);
+  const { name, userToken, setUnsavedChanges, setPageNumber } =
+    useContext(ResearchContext);
 
   // state variables for posting data to database
   const [currentDateWithTime, setCurrentDateWithTime] = useState("");
@@ -195,58 +196,61 @@ const ResearchTable = ({
   };
   //updating tabledata
   const handleApplyChanges = () => {
-    setApplyLoading(true);
-    if (selectedRowData.length > 0) {
-      const updatedSelectedRows = selectedRowData.map((row) => ({
-        ...row,
-        reporting_tone: reportingTone || row.reporting_tone,
-        reporting_subject: subject || row.reporting_subject,
-        subcategory: category || row.subcategory,
-        prominence: prominence || row.prominence,
-        detail_summary:
-          (editRow === "detail_summary" && editValue) || row.detail_summary,
-        headline: (editRow === "headline" && editValue) || row.headline,
-        headsummary:
-          (editRow === "headsummary" && editValue) || row.headsummary,
-        author_name:
-          (editRow === "author_name" && editValue) || row.author_name,
-        keyword: (editRow === "keyword" && editValue) || row.keyword,
-        remarks: (editRow === "remarks" && editValue) || row.remarks,
-      }));
-
-      const updatedTableData = tableData.map((row) => {
-        const updatedRow = updatedSelectedRows.find(
-          (selectedRow) =>
-            selectedRow.social_feed_id === row.social_feed_id &&
-            selectedRow.company_id === row.company_id
-        );
-        return updatedRow || row;
-      });
-
-      // Update only the items that exist in selectedRowData in both searchedData and tableData
-      const updatedSearchedData = searchedData.map((row) => {
-        const updatedRow = updatedSelectedRows.find(
-          (selectedRow) =>
-            selectedRow.social_feed_id === row.social_feed_id &&
-            selectedRow.company_id === row.company_id
-        );
-        return updatedRow || row;
-      });
-
-      setUpdatedRows(updatedSelectedRows);
-      // hightlight purpose(setHighlightUPdatedRows)
-      setHighlightUpdatedRows((prev) => [...prev, ...updatedSelectedRows]);
-
-      setTableData(updatedTableData);
-      setSearchedData(updatedSearchedData);
-      setUnsavedChanges(true);
-    } else {
-      toast.warning("Please select at least one item to update", {
+    if (selectedRowData.length <= 0)
+      return toast.warning("Please select at least one item to update", {
         autoClose: 3000,
       });
-    }
-    setApplyLoading(false);
-    setSelectedRowData([]);
+
+    setApplyLoading(true);
+    setTimeout(() => {
+      if (selectedRowData.length > 0) {
+        const updatedSelectedRows = selectedRowData.map((row) => ({
+          ...row,
+          reporting_tone: reportingTone || row.reporting_tone,
+          reporting_subject: subject || row.reporting_subject,
+          subcategory: category || row.subcategory,
+          prominence: prominence || row.prominence,
+          detail_summary:
+            (editRow === "detail_summary" && editValue) || row.detail_summary,
+          headline: (editRow === "headline" && editValue) || row.headline,
+          headsummary:
+            (editRow === "headsummary" && editValue) || row.headsummary,
+          author_name:
+            (editRow === "author_name" && editValue) || row.author_name,
+          keyword: (editRow === "keyword" && editValue) || row.keyword,
+          remarks: (editRow === "remarks" && editValue) || row.remarks,
+        }));
+
+        const updatedTableData = tableData.map((row) => {
+          const updatedRow = updatedSelectedRows.find(
+            (selectedRow) =>
+              selectedRow.social_feed_id === row.social_feed_id &&
+              selectedRow.company_id === row.company_id
+          );
+          return updatedRow || row;
+        });
+
+        // Update only the items that exist in selectedRowData in both searchedData and tableData
+        const updatedSearchedData = searchedData.map((row) => {
+          const updatedRow = updatedSelectedRows.find(
+            (selectedRow) =>
+              selectedRow.social_feed_id === row.social_feed_id &&
+              selectedRow.company_id === row.company_id
+          );
+          return updatedRow || row;
+        });
+
+        setUpdatedRows(updatedSelectedRows);
+        // hightlight purpose(setHighlightUPdatedRows)
+        setHighlightUpdatedRows((prev) => [...prev, ...updatedSelectedRows]);
+
+        setTableData(updatedTableData);
+        setSearchedData(updatedSearchedData);
+        setUnsavedChanges(true);
+      }
+      setApplyLoading(false);
+      setSelectedRowData([]);
+    }, 0);
   };
   const handleSearch = () => {
     if (selectedRowData.length > 0) {
@@ -458,8 +462,7 @@ const ResearchTable = ({
       return () => clearTimeout(timeoutId);
     }
   }, [savedSuccess]);
-  const loadingLoader =
-    sortLoading || applyLoading || tableLoading || tableDataLoading;
+  const loadingLoader = sortLoading || tableLoading || tableDataLoading;
   return (
     <div className="relative">
       {loadingLoader && (
@@ -538,6 +541,7 @@ const ResearchTable = ({
           btnText={applyLoading ? "Applying" : "Apply"}
           onClick={handleApplyChanges}
           disabled={applyLoading}
+          isLoading={applyLoading}
         />
         <button
           className={`bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white tracking-wider text-[0.9em] ${
@@ -562,7 +566,8 @@ const ResearchTable = ({
               setEditRow,
               userToken,
               setHighlightUpdatedRows,
-              setIsRetrieveAfterSave
+              setIsRetrieveAfterSave,
+              setPageNumber
             );
             setFetchingUsingPrevNext(false);
           }}

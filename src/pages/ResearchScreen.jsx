@@ -101,6 +101,7 @@ const ReasearchScreen = () => {
     unsavedChanges,
     setUnsavedChanges,
     pageNumber,
+    setPageNumber,
     recordsPerPage,
   } = useContext(ResearchContext);
   const researchTableRef = useRef(null);
@@ -297,6 +298,7 @@ const ReasearchScreen = () => {
             );
           }
           setTableDataLoading(false);
+          if (!fetchingUsingPrevNext) setPageNumber(1);
         } catch (error) {
           console.log(error);
           setTableDataLoading(false);

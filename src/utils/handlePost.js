@@ -18,7 +18,8 @@ const handlePostData = async (
   setEditRow,
   userToken,
   setHighlightUpdatedRows,
-  setIsRetrieveAfterSave
+  setIsRetrieveAfterSave,
+  setPageNumber
 ) => {
   setSavedSuccess(true);
   setPostingLoading(true);
@@ -62,6 +63,7 @@ const handlePostData = async (
       setUnsavedChanges(false);
       setEditValue("");
       setEditRow("");
+      setPageNumber(1);
       setIsRetrieveAfterSave(true);
     } else {
       setSuccessMessage("No data to save.");

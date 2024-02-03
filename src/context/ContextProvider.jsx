@@ -10,7 +10,6 @@ const ContextProvider = ({ children }) => {
   // auto logout
   const [logoutTimer, setLogoutTimer] = useState(null);
   const [userToken, setUserToken] = useState("");
-
   //state for the login component
   const [researchOpen, setResearchOpen] = useState(false);
   const [name, setName] = useState("");
