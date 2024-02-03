@@ -606,7 +606,7 @@ const ResearchTable = ({
             placeholder="select a summary"
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
-            className="bg-secondory border-gray-300 border-2 rounded-md px-4 outline-none md:w-[1300px] sm:w-full hover:border-black"
+            className="bg-secondory border-gray-300 border-2 rounded-md px-4 outline-none md:w-[800px] sm:w-full hover:border-black"
           />
         </span>
       </div>

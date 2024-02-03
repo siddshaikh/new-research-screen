@@ -1,7 +1,12 @@
 import { FormControl, Select, MenuItem, OutlinedInput } from "@mui/material";
 import PropTypes from "prop-types";
+import useFetchData from "../../hooks/useFetchData";
+import { useEffect, useState } from "react";
 
-const Languages = ({ languages, language, setLanguage, classes }) => {
+const Languages = ({ language, setLanguage, classes }) => {
+  const [languages, setLanguages] = useState([]);
+
+  const base_url = import.meta.env.VITE_BASE_URL;
   const selectedLanguages = Object.entries(languages)
     .filter(([_, languagecode]) => language.includes(languagecode))
     .map(([languagename, _]) => languagename);
@@ -9,6 +14,19 @@ const Languages = ({ languages, language, setLanguage, classes }) => {
   const handleLanguageChange = (event) => {
     setLanguage(event.target.value);
   };
+  const {
+    data: langs,
+    error: langsError,
+    // loading: langsLoading,
+  } = useFetchData(`${base_url}languagelist/`);
+
+  useEffect(() => {
+    if (langs.data) {
+      setLanguages(langs.data.languages);
+    } else {
+      console.log(langsError);
+    }
+  }, [langs, langsError]);
   return (
     <div style={{ height: 25 }} className="flex items-center">
       <FormControl className="w-28">
@@ -48,7 +66,6 @@ const Languages = ({ languages, language, setLanguage, classes }) => {
 };
 
 Languages.propTypes = {
-  languages: PropTypes.objectOf(PropTypes.string).isRequired,
   language: PropTypes.arrayOf(PropTypes.string).isRequired,
   setLanguage: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,

@@ -58,8 +58,6 @@ const ReasearchScreen = () => {
   const [continent, setContinent] = useState([]);
   // basis onn the selection of the continent showing th country
   const [country, setCountry] = useState([]);
-  //languages from getting an api
-  const [languages, setLanguages] = useState([]);
   // image
   const [isImage, setIsImage] = useState(0);
   // video
@@ -160,23 +158,9 @@ const ReasearchScreen = () => {
       console.log(qcUserDataError);
     }
   }, [qcUserData, qcUserDataError]);
-  //  fetching langueges
-  const {
-    data: langs,
-    error: langsError,
-    loading: langsLoading,
-  } = useFetchData(`${base_url}languagelist/`);
-
-  useEffect(() => {
-    if (langs.data) {
-      setLanguages(langs.data.languages);
-    } else {
-      console.log(langsError);
-    }
-  }, [langs, langsError]);
 
   // loading states
-  const isLoading = clientLoading || companyLoading || langsLoading;
+  const isLoading = clientLoading || companyLoading;
 
   const arrayToString = (arr) => {
     if (Array.isArray(arr)) {
@@ -416,7 +400,6 @@ const ReasearchScreen = () => {
             </div>
             {/* languages */}
             <Languages
-              languages={languages}
               language={language}
               setLanguage={setLanguage}
               classes={classes}
@@ -444,7 +427,8 @@ const ReasearchScreen = () => {
               }}
               className={`bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white text-[0.9em] ${
                 tableDataLoading ? "text-yellow-300" : "text-white"
-              }`}
+              } ${tableDataLoading && "cursor-not-allowed"}`}
+              disabled={tableDataLoading}
             >
               {tableDataLoading ? "Loading..." : "Search"}
             </button>
