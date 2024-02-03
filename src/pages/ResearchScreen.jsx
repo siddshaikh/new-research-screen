@@ -296,10 +296,11 @@ const ReasearchScreen = () => {
                 ),
               };
             });
-            setTotalRecords(
-              response.data.feed_count.map((item) => item.total_rows)
-            );
-
+            if (!fetchingUsingPrevNext) {
+              setTotalRecords(
+                response.data.feed_count.map((item) => item.total_rows)
+              );
+            }
             setTableData(updatedData);
             const localeV = response.data.feed_data;
             setTableHeaders(
