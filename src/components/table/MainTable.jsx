@@ -193,7 +193,8 @@ const MainTable = ({
                     <div
                       className={`text-xs w-16 text-black overflow-hidden whitespace-normal mx-3 ${
                         (header === "SOCIAL FEED ID" && "w-20") ||
-                        (header === "LINK" && "w-6")
+                        (header === "LINK" && "w-6") ||
+                        (header === "PROMINENCE" && "w-20")
                       }`}
                       style={{
                         display: "-webkit-box",
