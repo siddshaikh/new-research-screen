@@ -20,6 +20,7 @@ import SearchableCategory from "../research-dropdowns/table-dropdowns/Searchable
 // import DeleteTableData from "../deleteData/DeleteTableData";
 import Pagination from "../../components/pagination/Pagination";
 import TotalRecords from "../total-records/TotalRecords";
+import { url } from "../../constants/baseUrl";
 
 const useStyles = makeStyles(() => ({
   dropDowns: {
@@ -86,7 +87,6 @@ const ResearchTable = ({
   const [sortDirection, setSortDirection] = useState("asc");
   const [sortColumn, setSortColumn] = useState("");
   // dropdown fetch
-  const url = import.meta.env.VITE_BASE_URL;
   // reporting tone
   const [reportingTones, setReportingTones] = useState([]);
   const [reportingTone, setReportingTone] = useState("");
@@ -106,24 +106,10 @@ const ResearchTable = ({
     }
   }, [prominenceLists]);
   //reportingsubject_list
-  const [subjects, setSubjects] = useState([]);
   const [subject, setSubject] = useState("");
-  const { data: subjectLists } = useFetchData(`${url}reportingsubjectlist`);
-  useEffect(() => {
-    if (subjectLists.data) {
-      setSubjects(subjectLists.data.reportingsubject_list);
-    }
-  }, [subjectLists]);
-  //subcategory_list
-  const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState("");
-  const { data: categoryLists } = useFetchData(`${url}subcategorylist`);
-  useEffect(() => {
-    if (categoryLists.data) {
-      setCategories(categoryLists.data.subcategory_list);
-    }
-  }, [categoryLists]);
 
+  //subcategory_list
+  const [category, setCategory] = useState("");
   // effect for the setting data for the editing row data basis on dropdown selection
   useEffect(() => {
     const editRowValues = selectedRowData
@@ -536,14 +522,12 @@ const ResearchTable = ({
         {/* Reporting subject */}
         <div className="mt-1 flex items-center gap-2">
           <SubjectSearchable
-            width={120}
-            subjects={subjects}
             label={"Subject"}
             setSubject={setSubject}
             subject={subject}
+            width={120}
           />
           <SearchableCategory
-            categories={categories}
             label={"Category"}
             setCategory={setCategory}
             category={category}
@@ -553,6 +537,7 @@ const ResearchTable = ({
         <Button
           btnText={applyLoading ? "Applying" : "Apply"}
           onClick={handleApplyChanges}
+          disabled={applyLoading}
         />
         <button
           className={`bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white tracking-wider text-[0.9em] ${
@@ -604,7 +589,7 @@ const ResearchTable = ({
         <span className="mt-3">
           <input
             placeholder="select a summary"
-            value={editValue}
+            value={editValue || ""}
             onChange={(e) => setEditValue(e.target.value)}
             className="bg-secondory border-gray-300 border-2 rounded-md px-4 outline-none md:w-[800px] sm:w-full hover:border-black"
           />
@@ -641,7 +626,7 @@ ResearchTable.propTypes = {
   tableData: PropTypes.array.isRequired,
   setTableData: PropTypes.func.isRequired,
   setIsRetrieveAfterSave: PropTypes.func,
-  totalRecordsCount: PropTypes.array,
+  totalRecordsCount: PropTypes.number,
   setFetchingUsingPrevNext: PropTypes.func,
 };
 export default ResearchTable;

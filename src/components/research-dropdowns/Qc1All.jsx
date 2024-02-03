@@ -36,13 +36,13 @@ const Qc1All = ({ qc1done, setQc1done, classes, qc1Array }) => {
   );
 };
 Qc1All.propTypes = {
-  qc1done: PropTypes.string.isRequired,
+  qc1done: PropTypes.number.isRequired,
   setQc1done: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
   qc1Array: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      value: PropTypes.string.isRequired,
+      value: PropTypes.number.isRequired,
       option: PropTypes.string.isRequired,
     })
   ).isRequired,

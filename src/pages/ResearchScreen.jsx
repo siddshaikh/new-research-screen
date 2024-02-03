@@ -27,6 +27,7 @@ import Languages from "../components/research-dropdowns/Languages";
 import Continents from "../components/research-dropdowns/Continents";
 import Countries from "../components/research-dropdowns/Countries";
 import CustomAutocomplete from "../components/custom/Autocomplet";
+import { url } from "../constants/baseUrl";
 
 const useStyle = makeStyles(() => ({
   dropDowns: {
@@ -109,13 +110,12 @@ const ReasearchScreen = () => {
     }
   }, [tableData]);
   // base url
-  const base_url = import.meta.env.VITE_BASE_URL;
   // clients
   const {
     data: clientData,
     error: ClientEror,
     loading: clientLoading,
-  } = useFetchData(`${base_url}clientlist/`, clients);
+  } = useFetchData(`${url}clientlist/`, clients);
   useEffect(() => {
     if (clientData.data) {
       setClients(clientData.data.clients);
@@ -128,7 +128,7 @@ const ReasearchScreen = () => {
     data: companyData,
     error: companyError,
     loading: companyLoading,
-  } = useFetchData(clientId ? `${base_url}companylist/${clientId}` : "");
+  } = useFetchData(clientId ? `${url}companylist/${clientId}` : "");
   useEffect(() => {
     if (clientId || companyData.data) {
       setCompany(companyData?.data?.companies || []);
@@ -149,7 +149,7 @@ const ReasearchScreen = () => {
   ]);
   //fetching qcusers
   const { data: qcUserData, error: qcUserDataError } = useFetchData(
-    `${base_url}qcuserlist/`
+    `${url}qcuserlist/`
   );
   useEffect(() => {
     if (qcUserData.data) {
@@ -257,13 +257,16 @@ const ReasearchScreen = () => {
           addPropertyIfConditionIsTrue(!fetchingUsingPrevNext, "count", "Y");
 
           const requestDataJSON = JSON.stringify(requestData);
-          const url = `${import.meta.env.VITE_BASE_URL}listArticlebyQCTemp/`;
-          const response = await axios.post(url, requestDataJSON, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + userToken,
-            },
-          });
+          const response = await axios.post(
+            `${url}listArticlebyQCTemp/`,
+            requestDataJSON,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + userToken,
+              },
+            }
+          );
           if (response) {
             const updatedData = response.data.feed_data.map((item) => {
               return {
@@ -316,7 +319,7 @@ const ReasearchScreen = () => {
     isRetrieveAfterSave && handleSearch();
   }, [isRetrieveAfterSave]);
   return (
-    <div className="h-full ml-4">
+    <div className="h-full pl-4">
       {/* Category dropdowns filter out */}
       {/* client */}
       {isLoading ? (
@@ -379,7 +382,7 @@ const ReasearchScreen = () => {
               setQc2by={setQc2by}
             />
             {/* image checkbox */}
-            <div className="flex items-center" style={{ height: 25 }}>
+            <div className="flex items-center" style={{ height: 20 }}>
               <div className="mt-4">
                 <CheckboxComp
                   value={isImage}
@@ -387,9 +390,7 @@ const ReasearchScreen = () => {
                   label={"Image"}
                 />
               </div>
-            </div>
-            {/* video checkbox */}
-            <div style={{ height: 25 }} className="flex items-center">
+              {/* video checkbox */}
               <div className="mt-4">
                 <CheckboxComp
                   value={isVideo}
@@ -427,15 +428,13 @@ const ReasearchScreen = () => {
               }}
               className={`bg-primary border border-gray-400 rounded px-10 mt-3 uppercase text-white text-[0.9em] ${
                 tableDataLoading ? "text-yellow-300" : "text-white"
-              } ${tableDataLoading && "cursor-not-allowed"}`}
-              disabled={tableDataLoading}
+              }`}
             >
               {tableDataLoading ? "Loading..." : "Search"}
             </button>
           </div>
           {/* divider */}
           <Divider sx={{ marginTop: 1 }} />
-
           {/* table */}
           <div ref={researchTableRef}>
             <ResearchTable

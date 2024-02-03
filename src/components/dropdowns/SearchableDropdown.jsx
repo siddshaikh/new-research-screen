@@ -107,6 +107,6 @@ SearchableDropdown.propTypes = {
   options: PropTypes.array.isRequired,
   label: PropTypes.string.isRequired,
   setTestClient: PropTypes.func.isRequired,
-  testclient: PropTypes.number,
-  width: PropTypes.string,
+  testclient: PropTypes.string,
+  width: PropTypes.number,
 };

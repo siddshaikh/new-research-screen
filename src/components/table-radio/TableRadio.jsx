@@ -39,7 +39,7 @@ const TableRadio = ({ selectedRadioValue, handleChange }) => {
   );
 };
 TableRadio.propTypes = {
-  selectedRadioValue: PropTypes.string.isRequired,
+  selectedRadioValue: PropTypes.string,
   handleChange: PropTypes.func.isRequired,
 };
 export default TableRadio;

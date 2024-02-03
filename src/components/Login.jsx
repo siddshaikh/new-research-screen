@@ -8,6 +8,7 @@ import axios from "axios";
 import { ResearchContext } from "../context/ContextProvider";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { url } from "../constants/baseUrl";
 
 const theme = createTheme({
   palette: {
@@ -47,13 +48,10 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}authenticate/`,
-        {
-          loginname: name,
-          password: password,
-        }
-      );
+      const res = await axios.post(`${url}authenticate/`, {
+        loginname: name,
+        password: password,
+      });
 
       const data = JSON.parse(res.config.data);
       const loginname = data.loginname;

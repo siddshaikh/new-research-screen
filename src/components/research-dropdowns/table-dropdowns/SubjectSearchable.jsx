@@ -8,7 +8,9 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import PropTypes from "prop-types";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
+import useFetchData from "../../../hooks/useFetchData";
+import { url } from "../../../constants/baseUrl";
 
 const theme = createTheme({
   typography: {
@@ -39,9 +41,16 @@ const useStyles = makeStyles(() => ({
     },
   },
 }));
-const SubjectSearchable = ({ subjects, label, setSubject, subject, width }) => {
-  const classes = useStyles();
+const SubjectSearchable = ({ label, setSubject, subject, width }) => {
+  const [subjects, setSubjects] = useState([]);
 
+  const classes = useStyles();
+  const { data: subjectLists } = useFetchData(`${url}reportingsubjectlist`);
+  useEffect(() => {
+    if (subjectLists.data) {
+      setSubjects(subjectLists.data.reportingsubject_list);
+    }
+  }, [subjectLists]);
   const handleSelectChange = (event, newValue) => {
     setSubject(newValue || null);
   };
@@ -92,10 +101,9 @@ const SubjectSearchable = ({ subjects, label, setSubject, subject, width }) => {
   );
 };
 SubjectSearchable.propTypes = {
-  subjects: PropTypes.arrayOf(PropTypes.string),
   label: PropTypes.string.isRequired,
   setSubject: PropTypes.func.isRequired,
   subject: PropTypes.string,
-  width: PropTypes.string,
+  width: PropTypes.number,
 };
 export default memo(SubjectSearchable);

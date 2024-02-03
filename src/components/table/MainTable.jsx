@@ -245,7 +245,7 @@ const MainTable = ({
     <div className="mt-2 overflow-scroll h-screen">
       <table>
         <thead>
-          <tr className="sticky left-0 top-0 bg-primary ">
+          <tr className="sticky left-0 top-0 bg-primary">
             {" "}
             {tableHeaders?.length > 0 && (
               <td
@@ -318,7 +318,6 @@ const MainTable = ({
               ))}
           </tr>
         </thead>
-
         <tbody className="bg-thirdOne">{renderTableData()}</tbody>
       </table>
     </div>

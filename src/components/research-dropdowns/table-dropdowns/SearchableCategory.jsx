@@ -8,7 +8,9 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import PropTypes from "prop-types";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
+import useFetchData from "../../../hooks/useFetchData";
+import { url } from "../../../constants/baseUrl";
 
 const theme = createTheme({
   typography: {
@@ -39,14 +41,15 @@ const useStyles = makeStyles(() => ({
     },
   },
 }));
-const SearchableCategory = ({
-  categories,
-  label,
-  setCategory,
-  category,
-  width,
-}) => {
+const SearchableCategory = ({ label, setCategory, category, width }) => {
+  const [categories, setCategories] = useState([]);
   const classes = useStyles();
+  const { data: categoryLists } = useFetchData(`${url}subcategorylist`);
+  useEffect(() => {
+    if (categoryLists.data) {
+      setCategories(categoryLists.data.subcategory_list);
+    }
+  }, [categoryLists]);
   const handleSelectChange = (event, newValue) => {
     setCategory(newValue || null);
   };
@@ -97,10 +100,9 @@ const SearchableCategory = ({
   );
 };
 SearchableCategory.propTypes = {
-  categories: PropTypes.arrayOf(PropTypes.string),
   label: PropTypes.string.isRequired,
   setCategory: PropTypes.func.isRequired,
   category: PropTypes.string,
-  width: PropTypes.string,
+  width: PropTypes.number,
 };
 export default memo(SearchableCategory);

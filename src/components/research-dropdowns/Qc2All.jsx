@@ -34,13 +34,13 @@ const Qc2All = ({ qc2done, setQc2done, classes, qc2Array }) => {
   );
 };
 Qc2All.propTypes = {
-  qc2done: PropTypes.string.isRequired,
+  qc2done: PropTypes.number.isRequired,
   setQc2done: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
   qc2Array: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      value: PropTypes.string.isRequired,
+      value: PropTypes.number.isRequired,
       option: PropTypes.string.isRequired,
     })
   ).isRequired,

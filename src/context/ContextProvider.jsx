@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { url } from "../constants/baseUrl";
 
 export const ResearchContext = createContext(null);
 const ContextProvider = ({ children }) => {
@@ -66,13 +67,10 @@ const ContextProvider = ({ children }) => {
   };
   const getAutoToken = async () => {
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}authenticate/`,
-        {
-          loginname: name,
-          password: password,
-        }
-      );
+      const res = await axios.post(`${url}authenticate/`, {
+        loginname: name,
+        password: password,
+      });
       localStorage.setItem("user", res.data.access_token);
       setUserToken(localStorage.getItem("user"));
     } catch (error) {

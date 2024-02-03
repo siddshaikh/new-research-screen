@@ -2,11 +2,11 @@ import { FormControl, Select, MenuItem, OutlinedInput } from "@mui/material";
 import PropTypes from "prop-types";
 import useFetchData from "../../hooks/useFetchData";
 import { useEffect, useState } from "react";
+import { url } from "../../constants/baseUrl";
 
 const Languages = ({ language, setLanguage, classes }) => {
   const [languages, setLanguages] = useState([]);
 
-  const base_url = import.meta.env.VITE_BASE_URL;
   const selectedLanguages = Object.entries(languages)
     .filter(([_, languagecode]) => language.includes(languagecode))
     .map(([languagename, _]) => languagename);
@@ -18,7 +18,7 @@ const Languages = ({ language, setLanguage, classes }) => {
     data: langs,
     error: langsError,
     // loading: langsLoading,
-  } = useFetchData(`${base_url}languagelist/`);
+  } = useFetchData(`${url}languagelist/`);
 
   useEffect(() => {
     if (langs.data) {

@@ -74,7 +74,7 @@ const TableRowCheckBox = ({
 };
 
 TableRowCheckBox.propTypes = {
-  setSelectedRowData: PropTypes.func.isRequired,
+  setSelectedRowData: PropTypes.func,
   selectedRowData: PropTypes.array.isRequired,
   searchedData: PropTypes.array.isRequired,
   rowData: PropTypes.object.isRequired,
