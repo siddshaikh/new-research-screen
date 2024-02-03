@@ -68,9 +68,9 @@ const ReasearchScreen = () => {
   // data type separate
   const [dateType, setDateType] = useState("article");
   // qc by defaut it will be null
-  const [qc1done, setQc1done] = useState("");
+  const [qc1done, setQc1done] = useState(2);
   // qc2done
-  const [qc2done, setQc2done] = useState("");
+  const [qc2done, setQc2done] = useState(0);
   // qc1by
   const [qc1by, setQc1by] = useState([]);
   // qc2by
