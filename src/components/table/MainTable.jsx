@@ -166,7 +166,6 @@ const MainTable = ({
                         WebkitBoxOrient: "vertical",
                         WebkitLineClamp: 2,
                         fontSize: "0.8em",
-                        fontWeight: "bold",
                       }}
                       className={`text-xs w-26 text-black overflow-hidden whitespace-normal" ${
                         (header === "REPORTING SUBJECT" && "w-16") ||
@@ -194,7 +193,11 @@ const MainTable = ({
                       className={`text-xs w-16 text-black overflow-hidden whitespace-normal mx-3 ${
                         (header === "SOCIAL FEED ID" && "w-20") ||
                         (header === "LINK" && "w-6") ||
-                        (header === "PROMINENCE" && "w-20")
+                        (header === "PROMINENCE" && "w-20") ||
+                        (header === "QC2 DONE" && "w-4") ||
+                        (header === "QC1 DONE" && "w-4") ||
+                        (header === "HAS VIDEO" && "w-6") ||
+                        (header === "HAS IMAGE" && "w-6")
                       }`}
                       style={{
                         display: "-webkit-box",
@@ -202,7 +205,6 @@ const MainTable = ({
                         WebkitLineClamp: 2,
                         marginLeft: -3,
                         fontSize: "0.8em",
-                        fontWeight: "bold",
                         backgroundColor:
                           header === "REPORTING TONE" &&
                           rowData[

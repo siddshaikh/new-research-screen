@@ -7,6 +7,7 @@ const Home = React.lazy(() => import("./pages/Home"));
 import NotFound from "./components/NotFound";
 import { ResearchContext } from "./context/ContextProvider";
 import { checkUserAuthenticate } from "./auth/auth";
+import AutoTokenRefresh from "./auth/autoToken";
 
 function App() {
   const { userToken, setUserToken } = useContext(ResearchContext);
@@ -21,6 +22,7 @@ function App() {
   return (
     <div className="bg-secondory">
       <ToastContainer />
+      <AutoTokenRefresh />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route

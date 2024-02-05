@@ -1,8 +1,6 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { url } from "../constants/baseUrl";
 
 export const ResearchContext = createContext(null);
 const ContextProvider = ({ children }) => {
@@ -64,37 +62,14 @@ const ContextProvider = ({ children }) => {
     setPageNumber(1);
     navigate("/login");
   };
-  const getAutoToken = async () => {
-    try {
-      const res = await axios.post(`${url}authenticate/`, {
-        loginname: name,
-        password: password,
-      });
-      localStorage.setItem("user", res.data.access_token);
-      setUserToken(localStorage.getItem("user"));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setUserToken("");
-      getAutoToken();
-    }, 30 * 60 * 1000);
-    setLogoutTimer(timer);
 
-    return () => {
-      if (timer) {
-        clearTimeout(timer);
-      }
-    };
-  }, [userToken]);
   return (
     <ResearchContext.Provider
       value={{
         handleLogout,
         researchOpen,
         setResearchOpen,
+        setLogoutTimer,
         name,
         setName,
         password,
