@@ -72,11 +72,8 @@ const ResearchTable = ({
   const [searchedData, setSearchedData] = useState([]);
   const [tableLoading, setTableLoading] = useState(false);
   const [applyLoading, setApplyLoading] = useState(false);
-  // loading state for checkbox selection
   // data for the edit
   const [editValue, setEditValue] = useState("");
-  // Function to fetch table data
-  // updatedrows
   const [updatedRows, setUpdatedRows] = useState([]);
   // for highlight purpose
   const [highlightUpdatedRows, setHighlightUpdatedRows] = useState([]);
@@ -87,7 +84,6 @@ const ResearchTable = ({
   const [sortLoading, setSortLoading] = useState(false);
   const [sortDirection, setSortDirection] = useState("asc");
   const [sortColumn, setSortColumn] = useState("");
-  // dropdown fetch
   // reporting tone
   const [reportingTones, setReportingTones] = useState([]);
   const [reportingTone, setReportingTone] = useState("");
