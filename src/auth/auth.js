@@ -4,3 +4,6 @@ export const checkUserAuthenticate = (setUserToken) => {
     setUserToken(token);
   }
 };
+export const isAuthenticated = () => {
+  return !!localStorage.getItem("user");
+};

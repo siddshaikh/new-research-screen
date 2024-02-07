@@ -3,7 +3,11 @@ import { useContext } from "react";
 import { ResearchContext } from "../../context/ContextProvider";
 import PropTypes from "prop-types";
 
-const Pagination = ({ tableData, setFetchingUsingPrevNext }) => {
+const Pagination = ({
+  tableData,
+  setFetchingUsingPrevNext,
+  totalRecordsCount,
+}) => {
   const { pageNumber, setPageNumber, recordsPerPage } =
     useContext(ResearchContext);
   const isPrevDisabled = pageNumber === 1;
@@ -38,7 +42,7 @@ const Pagination = ({ tableData, setFetchingUsingPrevNext }) => {
       >
         <TbPlayerTrackPrev />
       </button>
-      <p className="text-[0.9em] mt-3">{pageValueToShow}</p>
+      <p className="text-[0.9em] mt-3">{`${pageValueToShow} of  ${totalRecordsCount}`}</p>
       <button
         onClick={handleNext}
         className={`bg-primary border border-gray-400 rounded px-10 uppercase text-white mt-3 tracking-wider ${
@@ -56,6 +60,7 @@ const Pagination = ({ tableData, setFetchingUsingPrevNext }) => {
 Pagination.propTypes = {
   tableData: PropTypes.array.isRequired,
   setFetchingUsingPrevNext: PropTypes.func.isRequired,
+  totalRecordsCount: PropTypes.number,
 };
 
 export default Pagination;

@@ -10,6 +10,7 @@ const handlePostData = async (
   setSuccessMessage,
   setSelectedRowData,
   setReportingTone,
+  setSearchedData,
   setSubject,
   setCategory,
   setProminence,
@@ -55,6 +56,7 @@ const handlePostData = async (
       setSuccessMessage("Data updated successfully!");
       setSelectedRowData([]);
       setHighlightUpdatedRows([]);
+      setSearchedData([]);
       // Clearing the dropdown values
       setReportingTone("");
       setSubject("");

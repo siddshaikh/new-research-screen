@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Tooltip } from "@material-ui/core";
+import { Tooltip } from "@mui/material";
 import { ResearchContext } from "../context/ContextProvider";
 
 const Qc2Table = () => {
@@ -52,17 +52,17 @@ const Qc2Table = () => {
     }
   };
   return (
-    <div className="flex flex-col overflow-scroll h-screen">
+    <div className="flex flex-col h-screen overflow-scroll">
       <div className="-my-2 sm:-mx-6 lg:-mx-8">
-        <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+        <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div className="overflow-hidden border-b border-gray-200 shadow sm:rounded-lg">
             {qc2PrintTableData.length > 0 ? (
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                      className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase cursor-pointer"
                     >
                       <input
                         type="checkbox"
@@ -104,8 +104,8 @@ const Qc2Table = () => {
                         {items.company_name}
                       </td>
                       <Tooltip placement="top" title={items.headline}>
-                        <td className="px-6 py-4 whitespace-nowrap overflow-hidden">
-                          <div className="truncate w-48">{items.headline}</div>
+                        <td className="px-6 py-4 overflow-hidden whitespace-nowrap">
+                          <div className="w-48 truncate">{items.headline}</div>
                         </td>
                       </Tooltip>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -136,8 +136,8 @@ const Qc2Table = () => {
                         {items.subcategory}
                       </td>
                       <Tooltip placement="top" title={items.detail_summary}>
-                        <td className="px-6 py-4 whitespace-nowrap overflow-hidden">
-                          <div className="truncate w-48">
+                        <td className="px-6 py-4 overflow-hidden whitespace-nowrap">
+                          <div className="w-48 truncate">
                             {items.detail_summary}
                           </div>
                         </td>
@@ -189,7 +189,7 @@ const Qc2Table = () => {
                 </tbody>
               </table>
             ) : (
-              <span className="block text-center mt-2">No Data Found.</span>
+              <span className="block mt-2 text-center">No Data Found.</span>
             )}
           </div>
         </div>

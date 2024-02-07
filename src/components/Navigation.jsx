@@ -22,23 +22,23 @@ const Navigation = () => {
 
   return (
     <div className="rounded-lg shadow-md bg-primary">
-      <ul className="flex justify-evenly border-b border-gray-200">
-        <h1 className=" px-4 text-gray-500 border-transparent uppercase font-bold text-xl">
+      <ul className="flex border-b border-gray-200 justify-evenly">
+        <h1 className="px-4 text-xl font-bold text-gray-500 uppercase border-transparent ">
           Research
         </h1>
-        <li className="-mb-px mr-1">
+        <li className="mr-1 -mb-px">
           <NavLink to={"/"}>
             <button
-              className="bg-transparent inline-block px-4 text-gray-200 hover:text-slate-500 border-b-2 border-transparent hover:border-gray-500 focus:outline-none tracking-wider uppercase"
+              className="inline-block px-4 tracking-wider text-gray-200 uppercase bg-transparent border-b-2 border-transparent hover:text-slate-500 hover:border-gray-500 focus:outline-none"
               onClick={handleResearchScreenClick}
             >
               Online
             </button>
           </NavLink>
         </li>
-        <li className="-mb-px mr-1">
+        <li className="mr-1 -mb-px">
           <button
-            className="bg-transparent inline-block px-4 text-gray-200 hover:text-slate-500 border-b-2 border-transparent hover:border-gray-500 focus:outline-none uppercase tracking-wider cursor-not-allowed"
+            className="inline-block px-4 tracking-wider text-gray-200 uppercase bg-transparent border-b-2 border-transparent cursor-not-allowed hover:text-slate-500 hover:border-gray-500 focus:outline-none"
             onClick={handleQc2PrintClick}
             disabled
           >
@@ -47,7 +47,7 @@ const Navigation = () => {
         </li>
         <li className="-mb-px">
           <button
-            className="bg-transparent inline-block px-4 text-gray-200 hover:text-slate-500 border-b-2 border-transparent hover:border-gray-500 focus:outline-none uppercase tracking-wider"
+            className="inline-block px-4 tracking-wider text-gray-200 uppercase bg-transparent border-b-2 border-transparent hover:text-slate-500 hover:border-gray-500 focus:outline-none"
             onClick={handleLogout}
           >
             Logout

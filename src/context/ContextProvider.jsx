@@ -15,8 +15,6 @@ const ContextProvider = ({ children }) => {
   // for logout timer
   const [timerId, setTimerId] = useState(null);
   // loading state while fetching tableData
-  // fetching table data using client and companyid and multiple params
-  const [tableFetchLoading, setTableFetchLoading] = useState(false);
   // table headers in uppercase
   const [tableHeaders, setTableHeaders] = useState([]);
 
@@ -82,8 +80,6 @@ const ContextProvider = ({ children }) => {
         setFromDate,
         dateNow,
         setDateNow,
-        tableFetchLoading,
-        setTableFetchLoading,
         showTableData,
         setShowTableData,
         tableHeaders,

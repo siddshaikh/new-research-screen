@@ -328,7 +328,7 @@ const ReasearchScreen = () => {
         <Loader />
       ) : (
         <>
-          <div className="flex items-center gap-1 flex-wrap mt-2">
+          <div className="flex flex-wrap items-center gap-1 mt-2">
             <div className="flex items-center mt-1" style={{ height: 25 }}>
               <SearchableDropDown
                 options={clients}

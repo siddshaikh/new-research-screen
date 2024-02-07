@@ -19,8 +19,8 @@ import SubjectSearchable from "../research-dropdowns/table-dropdowns/SubjectSear
 import SearchableCategory from "../research-dropdowns/table-dropdowns/SearchableCategory";
 // import DeleteTableData from "../deleteData/DeleteTableData";
 import Pagination from "../../components/pagination/Pagination";
-import TotalRecords from "../total-records/TotalRecords";
 import { url } from "../../constants/baseUrl";
+import FilteredRowCount from "../filtered-rows/FilteredRowCount";
 
 const useStyles = makeStyles(() => ({
   dropDowns: {
@@ -70,6 +70,9 @@ const ResearchTable = ({
   const [secondHeaderForSearch, setSecondHeaderForSearch] = useState("");
   const [secondSearchValue, setSecondSearchValue] = useState("");
   const [searchedData, setSearchedData] = useState([]);
+  useEffect(() => {
+    tableDataLoading && setSearchedData([]);
+  }, [tableDataLoading]);
   const [tableLoading, setTableLoading] = useState(false);
   const [applyLoading, setApplyLoading] = useState(false);
   // data for the edit
@@ -462,12 +465,12 @@ const ResearchTable = ({
   return (
     <div className="relative">
       {loadingLoader && (
-        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-200 bg-opacity-50 z-50">
+        <div className="absolute top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-gray-200 bg-opacity-50">
           <Loader />
         </div>
       )}
       {/* filters for editing the cells */}
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex flex-wrap items-center gap-2">
         {/* first find */}
         <FirstFind
           classes={classes}
@@ -501,7 +504,7 @@ const ResearchTable = ({
         <Button btnText={"Find"} onClick={handleSearch} />
       </div>
       <hr className="mt-1" />
-      <div className="flex items-center flex-wrap gap-4">
+      <div className="flex flex-wrap items-center gap-4">
         {" "}
         {/* dropdowns for separating the files */}
         {/* reporting tone */}
@@ -519,7 +522,7 @@ const ResearchTable = ({
           mappingValue={prominences}
         />
         {/* Reporting subject */}
-        <div className="mt-1 flex items-center gap-2">
+        <div className="flex items-center gap-2 mt-1">
           <SubjectSearchable
             label={"Subject"}
             setSubject={setSubject}
@@ -553,6 +556,7 @@ const ResearchTable = ({
               setUpdatedRows,
               setSuccessMessage,
               setSelectedRowData,
+              setSearchedData,
               setReportingTone,
               setSubject,
               setCategory,
@@ -580,7 +584,7 @@ const ResearchTable = ({
           )}
         </div>
       </div>
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex flex-wrap items-center gap-2">
         {/* dropdown headers ofr edit*/}
         <HeaderForEdits
           editRow={editRow}
@@ -602,9 +606,12 @@ const ResearchTable = ({
           <Pagination
             tableData={tableData}
             setFetchingUsingPrevNext={setFetchingUsingPrevNext}
+            totalRecordsCount={totalRecordsCount}
           />
         )}
-        <TotalRecords totalRecordsCount={totalRecordsCount} />
+        {searchedData.length > 0 && (
+          <FilteredRowCount filterRowCount={searchedData} />
+        )}
       </div>
       <MainTable
         searchedData={searchedData}
