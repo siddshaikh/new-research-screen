@@ -40,7 +40,8 @@ const ContextProvider = ({ children }) => {
   // dates end
   // pagination
   const [pageNumber, setPageNumber] = useState(1);
-  const recordsPerPage = 800;
+  const [recordsPerPage, setRecordsPerPage] = useState(600);
+
   const [showTableData, setShowTableData] = useState(false);
 
   // if user forgot the save the data after apply changes in  table
@@ -91,6 +92,7 @@ const ContextProvider = ({ children }) => {
         pageNumber,
         setPageNumber,
         recordsPerPage,
+        setRecordsPerPage,
         // qc2print
         qc2Open,
         setQc2Open,

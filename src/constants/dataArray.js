@@ -334,3 +334,4 @@ export const DDEditValues = [
     value: "headsummary",
   },
 ];
+export const recordsPerPage = [200, 400, 600, 800, 1000];

@@ -2,13 +2,14 @@ import { TbPlayerTrackPrev, TbPlayerTrackNext } from "react-icons/tb";
 import { useContext } from "react";
 import { ResearchContext } from "../../context/ContextProvider";
 import PropTypes from "prop-types";
+import SetRecords from "../set-records/SetRecords";
 
 const Pagination = ({
   tableData,
   setFetchingUsingPrevNext,
   totalRecordsCount,
 }) => {
-  const { pageNumber, setPageNumber, recordsPerPage } =
+  const { pageNumber, setPageNumber, recordsPerPage, setRecordsPerPage } =
     useContext(ResearchContext);
   const isPrevDisabled = pageNumber === 1;
   const isNextDisabled = tableData.length < recordsPerPage;
@@ -42,7 +43,15 @@ const Pagination = ({
       >
         <TbPlayerTrackPrev />
       </button>
-      <p className="text-[0.9em] mt-3">{`${pageValueToShow} of  ${totalRecordsCount}`}</p>
+      <p className="text-[0.9em] mt-3">
+        set
+        <SetRecords
+          records={recordsPerPage}
+          setRecords={setRecordsPerPage}
+          pageNumber={pageNumber}
+        />
+        {` ${pageValueToShow} of ${totalRecordsCount}`}
+      </p>
       <button
         onClick={handleNext}
         className={`bg-primary border border-gray-400 rounded px-10 uppercase text-white mt-3 tracking-wider ${
