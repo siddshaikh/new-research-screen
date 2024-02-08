@@ -1,47 +1,45 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { IoMdArrowDropup, IoMdArrowDropdown } from "react-icons/io";
 
 const CustomAutocomplete = ({ company, companies, setCompanies }) => {
-  const [inputValue, setInputValue] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const [isListOpen, setListOpen] = useState(false);
+  const [isListOpen, setIsListOpen] = useState(false);
   const [selectAllFlag, setSelectAllFlag] = useState(false);
-
+  const [inputValue, setInputValue] = useState("");
   const componentRef = useRef();
+  const firstCompanyName = company
+    .filter((item) => item.companyid === companies[0])
+    .map((item) => item.companyname)
+    .join(" ");
 
+  useEffect(() => {
+    setFilteredSuggestions(company);
+  }, [company]);
+
+  const handleOutsideClick = (e) => {
+    if (componentRef.current && !componentRef.current.contains(e.target)) {
+      setIsListOpen(false);
+    }
+  };
+  useEffect(() => {
+    document.addEventListener("click", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, []);
   const handleInputChange = (e) => {
     const value = e.target.value;
     setInputValue(value);
 
-    setFilteredSuggestions(() =>
-      company.filter((suggestion) =>
-        suggestion.companyname.toLowerCase().includes(value.toLowerCase())
-      )
+    const filtered = company.filter((suggestion) =>
+      suggestion.companyname.toLowerCase().includes(value.toLowerCase())
     );
 
-    setListOpen(!!value.trim());
+    setFilteredSuggestions(filtered);
+    setIsListOpen(!!value.trim());
   };
-
-  const handleInputClick = () => {
-    if (!isListOpen) {
-      setFilteredSuggestions(company);
-      setListOpen(true);
-    }
-  };
-
-  const handleArrowClick = () => {
-    setListOpen(!isListOpen);
-  };
-
-  const selectedCompaniesString =
-    companies.length > 0
-      ? `${
-          company.find((suggestion) => suggestion.companyid === companies[0])
-            .companyname
-        }${companies.length > 1 ? "..." : ""}`
-      : "";
-
   const handleSuggestionClick = (suggestion) => {
     const isAlreadySelected = companies.includes(suggestion.companyid);
 
@@ -53,64 +51,9 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
     } else {
       setCompanies([...companies, suggestion.companyid]);
     }
-
     setInputValue("");
+    setFilteredSuggestions(company);
   };
-
-  const handleRemoveItem = (itemToRemove) => {
-    const updatedItems = companies.filter(
-      (item) => item !== itemToRemove.companyid
-    );
-    setCompanies(updatedItems);
-  };
-
-  const handleOutsideClick = (e) => {
-    if (componentRef.current && !componentRef.current.contains(e.target)) {
-      // Click occurred outside the component, close the list
-      setListOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("click", handleOutsideClick);
-
-    return () => {
-      document.removeEventListener("click", handleOutsideClick);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Backspace" && inputValue === "") {
-        e.preventDefault();
-
-        // Check if the Backspace event occurs inside the input field
-        const isInputFocused =
-          document.activeElement ===
-          componentRef.current.querySelector("input");
-
-        if (isInputFocused) {
-          setCompanies([]);
-        }
-      } else if (
-        // eslint-disable-next-line no-dupe-else-if
-        e.key === "Backspace" &&
-        inputValue === "" &&
-        companies.length > 0
-      ) {
-        e.preventDefault();
-        const lastItem = companies[companies.length - 1];
-        handleRemoveItem(lastItem);
-      }
-    };
-
-    const inputElement = componentRef.current.querySelector("input");
-    inputElement.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      inputElement.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [inputValue, companies]);
 
   const handleClickAll = () => {
     const allCompanyIds = company.map((suggestion) => suggestion.companyid);
@@ -126,32 +69,38 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
   };
 
   return (
-    <div ref={componentRef} className="relative mt-1">
-      <input
-        type="text"
-        value={selectedCompaniesString || inputValue}
-        onChange={handleInputChange}
-        onClick={handleInputClick}
-        aria-label="Companies"
-        placeholder="Companies"
-        className="border border-gray-400 mt-2 focus:outline-none h-[25px] text-[0.8em] w-[200px] text-left px-4 placeholder-style bg-secondory hover:border-black"
-        style={{ borderRadius: "3px" }}
-      />
+    <div className="relative mt-3" ref={componentRef}>
       <div
         role="button"
-        className="absolute right-4 top-3 text-[#555] text-[0.8em] cursor-pointer bg-secondory px-3"
-        onClick={handleArrowClick}
+        className="flex items-center justify-between border border-gray-400 focus:border-black w-[200px] h-[25px] rounded-[3px] text-[0.8em] px-3"
+        onClick={() => setIsListOpen(!isListOpen)}
       >
-        {isListOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
+        {(!companies.length && (
+          <span className="italic text-gray-600">Select</span>
+        )) ||
+          (companies.length === 1 && (
+            <span className="truncate">
+              {firstCompanyName.length > 8
+                ? `${firstCompanyName.substring(0, 16)}...`
+                : firstCompanyName}
+            </span>
+          )) ||
+          (companies.length > 1 && `${companies.length} selected`)}{" "}
+        <span className="text-lg text-gray-500">
+          {isListOpen ? <IoMdArrowDropup /> : <IoMdArrowDropdown />}
+        </span>
       </div>
       {isListOpen && (
-        <ul className="absolute top-10 left-0 bg-white border border-gray-300 rounded-md z-50 w-[200px] h-[200px] overflow-scroll text-[0.8em]">
-          {/* Select All and Deselect All buttons */}
-          <li className="p-2 px-4 text-gray-500 flex items-center gap-4">
-            {company.length <= 0 ? (
-              <p>No Options</p>
-            ) : (
-              <>
+        <div className="absolute top-6 left-0 bg-white border border-gray-300 rounded-md z-50 w-[200px] h-[200px] text-[0.8em] flex flex-col items-center gap-1">
+          {company.length > 0 ? (
+            <>
+              <input
+                type="text"
+                value={inputValue}
+                onChange={handleInputChange}
+                className="border border-gray-400 rounded-[3px] top-1 w-full outline-none"
+              />
+              <div className="flex items-center w-full mx-2 bg-gray-200 justify-evenly">
                 <button
                   onClick={handleClickAll}
                   disabled={selectAllFlag}
@@ -168,42 +117,44 @@ const CustomAutocomplete = ({ company, companies, setCompanies }) => {
                 >
                   Deselect All
                 </button>
-              </>
-            )}
-          </li>
+              </div>
+              <ul className="flex flex-col gap-2 mx-2 overflow-y-scroll">
+                {/* Display selected items at the top */}
+                {companies.map((selectedCompanyId) => {
+                  const selectedSuggestion = company.find(
+                    (suggestion) => suggestion.companyid === selectedCompanyId
+                  );
 
-          {/* Display selected items at the top */}
-          {companies.map((selectedCompanyId) => {
-            const selectedSuggestion = company.find(
-              (suggestion) => suggestion.companyid === selectedCompanyId
-            );
-
-            return (
-              <li
-                style={{ opacity: 0.7 }}
-                key={selectedSuggestion.companyid}
-                onClick={() => handleSuggestionClick(selectedSuggestion)}
-                className={`cursor-pointer p-2 px-4 bg-[#e6faf9]`}
-              >
-                {selectedSuggestion.companyname}
-              </li>
-            );
-          })}
-
-          {/* Display unselected items */}
-          {filteredSuggestions.map((suggestion) => (
-            <li
-              style={{ opacity: 0.7 }}
-              key={suggestion.companyid}
-              onClick={() => handleSuggestionClick(suggestion)}
-              className={`cursor-pointer p-2 px-4 ${
-                companies.includes(suggestion.companyid) ? "hidden" : ""
-              }`}
-            >
-              {suggestion.companyname}
-            </li>
-          ))}
-        </ul>
+                  return (
+                    <li
+                      style={{ opacity: 0.7 }}
+                      key={selectedSuggestion.companyid}
+                      onClick={() => handleSuggestionClick(selectedSuggestion)}
+                      className={`cursor-pointer bg-[#e6faf9] w-full`}
+                    >
+                      {selectedSuggestion.companyname}
+                    </li>
+                  );
+                })}
+                {/* Display unselected items */}
+                {filteredSuggestions.map((suggestion) => (
+                  <li
+                    style={{ opacity: 0.7 }}
+                    key={suggestion.companyid}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    className={`cursor-pointer w-full ${
+                      companies.includes(suggestion.companyid) ? "hidden" : ""
+                    }`}
+                  >
+                    {suggestion.companyname}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <span>No Options</span>
+          )}
+        </div>
       )}
     </div>
   );
