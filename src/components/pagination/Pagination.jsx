@@ -44,11 +44,12 @@ const Pagination = ({
         <TbPlayerTrackPrev />
       </button>
       <p className="text-[0.9em] mt-3">
-        set
         <SetRecords
           records={recordsPerPage}
           setRecords={setRecordsPerPage}
           pageNumber={pageNumber}
+          setFetchingUsingPrevNext={setFetchingUsingPrevNext}
+          totalRecordsCount={totalRecordsCount}
         />
         {` ${pageValueToShow} of ${totalRecordsCount}`}
       </p>

@@ -315,7 +315,7 @@ const ReasearchScreen = () => {
   // call for the pagination
   useEffect(() => {
     tableData.length > 0 && handleSearch();
-  }, [pageNumber]);
+  }, [pageNumber, recordsPerPage]);
   // call after data save
   useEffect(() => {
     isRetrieveAfterSave && handleSearch();
