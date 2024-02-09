@@ -298,6 +298,7 @@ const ReasearchScreen = () => {
             );
           }
           setTableDataLoading(false);
+          setIsRetrieveAfterSave(false);
           if (!fetchingUsingPrevNext) setPageNumber(1);
         } catch (error) {
           console.log(error);
