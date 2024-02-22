@@ -239,7 +239,8 @@ const ResearchTable = ({
           return updatedRow || row;
         });
 
-        setUpdatedRows(updatedSelectedRows);
+        setUpdatedRows((prev) => [...prev, ...updatedSelectedRows]);
+
         // hightlight purpose(setHighlightUPdatedRows)
         setHighlightUpdatedRows((prev) => [...prev, ...updatedSelectedRows]);
 
